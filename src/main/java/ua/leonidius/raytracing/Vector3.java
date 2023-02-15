@@ -46,4 +46,8 @@ public class Vector3 {
         return new Vector3(x / length, y / length, z / length);
     }
 
+    public Vector3 multiplyBy(double scalar) {
+        return new Vector3(x * scalar, y * scalar, z * scalar);
+    }
+
 }
