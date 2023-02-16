@@ -2,6 +2,8 @@ package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.*;
 
+import java.util.Arrays;
+
 public class Renderer {
 
     /**
@@ -37,13 +39,10 @@ public class Renderer {
                 // origin point -- focus point
 
                 for (Shape3d object : scene.getObjects()) {
-                    // todo: choose the closest one
-                    // and check if it intersects with object
-                    // Point intersection = object.findVisibleIntersectionWithRay(focusPoint, rayVector);
-
-                    // check that intersection is not behind camera
-
-                    // pixels[pixelX][pixelY] = intersection == null ? 0 : 1;
+                    boolean intersectionExists = object.findVisibleIntersectionWithRay(focusPoint, rayVector);
+                    if (intersectionExists) {
+                        pixels[pixelX][pixelY] = 1.0;
+                    }
                 }
             }
         }

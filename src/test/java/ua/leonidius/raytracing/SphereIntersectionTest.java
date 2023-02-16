@@ -29,8 +29,14 @@ class SphereIntersectionTest {
     }
 
     @Test
-    public void testFindVisibleIntersectionWithRay_tangent() {
-        // todo
+    public void testFindVisibleIntersectionWithRay_harderIntersection() {
+        var sphere = new Sphere(new Point(2, 2, 1), 1.3);
+
+        var rayOrigin = new Point(0, 0, 0);
+        var rayDirection = new Vector3(1, 1, 1);
+
+        boolean actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
+        assertTrue(actual);
     }
 
 }

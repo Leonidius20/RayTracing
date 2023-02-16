@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Scene {
 
-    @Getter ArrayList<Shape3d> objects;
+    @Getter ArrayList<Shape3d> objects = new ArrayList<>();
     @Getter Camera activeCamera;
     LightSource lightSource;
 
