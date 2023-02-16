@@ -29,6 +29,7 @@ public class Renderer {
 
         for (int pixelX = 0; pixelX < imageWidth; pixelX++) {
             for (int pixelY = 0; pixelY < imageHeight; pixelY++) {
+                // todo: remove vector creation for better performance
                 Vector3 offset = new Vector3(pixelX * pixelWidth, 0, -pixelY * pixelHeight);
 
                 Vector3 pixelCenter = topLeftPixelCenter.add(offset);
@@ -66,23 +67,22 @@ public class Renderer {
 
         var sensorCenter = findCameraSensorCenter(camera);
 
-        final double realSensorWidth = imageWidth * camera.getSensorWidth();
-        final double realSensorHeight = imageHeight * camera.getSensorHeight();
-
         final double pixelWidth = camera.getPixelWidth();
         final double pixelHeight = camera.getPixelHeight();
 
-        Point focusPoint = camera.getFocusPoint();
+        final double realSensorWidth = imageWidth * pixelWidth;
+        final double realSensorHeight = imageHeight * pixelHeight;
 
         // TODO: the plane isn't always vetical. Gotta find top left corner through vector operations
         // camera dir vector (denormalized) + left perpendicular vector + to top perp vector
 
-        Vector3 horizontalOffset = new Vector3(-realSensorWidth / 2.0 + pixelWidth / 2.0, 0, 0);
-        Vector3 verticalOffset = new Vector3(0, 0, realSensorHeight / 2.0 - pixelHeight / 2.0);
+        // TODO: remove vector creations, just work with numbers (for better performance)
+
+        Vector3 offsetXY = new Vector3(-realSensorWidth / 2.0 + pixelWidth / 2.0, 0, realSensorHeight / 2.0 - pixelHeight / 2.0);
 
         // TODO: maybe subtract C (focus point)?
 
-        return sensorCenter.add(horizontalOffset).add(verticalOffset);
+        return sensorCenter.add(offsetXY);
     }
 
 }

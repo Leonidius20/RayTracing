@@ -30,7 +30,22 @@ class RendererTest {
 
     @Test
     public void testFindTopLeftPixelCenter_defaultDirection() {
+        Point focusPoint = new Point(-2, 3, 6);
+        double focusDistance = 1.5;
+        int resolutionHeight = 20;
+        int resolutionWidth = 20;
+        double pixelHeight = 2;
+        double pixelWidth = 2;
 
+        Camera camera = new Camera(
+                focusPoint, focusDistance,
+                resolutionHeight, resolutionWidth,
+                pixelHeight, pixelWidth);
+
+        Vector3 expected = new Vector3(-21, 4.5, 25);
+        Vector3 actual = Renderer.findTopLeftPixelCenter(camera);
+
+        assertEquals(expected, actual);
     }
 
 }
