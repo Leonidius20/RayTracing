@@ -1,6 +1,6 @@
 package ua.leonidius.raytracing;
 
-public class Sphere {
+public class Sphere implements Shape3d {
 
     Point center;
     double radius;
@@ -10,8 +10,8 @@ public class Sphere {
         this.radius = radius;
     }
 
-    Point findIntersectionWithRay() {
-        return null;
+    public Point findIntersectionWithRay(Point origin, Vector3 direction) {
+
     }
 
 }
