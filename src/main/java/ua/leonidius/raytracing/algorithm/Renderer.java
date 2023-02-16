@@ -52,7 +52,7 @@ public class Renderer {
         return pixels;
     }
 
-    private static Vector3 findCameraSensorCenter(Camera camera) {
+    static Vector3 findCameraSensorCenter(Camera camera) {
         return camera.getDirection().multiplyBy(camera.getFocusDistance()).add(camera.getFocusPoint());
     }
 
@@ -60,7 +60,7 @@ public class Renderer {
      * Calculate the real-world coordinates of the center of the top-left pixel on camera's sensor
      * @return
      */
-    private static Vector3 findTopLeftPixelCenter(Camera camera) {
+    static Vector3 findTopLeftPixelCenter(Camera camera) {
         final int imageWidth = camera.getSensorWidth();
         final int imageHeight = camera.getSensorHeight();
 

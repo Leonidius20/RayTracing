@@ -11,7 +11,7 @@ public class Sphere implements Shape3d {
     }
 
     public Point findIntersectionWithRay(Point origin, Vector3 direction) {
-
+        return null; // todo
     }
 
 }

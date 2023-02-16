@@ -1,5 +1,7 @@
 package ua.leonidius.raytracing;
 
+import java.util.Objects;
+
 public class Point {
 
     public final double x;
@@ -20,6 +22,14 @@ public class Point {
      */
     public Point add(double deltaX, double deltaY, double deltaZ) {
         return new Point(x + deltaX, y + deltaY, z + deltaZ);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0 && Double.compare(point.z, z) == 0;
     }
 
 }

@@ -20,10 +20,10 @@ public class Camera {
     @Getter final int sensorHeight;
     @Getter final int sensorWidth;
 
-    @Getter final int pixelHeight;
-    @Getter final int pixelWidth;
+    @Getter final double pixelHeight;
+    @Getter final double pixelWidth;
 
-    public Camera(Point focusPoint, /*Vector3 cameraDirection,*/ double focusDistance, int sensorHeight, int sensorWidth, int pixelHeight, int pixelWidth) {
+    public Camera(Point focusPoint, /*Vector3 cameraDirection,*/ double focusDistance, int sensorHeight, int sensorWidth, double pixelHeight, double pixelWidth) {
         this.focusPoint = focusPoint;
         //this.cameraDirection = cameraDirection.normalize();
         this.focusDistance = focusDistance;
