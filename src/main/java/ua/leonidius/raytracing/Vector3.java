@@ -33,6 +33,14 @@ public class Vector3 {
         return new Vector3(x + other.x, y + other.y, z + other.z);
     }
 
+    public Vector3 subtract(Vector3 other) {
+        return new Vector3(x - other.x, y - other.y, z - other.z);
+    }
+
+    public Vector3 subtract(Point other) {
+        return new Vector3(x - other.x, y - other.y, z - other.z);
+    }
+
     public double calculateLength() {
         return Math.sqrt(x * x + y * y + z * z);
     }

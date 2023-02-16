@@ -17,9 +17,6 @@ public class Renderer {
 
         double[][] pixels = new double[imageWidth][imageHeight];
 
-        final double realSensorWidth = imageWidth * camera.getSensorWidth();
-        final double realSensorHeight = imageHeight * camera.getSensorHeight();
-
         final double pixelWidth = camera.getPixelWidth();
         final double pixelHeight = camera.getPixelHeight();
 
@@ -31,6 +28,7 @@ public class Renderer {
             for (int pixelY = 0; pixelY < imageHeight; pixelY++) {
                 // todo: remove vector creation for better performance
                 Vector3 offset = new Vector3(pixelX * pixelWidth, 0, -pixelY * pixelHeight);
+                // todo: offset is also dependent on rotation of camera. Maybe add different basises?
 
                 Vector3 pixelCenter = topLeftPixelCenter.add(offset);
 
@@ -41,7 +39,7 @@ public class Renderer {
                 for (Shape3d object : scene.getObjects()) {
                     // todo: choose the closest one
                     // and check if it intersects with object
-                    Point intersection = object.findIntersectionWithRay(focusPoint, rayVector);
+                    // Point intersection = object.findVisibleIntersectionWithRay(focusPoint, rayVector);
 
                     // check that intersection is not behind camera
 
