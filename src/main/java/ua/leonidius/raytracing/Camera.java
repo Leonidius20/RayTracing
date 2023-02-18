@@ -9,7 +9,7 @@ public class Camera {
     /**
      * Normalized vector of camera direction (where it is pointing to)
      */
-    @Getter Vector3 direction = new Vector3(0, 1, 0); // TODO: support others
+    @Getter Vector3 direction = new Vector3(0, 1, 0).normalize(); // TODO: support others
 
     /**
      * Distance between the focus point and the sensor plane
@@ -31,6 +31,25 @@ public class Camera {
         this.sensorWidth = sensorWidth;
         this.pixelHeight = pixelHeight;
         this.pixelWidth = pixelWidth;
+    }
+
+    public Vector3 findSensorCenter() {
+        return direction.multiplyBy(focusDistance).add(focusPoint);
+    }
+
+    public Vector3 findTopLeftPixelCenter() {
+        var sensorCenter = findSensorCenter();
+
+        final double realSensorWidth = sensorWidth * pixelWidth;
+        final double realSensorHeight = sensorHeight * pixelHeight;
+
+        // TODO: the plane isn't always vetical. Gotta find top left corner through vector operations
+
+        Vector3 offsetXY = new Vector3((-realSensorWidth  + pixelWidth) / 2.0,
+                0,
+                (realSensorHeight - pixelHeight) / 2.0);
+
+        return sensorCenter.add(offsetXY);
     }
 
 }

@@ -1,6 +1,7 @@
 package ua.leonidius.raytracing;
 
 import org.junit.jupiter.api.Test;
+import ua.leonidius.raytracing.algorithm.Ray;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +14,7 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 2, 2);
         var rayDirection = new Vector3(1, 0, 0);
 
-        double actualT = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
+        double actualT = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
         System.out.println("Acutual T: " + actualT);
 
         var actualIntersectionPoint = rayDirection.multiplyBy(actualT).add(rayOrigin);
@@ -28,7 +29,7 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 2, 2);
         var rayDirection = new Vector3(0, 0, 1);
 
-        Double actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
+        Double actual = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
         assertNull(actual);
     }
 
@@ -39,7 +40,7 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 0, 0);
         var rayDirection = new Vector3(1, 1, 1);
 
-        Double actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
+        Double actual = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
         assertTrue(Math.abs(actual - 1.08261948) < 0.0001);
     }
 

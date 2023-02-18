@@ -2,16 +2,19 @@ package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.*;
 
-import java.util.Arrays;
-
 public class Renderer {
+
+    private final Scene scene;
+
+    public Renderer(Scene scene) {
+        this.scene = scene;
+    }
 
     /**
      * Render scene and return pixel values
-     * @param scene scene to render
      * @return array of pixel values (camera sensor width x height)
      */
-    public static double[][] render(Scene scene) {
+    public double[][] render() {
         Camera camera = scene.getActiveCamera();
 
         final int imageWidth = camera.getSensorWidth();
@@ -24,7 +27,7 @@ public class Renderer {
 
         Point focusPoint = camera.getFocusPoint();
 
-        Vector3 topLeftPixelCenter = findTopLeftPixelCenter(camera);
+        Vector3 topLeftPixelCenter = camera.findTopLeftPixelCenter();
 
         for (int pixelX = 0; pixelX < imageWidth; pixelX++) { // row
             for (int pixelY = 0; pixelY < imageHeight; pixelY++) {
@@ -39,24 +42,19 @@ public class Renderer {
                 Vector3 rayDirection = pixelCenter.subtract(focusPoint)
                         .normalize();
 
-                // origin point -- focus point
+                Ray ray = new Ray(focusPoint, rayDirection);
 
                 for (Shape3d object : scene.getObjects()) {
                     // TODO: find all intersections and choose the closest one
-                    Double intersectionTparam = object.findVisibleIntersectionWithRay(focusPoint, rayDirection);
+                    Double intersectionTparam = object.findVisibleIntersectionWithRay(ray);
 
                     boolean intersectionExists = intersectionTparam != null;
                     if (intersectionExists) {
                         // calculate lighting
-                        var intersectionPoint = rayDirection // p = o + dt
-                                .multiplyBy(intersectionTparam)
-                                .add(focusPoint); // todo: check if it's right
+                        var intersectionPoint =
+                                ray.getXyzOnRay(intersectionTparam);
 
-                        var normal = object.getNormalAt(intersectionPoint);
-
-                        var lightValue = scene.getLightSource().getDirection()
-                                .dotProduct(normal);
-
+                        var lightValue = calculateLightAt(object, intersectionPoint);
 
                         // outer array contains rows (Y value), inner array contains cells from left to right (X value)
                         pixels[pixelY][pixelX] = lightValue;
@@ -68,38 +66,10 @@ public class Renderer {
         return pixels;
     }
 
-    static Vector3 findCameraSensorCenter(Camera camera) {
-        return camera.getDirection().multiplyBy(camera.getFocusDistance()).add(camera.getFocusPoint());
-    }
-
-    /**
-     * Calculate the real-world coordinates of the center of the top-left pixel on camera's sensor
-     * @return
-     */
-    static Vector3 findTopLeftPixelCenter(Camera camera) {
-        final int imageWidth = camera.getSensorWidth();
-        final int imageHeight = camera.getSensorHeight();
-
-        var sensorCenter = findCameraSensorCenter(camera);
-
-        final double pixelWidth = camera.getPixelWidth();
-        final double pixelHeight = camera.getPixelHeight();
-
-        final double realSensorWidth = imageWidth * pixelWidth;
-        final double realSensorHeight = imageHeight * pixelHeight;
-
-        // TODO: the plane isn't always vetical. Gotta find top left corner through vector operations
-        // camera dir vector (denormalized) + left perpendicular vector + to top perp vector
-
-        // TODO: remove vector creations, just work with numbers (for better performance)
-
-        Vector3 offsetXY = new Vector3((-realSensorWidth  + pixelWidth) / 2.0,
-                0,
-                (realSensorHeight - pixelHeight) / 2.0);
-
-        // TODO: maybe subtract C (focus point)?
-
-        return sensorCenter.add(offsetXY);
+    /* private */ double calculateLightAt(Shape3d object, Vector3 point) {
+        var normal = object.getNormalAt(point);
+        return scene.getLightSource().getDirection()
+                .dotProduct(normal);
     }
 
 }

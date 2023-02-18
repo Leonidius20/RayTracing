@@ -1,5 +1,7 @@
 package ua.leonidius.raytracing;
 
+import ua.leonidius.raytracing.algorithm.Ray;
+
 public class Sphere implements Shape3d {
 
     Point center;
@@ -12,19 +14,18 @@ public class Sphere implements Shape3d {
 
     /**
      *
-     * @param origin
-     * @param direction
+     * @param ray
      * @return null if no intersection, otherwise 't' parameter of the point of intersection (according
      * to vector formula of a line p = o + dt, where o is origin, d is direction, p is point
      */
-    public Double findVisibleIntersectionWithRay(Point origin, Vector3 direction) {
-        Vector3 originAsVector = new Vector3(origin.x, origin.y, origin.z);
+    public Double findVisibleIntersectionWithRay(Ray ray) {
+        Vector3 originAsVector = new Vector3(ray.getOrigin().x, ray.getOrigin().y, ray.getOrigin().z);
 
         Vector3 k = originAsVector.subtract(center);
 
         // parameters of a quadratic equation
-        double a = direction.square();
-        double b = 2 * direction.dotProduct(k);
+        double a = ray.getDirection().square();
+        double b = 2 * ray.getDirection().dotProduct(k);
         double c = k.square() - radius * radius;
 
         double discriminant = b * b - 4 * a * c;
