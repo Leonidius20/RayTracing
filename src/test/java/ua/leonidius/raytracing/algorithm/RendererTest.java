@@ -49,4 +49,14 @@ class RendererTest {
         verify(shape).findVisibleIntersectionWithRay(new Ray(focusPoint, f));
     }
 
+    @Test
+    public void testLightCalculation() {
+        // todo
+    }
+
+    @Test
+    public void testNearestVisibleObjectSelection() {
+        // todo
+    }
+
 }
