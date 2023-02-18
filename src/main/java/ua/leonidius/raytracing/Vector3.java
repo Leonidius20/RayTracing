@@ -63,7 +63,22 @@ public class Vector3 {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vector3 vector3 = (Vector3) o;
-        return Double.compare(vector3.x, x) == 0 && Double.compare(vector3.y, y) == 0 && Double.compare(vector3.z, z) == 0;
+
+        double epsilon = 0.0001; // comparison precision
+
+        return Math.abs(vector3.x - x) < epsilon
+                && Math.abs(vector3.y - y) < epsilon
+                && Math.abs(vector3.z - z) < epsilon;
+
+        // return Double.compare(vector3.x, x) == 0 && Double.compare(vector3.y, y) == 0 && Double.compare(vector3.z, z) == 0;
     }
 
+    @Override
+    public String toString() {
+        return "Vector3{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }

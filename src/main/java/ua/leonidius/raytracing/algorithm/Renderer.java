@@ -24,10 +24,11 @@ public class Renderer {
 
         Point focusPoint = camera.getFocusPoint();
 
-        Vector3 topLeftPixelCenter = findCameraSensorCenter(camera);
+        Vector3 topLeftPixelCenter = findTopLeftPixelCenter(camera);
 
-        for (int pixelX = 0; pixelX < imageWidth; pixelX++) {
+        for (int pixelX = 0; pixelX < imageWidth; pixelX++) { // row
             for (int pixelY = 0; pixelY < imageHeight; pixelY++) {
+
                 // todo: remove vector creation for better performance
                 Vector3 offset = new Vector3(pixelX * pixelWidth, 0, -pixelY * pixelHeight);
                 // todo: offset is also dependent on rotation of camera. Maybe add different basises?
@@ -35,13 +36,16 @@ public class Renderer {
                 Vector3 pixelCenter = topLeftPixelCenter.add(offset);
 
                 // vector from focus point to pixel center
-                Vector3 rayVector = new Vector3(pixelCenter.x - focusPoint.x, pixelCenter.y - focusPoint.y, pixelCenter.z - focusPoint.z);
+                Vector3 rayVector = pixelCenter.subtract(focusPoint)
+                        .normalize();
+
                 // origin point -- focus point
 
                 for (Shape3d object : scene.getObjects()) {
                     boolean intersectionExists = object.findVisibleIntersectionWithRay(focusPoint, rayVector);
                     if (intersectionExists) {
-                        pixels[pixelX][pixelY] = 1.0;
+                        // outer array contains rows (Y value), inner array contains cells from left to right (X value)
+                        pixels[pixelY][pixelX] = 1.0;
                     }
                 }
             }
@@ -75,7 +79,9 @@ public class Renderer {
 
         // TODO: remove vector creations, just work with numbers (for better performance)
 
-        Vector3 offsetXY = new Vector3(-realSensorWidth / 2.0 + pixelWidth / 2.0, 0, realSensorHeight / 2.0 - pixelHeight / 2.0);
+        Vector3 offsetXY = new Vector3((-realSensorWidth  + pixelWidth) / 2.0,
+                0,
+                (realSensorHeight - pixelHeight) / 2.0);
 
         // TODO: maybe subtract C (focus point)?
 
