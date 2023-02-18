@@ -17,7 +17,13 @@ public class ConsoleImageWriter implements ImageWriter {
         for (double[] pixelLine : pixels) {
             System.out.print("|");
             for (double pixel : pixelLine) {
-                System.out.print(pixel > 0 ? "█" : " ");
+                if (pixel <= 0) System.out.print(" ");
+                else if (pixel > 0 && pixel <= 0.2) System.out.print(".");
+                else if (pixel > 0.2 && pixel < 0.5) System.out.print("*");
+                else if (pixel >= 0.5 && pixel < 0.8) System.out.print("O");
+                else System.out.print("█");
+
+                // System.out.print(pixel > 0 ? "█" : " ");
             }
             System.out.println("|");
         }

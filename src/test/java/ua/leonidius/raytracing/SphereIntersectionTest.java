@@ -1,9 +1,6 @@
 package ua.leonidius.raytracing;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,8 +13,12 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 2, 2);
         var rayDirection = new Vector3(1, 0, 0);
 
-        boolean actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
-        assertTrue(actual);
+        double actualT = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
+        System.out.println("Acutual T: " + actualT);
+
+        var actualIntersectionPoint = rayDirection.multiplyBy(actualT).add(rayOrigin);
+
+        assertEquals(new Vector3(1.0, 2.0, 2.0), actualIntersectionPoint);
     }
 
     @Test
@@ -27,8 +28,8 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 2, 2);
         var rayDirection = new Vector3(0, 0, 1);
 
-        boolean actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
-        assertFalse(actual);
+        Double actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
+        assertNull(actual);
     }
 
     @Test
@@ -38,8 +39,8 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 0, 0);
         var rayDirection = new Vector3(1, 1, 1);
 
-        boolean actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
-        assertTrue(actual);
+        Double actual = sphere.findVisibleIntersectionWithRay(rayOrigin, rayDirection);
+        assertTrue(Math.abs(actual - 1.08261948) < 0.0001);
     }
 
 

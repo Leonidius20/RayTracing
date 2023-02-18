@@ -8,9 +8,9 @@ public class Scene {
 
     @Getter ArrayList<Shape3d> objects = new ArrayList<>();
     @Getter Camera activeCamera;
-    LightSource lightSource;
+    @Getter DirectionalLightSource lightSource;
 
-    public Scene(Camera camera, LightSource light) {
+    public Scene(Camera camera, DirectionalLightSource light) {
         this.activeCamera = camera;
         this.lightSource = light;
     }

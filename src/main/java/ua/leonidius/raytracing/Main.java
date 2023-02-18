@@ -9,10 +9,9 @@ public class Main {
         var sphere = new Sphere(new Point(0, 0, 0), 6);
         var camera = new Camera(new Point(0, -20, 0), 10, 40, 40, 0.25, 0.25);
 
-        // in camera, Z is horizontal for some reason (maybe has to do wityyh that pixel arrasy orientation)
-        // x is vertical
+        var lightSource = new DirectionalLightSource(new Vector3(-0.4, -1, 0).normalize());
 
-        var scene = new Scene(camera, null);
+        var scene = new Scene(camera, lightSource);
         scene.addObject(sphere);
 
         var pixels = Renderer.render(scene);

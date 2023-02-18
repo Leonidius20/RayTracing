@@ -36,16 +36,30 @@ public class Renderer {
                 Vector3 pixelCenter = topLeftPixelCenter.add(offset);
 
                 // vector from focus point to pixel center
-                Vector3 rayVector = pixelCenter.subtract(focusPoint)
+                Vector3 rayDirection = pixelCenter.subtract(focusPoint)
                         .normalize();
 
                 // origin point -- focus point
 
                 for (Shape3d object : scene.getObjects()) {
-                    boolean intersectionExists = object.findVisibleIntersectionWithRay(focusPoint, rayVector);
+                    // TODO: find all intersections and choose the closest one
+                    Double intersectionTparam = object.findVisibleIntersectionWithRay(focusPoint, rayDirection);
+
+                    boolean intersectionExists = intersectionTparam != null;
                     if (intersectionExists) {
+                        // calculate lighting
+                        var intersectionPoint = rayDirection // p = o + dt
+                                .multiplyBy(intersectionTparam)
+                                .add(focusPoint); // todo: check if it's right
+
+                        var normal = object.getNormalAt(intersectionPoint);
+
+                        var lightValue = scene.getLightSource().getDirection()
+                                .dotProduct(normal);
+
+
                         // outer array contains rows (Y value), inner array contains cells from left to right (X value)
-                        pixels[pixelY][pixelX] = 1.0;
+                        pixels[pixelY][pixelX] = lightValue;
                     }
                 }
             }
