@@ -54,6 +54,7 @@ public class Renderer {
                     var lightValue = calculateLightAt(
                             closestIntersection.object, intersectionPoint);
 
+
                     // outer array contains rows (Y value), inner array contains cells from left to right (X value)
                     pixels[pixelY][pixelX] = lightValue;
                 }

@@ -52,4 +52,6 @@ public class Camera {
         return sensorCenter.add(offsetXY);
     }
 
+
+
 }
