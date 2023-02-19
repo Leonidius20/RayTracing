@@ -3,6 +3,9 @@ package ua.leonidius.raytracing;
 import org.apache.commons.cli.*;
 import ua.leonidius.raytracing.algorithm.Renderer;
 import ua.leonidius.raytracing.output.PngImageWriter;
+import ua.leonidius.raytracing.shapes.Plane;
+import ua.leonidius.raytracing.shapes.Sphere;
+import ua.leonidius.raytracing.shapes.Triangle;
 
 import java.io.IOException;
 
@@ -42,7 +45,7 @@ public class Main {
         }
 
         var scene = createScene();
-        var pixels = new Renderer(scene).render();
+        var pixels = new Renderer(scene, ShadingModel.FLAT).render();
 
         (new PngImageWriter(outputFileName)).writeImage(pixels);
     }
@@ -54,18 +57,25 @@ public class Main {
         var sphereBehind = new Sphere(new Point(9 + 6, 2, 0), 4);
         var sphereBehind2 = new Sphere(new Point(9 - 32, 4, 0 + 16), 4);
 
-        var plane = new Plane(new Point(0, 8, 0), new Vector3(0, -1, 0));
+        var plane = new Plane(new Point(0, 8, 0), new Vector3(0, -1, 1));
 
         var camera = new Camera(new Point(0, -28, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.125, 0.125);
 
-        var lightSource = new DirectionalLightSource(new Vector3(2, -1, 0).normalize());
+        var lightSource = new DirectionalLightSource(new Vector3(-1, -1, 0).normalize());
         // why is y = -1? itn't the light shining into camera this way?
 
+        var triangle = new Triangle(
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 0),
+                new Vector3(0, 0, 1)
+        );
+
         var scene = new Scene(camera, lightSource);
-        scene.addObject(sphere);
-        scene.addObject(sphereBehind);
-        scene.addObject(sphereBehind2);
-        scene.addObject(plane);
+        //scene.addObject(sphere);
+        //scene.addObject(sphereBehind);
+        //scene.addObject(sphereBehind2);
+        //scene.addObject(plane);
+        scene.add(triangle);
 
         return scene;
     }

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.leonidius.raytracing.*;
+import ua.leonidius.raytracing.shapes.Shape3d;
+import ua.leonidius.raytracing.shapes.Sphere;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -15,7 +17,7 @@ class RendererTest {
     @Test
     public void testRaysShooting() {
         Shape3d shape = mock(Shape3d.class);
-        when(shape.getNormalAt(any())).thenReturn(new Vector3(0, 0, 0)); // to avoid NPE
+        when(shape.getNormalAt(any(), any())).thenReturn(new Vector3(0, 0, 0)); // to avoid NPE
 
         var focusPoint = new Point(0.0, 0.1, 0.2);
         double focusDistance = 1.5;
@@ -28,10 +30,10 @@ class RendererTest {
                 new Camera(
                         focusPoint,focusDistance, heightInPixels, widthInPixels, pixelHeight, pixelWidth),
                 new DirectionalLightSource(new Vector3(0, 0, 0)));
-        scene.addObject(shape);
+        scene.add(shape);
 
         // do render
-        new Renderer(scene).render();
+        new Renderer(scene, ShadingModel.FLAT).render();
 
         // expected ray vectors (directions) (normalized)
         var a = (new Vector3(-1.2, 1.6, 0.75)).subtract(focusPoint).normalize();
@@ -53,11 +55,11 @@ class RendererTest {
     public void testLightCalculation() {
         var scene = new Scene(null, new DirectionalLightSource(new Vector3(1.0, 2.0, 3.0)));
         var sphere = new Sphere(new Point(2, 3, 4), 3);
-        scene.addObject(sphere);
+        scene.add(sphere);
 
         var pointInQuestion = new Vector3(2, 3, 7);
 
-        var renderer = new Renderer(scene);
+        var renderer = new Renderer(scene, ShadingModel.FLAT);
 
         assertEquals(3, renderer.calculateLightAt(sphere, pointInQuestion));
     }
@@ -71,8 +73,8 @@ class RendererTest {
         var ray = new Ray(new Point(0, -3, 0), new Vector3(0, 1, 0));
 
         var scene = new Scene(null, null);
-        scene.addObject(sphereBehind);
-        scene.addObject(sphere);
+        scene.add(sphereBehind);
+        scene.add(sphere);
 
         var intersection = Renderer.findClosestIntersection(ray, scene);
         assertEquals(sphere, intersection.object());

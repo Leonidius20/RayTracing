@@ -1,5 +1,8 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.shapes;
 
+import ua.leonidius.raytracing.Point;
+import ua.leonidius.raytracing.ShadingModel;
+import ua.leonidius.raytracing.Vector3;
 import ua.leonidius.raytracing.algorithm.Ray;
 
 public class Sphere implements Shape3d {
@@ -47,7 +50,7 @@ public class Sphere implements Shape3d {
     }
 
     @Override
-    public Vector3 getNormalAt(Vector3 point) {
+    public Vector3 getNormalAt(Vector3 point, ShadingModel shading) {
         return point.subtract(center).normalize();
     }
 }

@@ -1,13 +1,16 @@
 package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.*;
+import ua.leonidius.raytracing.shapes.Shape3d;
 
 public class Renderer {
 
     private final Scene scene;
+    private final ShadingModel shading;
 
-    public Renderer(Scene scene) {
+    public Renderer(Scene scene, ShadingModel shading) {
         this.scene = scene;
+        this.shading = shading;
     }
 
     /**
@@ -65,7 +68,7 @@ public class Renderer {
     }
 
     /* private */ double calculateLightAt(Shape3d object, Vector3 point) {
-        var normal = object.getNormalAt(point);
+        var normal = object.getNormalAt(point, shading);
         var value = scene.getLightSource().getDirection()
                 .dotProduct(normal);
         return Math.max(0.0, value);

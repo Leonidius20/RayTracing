@@ -1,6 +1,7 @@
 package ua.leonidius.raytracing;
 
 import lombok.Getter;
+import ua.leonidius.raytracing.shapes.Shape3d;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class Scene {
         this.lightSource = light;
     }
 
-    public void addObject(Shape3d obj) {
+    public void add(Shape3d obj) {
         objects.add(obj);
     }
 

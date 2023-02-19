@@ -2,6 +2,7 @@ package ua.leonidius.raytracing;
 
 import org.junit.jupiter.api.Test;
 import ua.leonidius.raytracing.algorithm.Ray;
+import ua.leonidius.raytracing.shapes.Plane;
 
 import static org.junit.jupiter.api.Assertions.*;
 
