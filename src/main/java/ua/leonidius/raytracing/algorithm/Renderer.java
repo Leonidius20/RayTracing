@@ -20,7 +20,7 @@ public class Renderer {
         final int imageWidth = camera.getSensorWidth();
         final int imageHeight = camera.getSensorHeight();
 
-        double[][] pixels = new double[imageWidth][imageHeight];
+        double[][] pixels = new double[imageHeight][imageWidth];
 
         final double pixelWidth = camera.getPixelWidth();
         final double pixelHeight = camera.getPixelHeight();
@@ -44,21 +44,18 @@ public class Renderer {
 
                 Ray ray = new Ray(focusPoint, rayDirection);
 
-                for (Shape3d object : scene.getObjects()) {
-                    // TODO: find all intersections and choose the closest one
-                    Double intersectionTparam = object.findVisibleIntersectionWithRay(ray);
+                var closestIntersection = findClosestIntersection(ray, scene);
 
-                    boolean intersectionExists = intersectionTparam != null;
-                    if (intersectionExists) {
-                        // calculate lighting
-                        var intersectionPoint =
-                                ray.getXyzOnRay(intersectionTparam);
+                if (closestIntersection.object != null) {
+                    // calculate lighting
+                    var intersectionPoint =
+                            ray.getXyzOnRay(closestIntersection.tParam);
 
-                        var lightValue = calculateLightAt(object, intersectionPoint);
+                    var lightValue = calculateLightAt(
+                            closestIntersection.object, intersectionPoint);
 
-                        // outer array contains rows (Y value), inner array contains cells from left to right (X value)
-                        pixels[pixelY][pixelX] = lightValue;
-                    }
+                    // outer array contains rows (Y value), inner array contains cells from left to right (X value)
+                    pixels[pixelY][pixelX] = lightValue;
                 }
             }
         }
@@ -70,6 +67,25 @@ public class Renderer {
         var normal = object.getNormalAt(point);
         return scene.getLightSource().getDirection()
                 .dotProduct(normal);
+    }
+
+    record ObjectAndRayIntersection(Double tParam, Shape3d object) {};
+
+    /* private */ static ObjectAndRayIntersection findClosestIntersection(Ray ray, Scene scene) {
+        Shape3d closestObject = null;
+        Double closestIntersectionTparam = null;
+
+        for (Shape3d object : scene.getObjects()) {
+            Double intersectionTparam = object.findVisibleIntersectionWithRay(ray);
+            if (intersectionTparam == null) continue;
+            if (closestIntersectionTparam == null
+                    || intersectionTparam < closestIntersectionTparam) {
+                closestIntersectionTparam = intersectionTparam;
+                closestObject = object;
+            }
+        }
+
+        return new ObjectAndRayIntersection(closestIntersectionTparam, closestObject);
     }
 
 }
