@@ -7,7 +7,7 @@ public class DirectionalLightSource {
     @Getter Vector3 direction;
 
     public DirectionalLightSource(Vector3 direction) {
-        this.direction = direction;
+        this.direction = direction.normalize();
     }
 
 }

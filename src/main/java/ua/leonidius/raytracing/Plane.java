@@ -34,7 +34,7 @@ public class Plane implements Shape3d {
 
     @Override
     public Vector3 getNormalAt(Vector3 point) {
-        return normal;
+        return normal.normalize();
     }
 
 }

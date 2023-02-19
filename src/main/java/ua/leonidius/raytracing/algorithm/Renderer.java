@@ -65,8 +65,9 @@ public class Renderer {
 
     /* private */ double calculateLightAt(Shape3d object, Vector3 point) {
         var normal = object.getNormalAt(point);
-        return scene.getLightSource().getDirection()
+        var value = scene.getLightSource().getDirection()
                 .dotProduct(normal);
+        return Math.max(0.0, value);
     }
 
     record ObjectAndRayIntersection(Double tParam, Shape3d object) {};
