@@ -1,11 +1,13 @@
 package ua.leonidius.raytracing;
 
 import ua.leonidius.raytracing.algorithm.Renderer;
-import ua.leonidius.raytracing.output.ConsoleImageWriter;
+import ua.leonidius.raytracing.output.PngImageWriter;
+
+import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         var sphere = new Sphere(new Point(0, 0, 0), 6);
 
         var sphereBehind = new Sphere(new Point(5, 2, 0), 4);
@@ -23,12 +25,8 @@ public class Main {
         scene.addObject(plane);
 
         var pixels = new Renderer(scene).render();
-        /*var pixels = new double[][] {
-                new double[]{ 0.0, 1.0, 0.0 },
-                new double[]{ 1.0, 1.0, 1.0 },
-                new double[]{ 0.0, 1.0, 0.0 }
-        };*/
-        (new ConsoleImageWriter()).writeImage(pixels);
+
+        (new PngImageWriter("output.png")).writeImage(pixels);
     }
 
 }
