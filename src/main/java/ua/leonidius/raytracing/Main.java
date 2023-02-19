@@ -10,6 +10,8 @@ public class Main {
 
         var sphereBehind = new Sphere(new Point(5, 2, 0), 4);
 
+        var plane = new Plane(new Point(0, 0, -6), new Vector3(0, -0.1, 1));
+
         var camera = new Camera(new Point(0, -20, 0), 10, 40, 40, 0.25, 0.25);
 
         var lightSource = new DirectionalLightSource(new Vector3(-0.4, -1, 0).normalize());
@@ -18,6 +20,7 @@ public class Main {
         var scene = new Scene(camera, lightSource);
         scene.addObject(sphere);
         scene.addObject(sphereBehind);
+        scene.addObject(plane);
 
         var pixels = new Renderer(scene).render();
         /*var pixels = new double[][] {

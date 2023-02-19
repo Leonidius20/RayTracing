@@ -32,4 +32,8 @@ public class Point {
         return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0 && Double.compare(point.z, z) == 0;
     }
 
+    public Vector3 toVector() {
+        return new Vector3(x, y, z);
+    }
+
 }
