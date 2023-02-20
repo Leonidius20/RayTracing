@@ -6,20 +6,28 @@ import ua.leonidius.raytracing.algorithm.Ray;
 
 public class Triangle implements Shape3d {
 
-    private final Vector3 vertex1;
-    private final Vector3 vertex2;
-    private final Vector3 vertex3;
+    private final Vector3[] vertices;
+    private final Vector3[] normals;
+
 
     public Triangle(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3) {
-        this.vertex1 = vertex1;
-        this.vertex2 = vertex2;
-        this.vertex3 = vertex3;
+        this.vertices = new Vector3[] {vertex1, vertex2, vertex3};
+        this.normals = new Vector3[] {null, null, null};
+    }
+
+    public Triangle(Vector3[] vertices, Vector3[] normals) {
+        this.vertices = vertices;
+        this.normals = normals;
     }
 
     private static final double EPSILON = 0.0000001;
 
     @Override
     public Double findVisibleIntersectionWithRay(Ray ray) {
+        final Vector3 vertex1 = vertices[0];
+        final Vector3 vertex2 = vertices[1];
+        final Vector3 vertex3 = vertices[2];
+
         Vector3 edge1 = vertex2.subtract(vertex1);
         Vector3 edge2 = vertex3.subtract(vertex1);
 
@@ -77,6 +85,10 @@ public class Triangle implements Shape3d {
     }
 
     /* private */ Vector3 getFlatShadingNormalAt(Vector3 point) {
+        final Vector3 vertex1 = vertices[0];
+        final Vector3 vertex2 = vertices[1];
+        final Vector3 vertex3 = vertices[2];
+
         var edge1 = vertex2.subtract(vertex1);
         var edge2 = vertex3.subtract(vertex1);
         return edge1.crossProduct(edge2).normalize(); // todo check orientation?

@@ -24,6 +24,7 @@ public class Renderer {
         final int imageHeight = camera.getSensorHeight();
 
         double[][] pixels = new double[imageHeight][imageWidth];
+        // set bg color?
 
         final double pixelWidth = camera.getPixelWidth();
         final double pixelHeight = camera.getPixelHeight();

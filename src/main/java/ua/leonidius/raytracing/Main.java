@@ -2,12 +2,15 @@ package ua.leonidius.raytracing;
 
 import org.apache.commons.cli.*;
 import ua.leonidius.raytracing.algorithm.Renderer;
+import ua.leonidius.raytracing.input.WavefrontSceneReader;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.shapes.Plane;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.Triangle;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
 
@@ -24,7 +27,14 @@ public class Main {
                 .desc("output file path")
                 .build();
 
+        var inputOption = Option.builder("input")
+                .argName("file")
+                .hasArg()
+                .desc("input file path")
+                .build();
+
         options.addOption(outputOption);
+        options.addOption(inputOption);
 
         var parser = new GnuParser();
         CommandLine line;
@@ -44,7 +54,22 @@ public class Main {
             return;
         }
 
-        var scene = createScene();
+        String inputFileName;
+        if (line.hasOption("input")) {
+            inputFileName = line.getOptionValue("input");
+        } else {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("raytracing", options);
+            return;
+        }
+
+        var scene = new WavefrontSceneReader(Paths.get(inputFileName)).read();
+        var camera = new Camera(new Point(0, -28, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.125, 0.125);
+        var lightSource = new DirectionalLightSource(new Vector3(-1, -1, 0).normalize());
+        scene.setActiveCamera(camera);
+        scene.setLightSource(lightSource);
+
+        System.out.println("Read scene file, starting to render");
         var pixels = new Renderer(scene, ShadingModel.FLAT).render();
 
         (new PngImageWriter(outputFileName)).writeImage(pixels);
