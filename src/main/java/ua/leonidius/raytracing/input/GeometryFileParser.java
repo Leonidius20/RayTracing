@@ -7,6 +7,6 @@ import java.util.ArrayList;
 
 public interface GeometryFileParser {
 
-    public ArrayList<Shape3d> parse() throws IOException;
+    public ArrayList<Shape3d> parse() throws IOException, ParserException;
 
 }

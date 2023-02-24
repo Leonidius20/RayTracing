@@ -2,15 +2,18 @@ package ua.leonidius.raytracing;
 
 import org.apache.commons.cli.*;
 import ua.leonidius.raytracing.algorithm.Renderer;
+import ua.leonidius.raytracing.input.ParserException;
 import ua.leonidius.raytracing.input.WavefrontParser;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.shapes.Plane;
+import ua.leonidius.raytracing.shapes.Shape3d;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.Triangle;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -63,7 +66,14 @@ public class Main {
             return;
         }
 
-        var shapes = new WavefrontParser(Files.newBufferedReader(Paths.get(inputFileName))).parse();
+        ArrayList<Shape3d> shapes = null;
+        try {
+            shapes = new WavefrontParser(Files.newBufferedReader(Paths.get(inputFileName))).parse();
+        } catch (ParserException e) {
+            System.err.println(e.getMessage());
+            System.exit(-1);
+        }
+
         var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);
         var lightSource = new DirectionalLightSource(new Vector3(1, -1, 0).normalize());
         var scene = new Scene(camera, lightSource);

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WavefrontParserTest {
 
     @Test
-    void read() throws IOException {
+    void read() throws IOException, ParserException {
         String file = """
                 # comment
                 v 0.123 0.234 0.345
@@ -49,12 +49,12 @@ class WavefrontParserTest {
     }
 
     @Test
-    void parseVectorDeclaration() {
+    void parseVectorDeclaration() throws ParserException {
         var reader = new WavefrontParser(null);
 
         // "v" vertex or "vn" normal
         String badLine = "v 5.76 7.67";
-        assertThrows(RuntimeException.class, () -> {
+        assertThrows(ParserException.class, () -> {
             reader.parseVectorDeclaration(badLine);
         });
 
@@ -64,7 +64,7 @@ class WavefrontParserTest {
     }
 
     @Test
-    void parsePolygonDeclaration() {
+    void parsePolygonDeclaration() throws ParserException {
         var reader = new WavefrontParser(null);
         // options:
         /*

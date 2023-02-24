@@ -7,8 +7,6 @@ import ua.leonidius.raytracing.shapes.Triangle;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class WavefrontParser implements GeometryFileParser {
 
@@ -19,55 +17,60 @@ public class WavefrontParser implements GeometryFileParser {
     }
 
     @Override
-    public ArrayList<Shape3d> parse() throws IOException, RuntimeException {
+    public ArrayList<Shape3d> parse() throws IOException, ParserException {
         String line;
 
         var allVertices = new ArrayList<Vector3>(); // starts with 0 instead of 1, keep in mind
         var allNormals = new ArrayList<Vector3>();
         var shapes = new ArrayList<Shape3d>();
 
+        int lineNumber = 0; // for error messages
         while ((line = reader.readLine()) != null) {
+            lineNumber++;
+
             if (line.isBlank() || line.length() < 2) continue;
 
             var firstTwoChars = line.substring(0, 2);
-            switch (firstTwoChars) {
-                case "v " ->
-                        // vertex
-                        allVertices.add(parseVectorDeclaration(line));
-                case "vn" ->
-                        // normals
-                        allNormals.add(parseVectorDeclaration(line).normalize());
-                case "f " -> {
-                    // face (triangle or polygon)
-                    var record = parsePolygonDeclaration(line);
-                    Vector3[] vertices = new Vector3[3];
-                    Vector3[] normals = new Vector3[3];
-                    for (int i = 0; i < 3; i++) {
-                        vertices[i] = allVertices.get(record.vertexIndices[i] - 1);
-                        var normalIndex = record.normalIndices[i];
-                        normals[i] = normalIndex != -1 ? allNormals.get(normalIndex - 1) : null;
+
+            try {
+                switch (firstTwoChars) {
+                    case "v " ->
+                            // vertex
+                            allVertices.add(parseVectorDeclaration(line));
+                    case "vn" ->
+                            // normals
+                            allNormals.add(parseVectorDeclaration(line).normalize());
+                    case "f " -> {
+                        // face (triangle or polygon)
+                        var record = parsePolygonDeclaration(line);
+                        Vector3[] vertices = new Vector3[3];
+                        Vector3[] normals = new Vector3[3];
+                        for (int i = 0; i < 3; i++) {
+                            vertices[i] = allVertices.get(record.vertexIndices[i] - 1);
+                            var normalIndex = record.normalIndices[i];
+                            normals[i] = normalIndex != -1 ? allNormals.get(normalIndex - 1) : null;
+                        }
+                        shapes.add(new Triangle(vertices, normals));
                     }
-                    shapes.add(new Triangle(vertices, normals));
+                    default -> {
+                        // ignore for now
+                    }
                 }
-                default -> {
-                    // ignore for now
-                }
+            } catch (ParserException e) {
+                // rethrow but add line number info
+                throw new ParserException("Line " + lineNumber + ": " + e.getMessage());
             }
-
-
         }
 
         return shapes;
     }
 
     // just test the end function?
-    /* private */ Vector3 parseVectorDeclaration(String line) {
+    /* private */ Vector3 parseVectorDeclaration(String line) throws ParserException {
         var parts = line.split(" ");
 
         if (parts.length < 4) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                    "error parsing vertex declaration"); // todo test if it's OK
-            throw new RuntimeException("Error parsing vector declaration");
+            throw new ParserException("Error parsing vector declaration: less than 3 coordinates");
         }
 
         try {
@@ -77,9 +80,7 @@ public class WavefrontParser implements GeometryFileParser {
 
             return new Vector3(x, y, z);
         } catch (NumberFormatException e) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                    "error parsing vector declaration"); // todo test if it's OK
-            throw new RuntimeException("Error parsing vector declaration");
+            throw new RuntimeException("Error parsing vector declaration: invalid number format");
         }
 
     }
@@ -89,13 +90,11 @@ public class WavefrontParser implements GeometryFileParser {
             int[] normalIndices
     ) { }
 
-    /* private */ PolygonRecord parsePolygonDeclaration(String line) {
+    /* private */ PolygonRecord parsePolygonDeclaration(String line) throws ParserException {
         var parts = line.split(" ");
 
         if (parts.length < 4) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                    "error parsing polygon declaration"); // todo test if it's OK
-            throw new RuntimeException("Error parsing polygon declaration");
+            throw new RuntimeException("Error parsing polygon declaration: less than 3 vertices");
         }
 
         int[] vertexIndices = new int[parts.length - 1];
@@ -106,9 +105,7 @@ public class WavefrontParser implements GeometryFileParser {
 
             var vertexParts = vertexDeclaration.split("/");
             if (vertexParts.length == 0) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                        "error parsing polygon declaration"); // todo test if it's OK
-                throw new RuntimeException("Error parsing polygon declaration");
+                throw new ParserException("Error parsing polygon declaration: vertex " + i + " has an empty declaration. Maybe there is an extra space.");
             }
 
             try {
@@ -116,15 +113,12 @@ public class WavefrontParser implements GeometryFileParser {
                 vertexIndices[i - 1] = vertexIndex;
 
                 if (vertexParts.length < 3) {
-                    // todo: not only check length but also v1// type records (with slashes but with empty values)
                     normalIndices[i - 1] = -1;
                 } else {
                     normalIndices[i - 1] = Integer.parseInt(vertexParts[2]);
                 }
             } catch (NumberFormatException e) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                        "error parsing polygon declaration"); // todo test if it's OK
-                throw new RuntimeException("Error parsing polygon declaration");
+                throw new ParserException("Error parsing polygon declaration: vertex " + i + " decl. has invalid numbers");
             }
 
         }
