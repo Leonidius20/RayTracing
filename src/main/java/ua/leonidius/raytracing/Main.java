@@ -14,8 +14,8 @@ import java.nio.file.Paths;
 
 public class Main {
 
-    private static final int IMAGE_WIDTH = 480;
-    private static final int IMAGE_HEIGHT = 360;
+    private static final int IMAGE_WIDTH = 854;
+    private static final int IMAGE_HEIGHT = 480;
 
     public static void main(String[] args) throws IOException {
         // parsing CLI arguments
@@ -64,8 +64,8 @@ public class Main {
         }
 
         var scene = new WavefrontSceneReader(Paths.get(inputFileName)).read();
-        var camera = new Camera(new Point(0, -28, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.125, 0.125);
-        var lightSource = new DirectionalLightSource(new Vector3(-1, -1, 0).normalize());
+        var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);
+        var lightSource = new DirectionalLightSource(new Vector3(1, -1, 0).normalize());
         scene.setActiveCamera(camera);
         scene.setLightSource(lightSource);
 

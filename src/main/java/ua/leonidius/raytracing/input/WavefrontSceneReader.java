@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,26 +32,28 @@ public class WavefrontSceneReader implements SceneReader {
 
         while ((line = reader.readLine()) != null) {
             var firstTwoChars = line.substring(0, 2);
-            if (firstTwoChars.equals("v ")) {
-                // vertex
-                allVertices.add(parseVectorDeclaration(line));
-            } else if (firstTwoChars.equals("vn")) {
-                // normals
-                allNormals.add(parseVectorDeclaration(line).normalize());
-            } else if (firstTwoChars.equals("f ")) {
-                // face (triangle or polygon)
-                var record = parsePolygonDeclaration(line);
-                Vector3[] vertices = new Vector3[3];
-                Vector3[] normals = new Vector3[3];
-                for (int i = 0; i < 3; i++) {
-                    vertices[i] = allVertices.get(record.vertexIndices[i] - 1);
-                    var normalIndex = record.vertexIndices[i];
-                    normals[i] = normalIndex != 1 ? allVertices.get(normalIndex - 1) : null;
+            switch (firstTwoChars) {
+                case "v " ->
+                        // vertex
+                        allVertices.add(parseVectorDeclaration(line));
+                case "vn" ->
+                        // normals
+                        allNormals.add(parseVectorDeclaration(line).normalize());
+                case "f " -> {
+                    // face (triangle or polygon)
+                    var record = parsePolygonDeclaration(line);
+                    Vector3[] vertices = new Vector3[3];
+                    Vector3[] normals = new Vector3[3];
+                    for (int i = 0; i < 3; i++) {
+                        vertices[i] = allVertices.get(record.vertexIndices[i] - 1);
+                        var normalIndex = record.vertexIndices[i];
+                        normals[i] = normalIndex != 1 ? allNormals.get(normalIndex - 1) : null;
+                    }
+                    scene.add(new Triangle(vertices, normals));
                 }
-
-                scene.add(new Triangle(vertices, normals));
-            } else {
-                // ignore for now
+                default -> {
+                    // ignore for now
+                }
             }
 
 
@@ -60,7 +63,7 @@ public class WavefrontSceneReader implements SceneReader {
     }
 
     // just test the end function?
-    private Vector3 parseVectorDeclaration(String line) {
+    /* private */ Vector3 parseVectorDeclaration(String line) {
         var parts = line.split(" ");
 
         if (parts.length != 4) {
@@ -83,12 +86,12 @@ public class WavefrontSceneReader implements SceneReader {
 
     }
 
-    private record PolygonRecord(
+    /* private */ record PolygonRecord(
             int[] vertexIndices,
             int[] normalIndices
-    ) {}
+    ) { }
 
-    private PolygonRecord parsePolygonDeclaration(String line) {
+    /* private */ PolygonRecord parsePolygonDeclaration(String line) {
         var parts = line.split(" ");
 
         if (parts.length < 4) {
@@ -114,7 +117,7 @@ public class WavefrontSceneReader implements SceneReader {
                 int vertexIndex = Integer.parseInt(vertexParts[0]);
                 vertexIndices[i - 1] = vertexIndex;
 
-                if (vertexParts.length == 1) {
+                if (vertexParts.length < 3) {
                     // todo: not only check length but also v1// type records (with slashes but with empty values)
                     normalIndices[i - 1] = -1;
                 } else {
