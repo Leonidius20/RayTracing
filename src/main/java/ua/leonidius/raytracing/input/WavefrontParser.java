@@ -1,36 +1,34 @@
 package ua.leonidius.raytracing.input;
 
-import ua.leonidius.raytracing.Scene;
 import ua.leonidius.raytracing.Vector3;
+import ua.leonidius.raytracing.shapes.Shape3d;
 import ua.leonidius.raytracing.shapes.Triangle;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WavefrontSceneReader implements SceneReader {
+public class WavefrontParser implements GeometryFileParser {
 
-    private final Path objFile;
+    private final BufferedReader reader;
 
-    public WavefrontSceneReader(Path objFile) {
-        this.objFile = objFile;
+    public WavefrontParser(BufferedReader reader) {
+        this.reader = reader;
     }
 
     @Override
-    public Scene read() throws IOException, RuntimeException {
-        var scene = new Scene(null, null); // todo set them
-
-        var reader = Files.newBufferedReader(objFile);
+    public ArrayList<Shape3d> parse() throws IOException, RuntimeException {
         String line;
 
         var allVertices = new ArrayList<Vector3>(); // starts with 0 instead of 1, keep in mind
         var allNormals = new ArrayList<Vector3>();
+        var shapes = new ArrayList<Shape3d>();
 
         while ((line = reader.readLine()) != null) {
+            if (line.isBlank() || line.length() < 2) continue;
+
             var firstTwoChars = line.substring(0, 2);
             switch (firstTwoChars) {
                 case "v " ->
@@ -46,10 +44,10 @@ public class WavefrontSceneReader implements SceneReader {
                     Vector3[] normals = new Vector3[3];
                     for (int i = 0; i < 3; i++) {
                         vertices[i] = allVertices.get(record.vertexIndices[i] - 1);
-                        var normalIndex = record.vertexIndices[i];
-                        normals[i] = normalIndex != 1 ? allNormals.get(normalIndex - 1) : null;
+                        var normalIndex = record.normalIndices[i];
+                        normals[i] = normalIndex != -1 ? allNormals.get(normalIndex - 1) : null;
                     }
-                    scene.add(new Triangle(vertices, normals));
+                    shapes.add(new Triangle(vertices, normals));
                 }
                 default -> {
                     // ignore for now
@@ -59,14 +57,14 @@ public class WavefrontSceneReader implements SceneReader {
 
         }
 
-        return scene;
+        return shapes;
     }
 
     // just test the end function?
     /* private */ Vector3 parseVectorDeclaration(String line) {
         var parts = line.split(" ");
 
-        if (parts.length != 4) {
+        if (parts.length < 4) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING,
                     "error parsing vertex declaration"); // todo test if it's OK
             throw new RuntimeException("Error parsing vector declaration");

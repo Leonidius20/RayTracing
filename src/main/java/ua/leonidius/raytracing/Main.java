@@ -2,14 +2,14 @@ package ua.leonidius.raytracing;
 
 import org.apache.commons.cli.*;
 import ua.leonidius.raytracing.algorithm.Renderer;
-import ua.leonidius.raytracing.input.WavefrontSceneReader;
+import ua.leonidius.raytracing.input.WavefrontParser;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.shapes.Plane;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.Triangle;
 
 import java.io.IOException;
-import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
@@ -63,11 +63,11 @@ public class Main {
             return;
         }
 
-        var scene = new WavefrontSceneReader(Paths.get(inputFileName)).read();
+        var shapes = new WavefrontParser(Files.newBufferedReader(Paths.get(inputFileName))).parse();
         var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);
         var lightSource = new DirectionalLightSource(new Vector3(1, -1, 0).normalize());
-        scene.setActiveCamera(camera);
-        scene.setLightSource(lightSource);
+        var scene = new Scene(camera, lightSource);
+        scene.setObjects(shapes);
 
         System.out.println("Read scene file, starting to render");
         var pixels = new Renderer(scene, ShadingModel.FLAT).render();

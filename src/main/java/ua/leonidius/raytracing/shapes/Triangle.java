@@ -4,6 +4,8 @@ import ua.leonidius.raytracing.ShadingModel;
 import ua.leonidius.raytracing.Vector3;
 import ua.leonidius.raytracing.algorithm.Ray;
 
+import java.util.Arrays;
+
 public class Triangle implements Shape3d {
 
     private final Vector3[] vertices;
@@ -92,6 +94,22 @@ public class Triangle implements Shape3d {
         var edge1 = vertex2.subtract(vertex1);
         var edge2 = vertex3.subtract(vertex1);
         return edge1.crossProduct(edge2).normalize(); // todo check orientation?
+    }
+
+    @Override
+    public String toString() {
+        return "Triangle{" +
+                "vertices=" + Arrays.toString(vertices) +
+                ", normals=" + Arrays.toString(normals) +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Triangle triangle = (Triangle) o;
+        return Arrays.equals(vertices, triangle.vertices) && Arrays.equals(normals, triangle.normals);
     }
 
 }

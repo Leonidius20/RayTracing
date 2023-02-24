@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Scene {
 
-    @Getter ArrayList<Shape3d> objects = new ArrayList<>();
+    @Getter @Setter ArrayList<Shape3d> objects = new ArrayList<>();
     @Getter @Setter Camera activeCamera;
     @Getter @Setter DirectionalLightSource lightSource;
 
