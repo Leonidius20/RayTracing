@@ -78,22 +78,33 @@ public class Triangle implements Shape3d {
         if (shading == ShadingModel.SMOOTH) {
             return getSmoothShadingNormalAt(point);
         } else {
-            return getFlatShadingNormalAt(point);
+            return getFlatShadingNormal(Winding.CLOCKWISE);
         }
     }
 
     /* private */ Vector3 getSmoothShadingNormalAt(Vector3 point) {
-        return getFlatShadingNormalAt(point); // todo
+        return getFlatShadingNormal(Winding.CLOCKWISE); // todo
     }
 
-    /* private */ Vector3 getFlatShadingNormalAt(Vector3 point) {
+    enum Winding {
+        CLOCKWISE,
+        COUNTER_CLOCKWISE,
+    }
+
+    /* private */ Vector3 getFlatShadingNormal(Winding winding) {
         final Vector3 vertex1 = vertices[0];
         final Vector3 vertex2 = vertices[1];
         final Vector3 vertex3 = vertices[2];
 
-        var edge1 = vertex2.subtract(vertex1);
-        var edge2 = vertex3.subtract(vertex1);
-        return edge1.crossProduct(edge2).normalize(); // todo check orientation?
+        var edge1 = vertex1.subtract(vertex3);
+        var edge2 = vertex2.subtract(vertex3);
+
+        if (winding == Winding.CLOCKWISE) {
+            return edge1.crossProduct(edge2).normalize();
+        } else {
+            return edge2.crossProduct(edge1).normalize();
+        }
+
     }
 
     @Override
