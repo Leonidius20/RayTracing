@@ -2,16 +2,17 @@ package ua.leonidius.raytracing;
 
 import java.util.Objects;
 
-public class Point { // todo: make it extend Vector3?
+public class Point extends Vector3 { // todo: make it extend Vector3?
 
-    public final double x;
-    public final double y;
-    public final double z;
+    //public final double x;
+    //public final double y;
+    //public final double z;
 
     public Point(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        super(x, y, z);
+        //this.x = x;
+        //this.y = y;
+       // this.z = z;
     }
 
     /**

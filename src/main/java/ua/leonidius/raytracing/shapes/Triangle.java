@@ -123,4 +123,10 @@ public class Triangle implements Shape3d {
         return Arrays.equals(vertices, triangle.vertices) && Arrays.equals(normals, triangle.normals);
     }
 
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(vertices);
+        result = 31 * result + Arrays.hashCode(normals);
+        return result;
+    }
 }

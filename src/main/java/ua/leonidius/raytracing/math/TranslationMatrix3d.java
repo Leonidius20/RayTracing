@@ -11,23 +11,4 @@ public class TranslationMatrix3d extends TransformMatrix3d {
         });
     }
 
-    public TranslationMatrix3d() {
-        super();
-        this.data[0][0] = 1;
-        this.data[1][1] = 1;
-        this.data[2][2] = 1;
-    }
-
-    public void setXTranslation(double dx) {
-        this.data[0][3] = dx;
-    }
-
-    public void setYTranslation(double dy) {
-        this.data[1][3] = dy;
-    }
-
-    public void setZTranslation(double dz) {
-        this.data[2][3] = dz;
-    }
-
 }

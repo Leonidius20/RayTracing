@@ -2,6 +2,8 @@ package ua.leonidius.raytracing;
 
 import ua.leonidius.raytracing.math.TransformMatrix3d;
 
+import java.util.Objects;
+
 public class Vector3 {
 
     public final double x;
@@ -82,6 +84,11 @@ public class Vector3 {
                 ", y=" + y +
                 ", z=" + z +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 
     public Vector3 crossProduct(Vector3 other) {

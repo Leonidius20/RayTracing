@@ -1,14 +1,15 @@
 package ua.leonidius.raytracing.math;
 
-import static ua.leonidius.raytracing.math.TrigonometryDegrees.cosD;
-import static ua.leonidius.raytracing.math.TrigonometryDegrees.sinD;
-
 public class RotationZMatrix extends TransformMatrix3d {
 
     public RotationZMatrix(double angleD) {
+        this(new AngleD(angleD));
+    }
+
+    public RotationZMatrix(AngleD angleD) {
         super(new double[][]{
-                new double[] {cosD(angleD), -sinD(angleD), 0, 0},
-                new double[] {sinD(angleD), cosD(angleD), 0, 0},
+                new double[] {angleD.cos(), -angleD.sin(), 0, 0},
+                new double[] {angleD.sin(), angleD.cos(), 0, 0},
                 new double[] {0, 0, 1, 0},
                 new double[] {0, 0, 0, 1},
         });

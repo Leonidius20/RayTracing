@@ -75,4 +75,9 @@ public class TransformMatrix3d {
         return Arrays.deepEquals(data, that.data);
     }
 
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(data);
+    }
+    
 }
