@@ -1,6 +1,7 @@
 package ua.leonidius.raytracing.input;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.debugging.WarningsFinder;
 import ua.leonidius.raytracing.Vector3;
 import ua.leonidius.raytracing.shapes.Shape3d;
 import ua.leonidius.raytracing.shapes.Triangle;
@@ -8,6 +9,9 @@ import ua.leonidius.raytracing.shapes.Triangle;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -100,4 +104,14 @@ class WavefrontParserTest {
         if (r1 == null || r2 == null) return false;
         return Arrays.equals(r1.vertexIndices(), r2.vertexIndices()) && Arrays.equals(r2.normalIndices(), r1.normalIndices());
     }
+
+    @Test
+    void testTrianglesCount() throws URISyntaxException, IOException, ParserException {
+        var fileUrl = getClass().getClassLoader().getResource("cow.obj");
+        var reader = new WavefrontParser(Files.newBufferedReader(Path.of(fileUrl.toURI())));
+        var triangles = reader.parse();
+        int expectedCount = 5144;
+        assertEquals(expectedCount, triangles.size());
+    }
+
 }

@@ -1,5 +1,7 @@
 package ua.leonidius.raytracing;
 
+import ua.leonidius.raytracing.math.TransformMatrix3d;
+
 public class Vector3 {
 
     public final double x;
@@ -89,4 +91,5 @@ public class Vector3 {
                 x * other.y - y * other.x
         );
     }
+
 }
