@@ -7,6 +7,6 @@ import java.util.ArrayList;
 
 public interface ParsedGeometryFile {
 
-    ArrayList<IShape3d> shapes() throws IOException, ParsingException;
+    ArrayList<IShape3d> shapes(ITriangleFactory triangleFactory) throws IOException, ParsingException;
 
 }

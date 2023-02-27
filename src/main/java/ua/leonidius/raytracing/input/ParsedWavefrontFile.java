@@ -17,7 +17,7 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
     }
 
     @Override
-    public ArrayList<IShape3d> shapes() throws IOException, ParsingException {
+    public ArrayList<IShape3d> shapes(ITriangleFactory triangleFactory) throws IOException, ParsingException {
         String line;
 
         var allVertices = new ArrayList<Vector3>(); // starts with 0 instead of 1, keep in mind
@@ -50,7 +50,7 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
                             var normalIndex = record.normalIndices[i];
                             normals[i] = normalIndex != -1 ? allNormals.get(normalIndex - 1) : null;
                         }
-                        shapes.add(new Triangle(vertices, normals));
+                        shapes.add(triangleFactory.make(vertices, normals));
                     }
                     default -> {
                         // ignore for now

@@ -13,6 +13,7 @@ import ua.leonidius.raytracing.shapes.Plane;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.Triangle;
+import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -72,7 +73,7 @@ public class Main {
 
         ArrayList<IShape3d> shapes = null;
         try {
-            shapes = new ParsedWavefrontFile(Files.newBufferedReader(Paths.get(inputFileName))).shapes();
+            shapes = new ParsedWavefrontFile(Files.newBufferedReader(Paths.get(inputFileName))).shapes(new TriangleFactory());
         } catch (ParsingException e) {
             System.err.println(e.getMessage());
             System.exit(-1);

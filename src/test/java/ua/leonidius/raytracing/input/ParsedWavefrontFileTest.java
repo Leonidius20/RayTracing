@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.shapes.Triangle;
+import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +34,7 @@ class ParsedWavefrontFileTest {
                 f 1//3 2//1 3//2""";
 
         var reader = new BufferedReader(new StringReader(file));
-        var shapes = new ParsedWavefrontFile(reader).shapes();
+        var shapes = new ParsedWavefrontFile(reader).shapes(new TriangleFactory());
 
         var expected = new ArrayList<IShape3d>();
         var expectedVertices = new Vector3[] {
@@ -108,7 +109,7 @@ class ParsedWavefrontFileTest {
     void testTrianglesCount() throws URISyntaxException, IOException, ParsingException {
         var fileUrl = getClass().getClassLoader().getResource("cow.obj");
         var reader = new ParsedWavefrontFile(Files.newBufferedReader(Path.of(fileUrl.toURI())));
-        var triangles = reader.shapes();
+        var triangles = reader.shapes(new TriangleFactory());
         int expectedCount = 5144;
         assertEquals(expectedCount, triangles.size());
     }
