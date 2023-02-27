@@ -1,6 +1,4 @@
-package ua.leonidius.raytracing;
-
-import java.util.Objects;
+package ua.leonidius.raytracing.enitites;
 
 public class Point extends Vector3 { // todo: make it extend Vector3?
 

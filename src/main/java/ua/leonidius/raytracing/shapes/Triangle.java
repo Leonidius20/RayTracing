@@ -1,12 +1,14 @@
 package ua.leonidius.raytracing.shapes;
 
 import ua.leonidius.raytracing.ShadingModel;
-import ua.leonidius.raytracing.Vector3;
-import ua.leonidius.raytracing.algorithm.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.algorithm.IShape3d;
+import ua.leonidius.raytracing.enitites.Ray;
 
 import java.util.Arrays;
+import java.util.OptionalDouble;
 
-public class Triangle implements Shape3d {
+public class Triangle implements IShape3d {
 
     private final Vector3[] vertices;
     private final Vector3[] normals;
@@ -25,7 +27,7 @@ public class Triangle implements Shape3d {
     private static final double EPSILON = 0.0000001;
 
     @Override
-    public Double findVisibleIntersectionWithRay(Ray ray) {
+    public OptionalDouble findVisibleIntersectionWithRay(Ray ray) {
         final Vector3 vertex1 = vertices[0];
         final Vector3 vertex2 = vertices[1];
         final Vector3 vertex3 = vertices[2];
@@ -41,7 +43,7 @@ public class Triangle implements Shape3d {
         a = edge1.dotProduct(h);
 
         if (a > -EPSILON && a < EPSILON) {
-            return null;    // This ray is parallel to this triangle.
+            return OptionalDouble.empty();    // This ray is parallel to this triangle.
         }
 
         f = 1.0 / a;
@@ -51,7 +53,7 @@ public class Triangle implements Shape3d {
         u = f * (s.dotProduct(h));
 
         if (u < 0.0 || u > 1.0) {
-            return null;
+            return OptionalDouble.empty();
         }
 
         Vector3 q = s.crossProduct(edge1);
@@ -59,17 +61,17 @@ public class Triangle implements Shape3d {
         v = f * ray.getDirection().dotProduct(q);
 
         if (v < 0.0 || u + v > 1.0) {
-            return null;
+            return OptionalDouble.empty();
         }
 
         // At this stage we can compute t to find out where the intersection point is on the line.
         double t = f * edge2.dotProduct(q);
         if (t > EPSILON) // ray intersection
         {
-            return t;
+            return OptionalDouble.of(t);
         } else // This means that there is a line intersection but not a ray intersection.
         {
-            return null;
+            return OptionalDouble.empty();
         }
     }
 

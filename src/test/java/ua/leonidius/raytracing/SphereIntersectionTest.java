@@ -1,7 +1,9 @@
 package ua.leonidius.raytracing;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.algorithm.Ray;
+import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.shapes.Sphere;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,10 +17,10 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 2, 2);
         var rayDirection = new Vector3(1, 0, 0);
 
-        double actualT = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
-        System.out.println("Acutual T: " + actualT);
+        var actualT = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
+        assertTrue(actualT.isPresent());
 
-        var actualIntersectionPoint = rayDirection.multiplyBy(actualT).add(rayOrigin);
+        var actualIntersectionPoint = rayDirection.multiplyBy(actualT.getAsDouble()).add(rayOrigin);
 
         assertEquals(new Vector3(1.0, 2.0, 2.0), actualIntersectionPoint);
     }
@@ -30,8 +32,8 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 2, 2);
         var rayDirection = new Vector3(0, 0, 1);
 
-        Double actual = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
-        assertNull(actual);
+        var actual = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
+        assertFalse(actual.isPresent());
     }
 
     @Test
@@ -41,8 +43,9 @@ class SphereIntersectionTest {
         var rayOrigin = new Point(0, 0, 0);
         var rayDirection = new Vector3(1, 1, 1);
 
-        Double actual = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
-        assertTrue(Math.abs(actual - 1.08261948) < 0.0001);
+        var actual = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
+        assertTrue(actual.isPresent());
+        assertTrue(Math.abs(actual.getAsDouble() - 1.08261948) < 0.0001);
     }
 
 

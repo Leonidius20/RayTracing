@@ -1,6 +1,6 @@
 package ua.leonidius.raytracing.math;
 
-import ua.leonidius.raytracing.Vector3;
+import ua.leonidius.raytracing.enitites.Vector3;
 
 import java.util.Arrays;
 

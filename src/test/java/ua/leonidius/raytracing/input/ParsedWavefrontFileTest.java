@@ -1,9 +1,8 @@
 package ua.leonidius.raytracing.input;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.debugging.WarningsFinder;
-import ua.leonidius.raytracing.Vector3;
-import ua.leonidius.raytracing.shapes.Shape3d;
+import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.shapes.Triangle;
 
 import java.io.BufferedReader;
@@ -17,10 +16,10 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class WavefrontParserTest {
+class ParsedWavefrontFileTest {
 
     @Test
-    void read() throws IOException, ParserException {
+    void read() throws IOException, ParsingException {
         String file = """
                 # comment
                 v 0.123 0.234 0.345
@@ -34,9 +33,9 @@ class WavefrontParserTest {
                 f 1//3 2//1 3//2""";
 
         var reader = new BufferedReader(new StringReader(file));
-        var shapes = new WavefrontParser(reader).parse();
+        var shapes = new ParsedWavefrontFile(reader).shapes();
 
-        var expected = new ArrayList<Shape3d>();
+        var expected = new ArrayList<IShape3d>();
         var expectedVertices = new Vector3[] {
                 new Vector3(0.123, 0.234, 0.345),
                 new Vector3(4, 5, 6),
@@ -53,12 +52,12 @@ class WavefrontParserTest {
     }
 
     @Test
-    void parseVectorDeclaration() throws ParserException {
-        var reader = new WavefrontParser(null);
+    void parseVectorDeclaration() throws ParsingException {
+        var reader = new ParsedWavefrontFile(null);
 
         // "v" vertex or "vn" normal
         String badLine = "v 5.76 7.67";
-        assertThrows(ParserException.class, () -> {
+        assertThrows(ParsingException.class, () -> {
             reader.parseVectorDeclaration(badLine);
         });
 
@@ -68,8 +67,8 @@ class WavefrontParserTest {
     }
 
     @Test
-    void parsePolygonDeclaration() throws ParserException {
-        var reader = new WavefrontParser(null);
+    void parsePolygonDeclaration() throws ParsingException {
+        var reader = new ParsedWavefrontFile(null);
         // options:
         /*
                 f 1 2 3      (only vertices)
@@ -80,36 +79,36 @@ class WavefrontParserTest {
 
         String line = "f 1 2 3";
 
-        var expected = new WavefrontParser.PolygonRecord(new int[] {1, 2, 3}, new int[] {-1,-1,-1});
+        var expected = new ParsedWavefrontFile.PolygonRecord(new int[] {1, 2, 3}, new int[] {-1,-1,-1});
 
         assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
 
 
         line = "f 3/1 4/2 5/3";
-        expected = new WavefrontParser.PolygonRecord(new int[] {3, 4, 5}, new int[] {-1,-1,-1});
+        expected = new ParsedWavefrontFile.PolygonRecord(new int[] {3, 4, 5}, new int[] {-1,-1,-1});
         assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
 
         line = "f 6/4/1 3/5/3 7/6/5";
-        expected = new WavefrontParser.PolygonRecord(new int[] {6, 3, 7}, new int[] {1,3,5});
+        expected = new ParsedWavefrontFile.PolygonRecord(new int[] {6, 3, 7}, new int[] {1,3,5});
         assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
 
         line = "f 7//1 8//2 9//3";
-        expected = new WavefrontParser.PolygonRecord(new int[] {7, 8, 9}, new int[] {1,2,3});
+        expected = new ParsedWavefrontFile.PolygonRecord(new int[] {7, 8, 9}, new int[] {1,2,3});
         assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
     }
 
-    boolean polygonRecordsAreEqual(WavefrontParser.PolygonRecord r1,
-                                   WavefrontParser.PolygonRecord r2) {
+    boolean polygonRecordsAreEqual(ParsedWavefrontFile.PolygonRecord r1,
+                                   ParsedWavefrontFile.PolygonRecord r2) {
         if (r1 == r2) return true;
         if (r1 == null || r2 == null) return false;
         return Arrays.equals(r1.vertexIndices(), r2.vertexIndices()) && Arrays.equals(r2.normalIndices(), r1.normalIndices());
     }
 
     @Test
-    void testTrianglesCount() throws URISyntaxException, IOException, ParserException {
+    void testTrianglesCount() throws URISyntaxException, IOException, ParsingException {
         var fileUrl = getClass().getClassLoader().getResource("cow.obj");
-        var reader = new WavefrontParser(Files.newBufferedReader(Path.of(fileUrl.toURI())));
-        var triangles = reader.parse();
+        var reader = new ParsedWavefrontFile(Files.newBufferedReader(Path.of(fileUrl.toURI())));
+        var triangles = reader.shapes();
         int expectedCount = 5144;
         assertEquals(expectedCount, triangles.size());
     }

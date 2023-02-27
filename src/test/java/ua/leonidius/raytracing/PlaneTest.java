@@ -1,7 +1,9 @@
 package ua.leonidius.raytracing;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.algorithm.Ray;
+import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.shapes.Plane;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +16,9 @@ class PlaneTest {
 
         var ray = new Ray(new Point(0, -20, 0), new Vector3(0, 1, 0));
 
-        assertTrue(Math.abs(plane.findVisibleIntersectionWithRay(ray) - 14) < 0.0001);
+        var t = plane.findVisibleIntersectionWithRay(ray);
+        assertTrue(t.isPresent());
+        assertTrue(Math.abs(t.getAsDouble() - 14) < 0.0001);
     }
 
     @Test

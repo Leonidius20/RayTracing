@@ -1,7 +1,9 @@
 package ua.leonidius.raytracing;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.algorithm.Renderer;
+import ua.leonidius.raytracing.camera.Camera;
+import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Vector3;
 
 import static org.junit.jupiter.api.Assertions.*;
 

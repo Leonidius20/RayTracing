@@ -1,6 +1,6 @@
 package ua.leonidius.raytracing.output;
 
-import ua.leonidius.raytracing.Vector3;
+import ua.leonidius.raytracing.enitites.Vector3;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

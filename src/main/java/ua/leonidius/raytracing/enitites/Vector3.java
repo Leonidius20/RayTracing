@@ -1,6 +1,4 @@
-package ua.leonidius.raytracing;
-
-import ua.leonidius.raytracing.math.TransformMatrix3d;
+package ua.leonidius.raytracing.enitites;
 
 import java.util.Objects;
 

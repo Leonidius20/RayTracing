@@ -4,7 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.leonidius.raytracing.*;
-import ua.leonidius.raytracing.shapes.Shape3d;
+import ua.leonidius.raytracing.camera.Camera;
+import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.shapes.Sphere;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +20,7 @@ class RendererTest {
 
     @Test
     public void testRaysShooting() {
-        Shape3d shape = mock(Shape3d.class);
+        IShape3d shape = mock(IShape3d.class);
         when(shape.getNormalAt(any(), any())).thenReturn(new Vector3(0, 0, 0)); // to avoid NPE
 
         var focusPoint = new Point(0.0, 0.1, 0.2);

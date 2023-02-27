@@ -2,11 +2,15 @@ package ua.leonidius.raytracing;
 
 import org.apache.commons.cli.*;
 import ua.leonidius.raytracing.algorithm.Renderer;
-import ua.leonidius.raytracing.input.ParserException;
-import ua.leonidius.raytracing.input.WavefrontParser;
+import ua.leonidius.raytracing.camera.Camera;
+import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.input.ParsingException;
+import ua.leonidius.raytracing.input.ParsedWavefrontFile;
+import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.shapes.Plane;
-import ua.leonidius.raytracing.shapes.Shape3d;
+import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.Triangle;
 
@@ -66,10 +70,10 @@ public class Main {
             return;
         }
 
-        ArrayList<Shape3d> shapes = null;
+        ArrayList<IShape3d> shapes = null;
         try {
-            shapes = new WavefrontParser(Files.newBufferedReader(Paths.get(inputFileName))).parse();
-        } catch (ParserException e) {
+            shapes = new ParsedWavefrontFile(Files.newBufferedReader(Paths.get(inputFileName))).shapes();
+        } catch (ParsingException e) {
             System.err.println(e.getMessage());
             System.exit(-1);
         }

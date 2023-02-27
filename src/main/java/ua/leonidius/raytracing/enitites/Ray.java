@@ -1,8 +1,6 @@
-package ua.leonidius.raytracing.algorithm;
+package ua.leonidius.raytracing.enitites;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.Point;
-import ua.leonidius.raytracing.Vector3;
 
 import java.util.Objects;
 

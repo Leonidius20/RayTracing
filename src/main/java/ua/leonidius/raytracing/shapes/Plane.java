@@ -1,12 +1,15 @@
 package ua.leonidius.raytracing.shapes;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.Point;
+import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.ShadingModel;
-import ua.leonidius.raytracing.Vector3;
-import ua.leonidius.raytracing.algorithm.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.algorithm.IShape3d;
+import ua.leonidius.raytracing.enitites.Ray;
 
-public class Plane implements Shape3d {
+import java.util.OptionalDouble;
+
+public class Plane implements IShape3d {
 
     @Getter private final Point center;
     @Getter private final Vector3 normal;
@@ -17,7 +20,7 @@ public class Plane implements Shape3d {
     }
 
     @Override
-    public Double findVisibleIntersectionWithRay(Ray ray) {
+    public OptionalDouble findVisibleIntersectionWithRay(Ray ray) {
         Vector3 k = ray.getOrigin().toVector().subtract(center);
 
         double numerator = - k.dotProduct(normal);
@@ -25,14 +28,14 @@ public class Plane implements Shape3d {
 
         if (denominator == 0) {
             // ray is parallel to the plane
-            return null;
+            return OptionalDouble.empty();
         }
 
         double t = numerator / denominator;
 
-        if (t < 0) return null;
+        if (t < 0) return OptionalDouble.empty();
 
-        return t;
+        return OptionalDouble.of(t);
     }
 
     @Override

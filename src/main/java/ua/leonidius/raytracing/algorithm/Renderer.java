@@ -1,9 +1,15 @@
 package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.*;
-import ua.leonidius.raytracing.shapes.Shape3d;
+import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
+
+import java.util.OptionalDouble;
 
 public class Renderer {
+    // TODO: what if we move this code to Camera lol? i mean, it is camera that
+    // captures the image with it's sensor...
 
     private final Scene scene;
     private final ShadingModel shading;
@@ -18,18 +24,18 @@ public class Renderer {
      * @return array of pixel values (camera sensor width x height)
      */
     public double[][] render() {
-        Camera camera = scene.getActiveCamera();
+        ICamera camera = scene.getActiveCamera();
 
-        final int imageWidth = camera.getSensorWidth();
-        final int imageHeight = camera.getSensorHeight();
+        final int imageWidth = camera.sensorWidth();
+        final int imageHeight = camera.sensorHeight();
 
         double[][] pixels = new double[imageHeight][imageWidth];
         // set bg color?
 
-        final double pixelWidth = camera.getPixelWidth();
-        final double pixelHeight = camera.getPixelHeight();
+        final double pixelWidth = camera.pixelWidth();
+        final double pixelHeight = camera.pixelHeight();
 
-        Point focusPoint = camera.getFocusPoint();
+        Point focusPoint = camera.focusPoint();
 
         Vector3 topLeftPixelCenter = camera.findTopLeftPixelCenter();
 
@@ -68,25 +74,25 @@ public class Renderer {
         return pixels;
     }
 
-    /* private */ double calculateLightAt(Shape3d object, Vector3 point) {
+    /* private */ double calculateLightAt(IShape3d object, Vector3 point) {
         var normal = object.getNormalAt(point, shading);
-        var value = scene.getLightSource().getDirection()
+        var value = scene.getLightSource().invertedDirection()
                 .dotProduct(normal);
         return Math.max(0.0, value);
     }
 
-    record ObjectAndRayIntersection(Double tParam, Shape3d object) {};
+    record ObjectAndRayIntersection(Double tParam, IShape3d object) {};
 
     /* private */ static ObjectAndRayIntersection findClosestIntersection(Ray ray, Scene scene) {
-        Shape3d closestObject = null;
+        IShape3d closestObject = null;
         Double closestIntersectionTparam = null;
 
-        for (Shape3d object : scene.getObjects()) {
-            Double intersectionTparam = object.findVisibleIntersectionWithRay(ray);
-            if (intersectionTparam == null) continue;
+        for (IShape3d object : scene.getObjects()) {
+            OptionalDouble intersectionTparam = object.findVisibleIntersectionWithRay(ray);
+            if (intersectionTparam.isEmpty()) continue;
             if (closestIntersectionTparam == null
-                    || intersectionTparam < closestIntersectionTparam) {
-                closestIntersectionTparam = intersectionTparam;
+                    || intersectionTparam.getAsDouble() < closestIntersectionTparam) {
+                closestIntersectionTparam = intersectionTparam.getAsDouble();
                 closestObject = object;
             }
         }

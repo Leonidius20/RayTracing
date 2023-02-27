@@ -1,28 +1,28 @@
 package ua.leonidius.raytracing.input;
 
-import ua.leonidius.raytracing.Vector3;
-import ua.leonidius.raytracing.shapes.Shape3d;
+import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.shapes.Triangle;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class WavefrontParser implements GeometryFileParser {
+public class ParsedWavefrontFile implements ParsedGeometryFile {
 
     private final BufferedReader reader;
 
-    public WavefrontParser(BufferedReader reader) {
+    public ParsedWavefrontFile(BufferedReader reader) {
         this.reader = reader;
     }
 
     @Override
-    public ArrayList<Shape3d> parse() throws IOException, ParserException {
+    public ArrayList<IShape3d> shapes() throws IOException, ParsingException {
         String line;
 
         var allVertices = new ArrayList<Vector3>(); // starts with 0 instead of 1, keep in mind
         var allNormals = new ArrayList<Vector3>();
-        var shapes = new ArrayList<Shape3d>();
+        var shapes = new ArrayList<IShape3d>();
 
         int lineNumber = 0; // for error messages
         while ((line = reader.readLine()) != null) {
@@ -56,9 +56,9 @@ public class WavefrontParser implements GeometryFileParser {
                         // ignore for now
                     }
                 }
-            } catch (ParserException e) {
+            } catch (ParsingException e) {
                 // rethrow but add line number info
-                throw new ParserException("Line " + lineNumber + ": " + e.getMessage());
+                throw new ParsingException("Line " + lineNumber + ": " + e.getMessage());
             }
         }
 
@@ -66,11 +66,11 @@ public class WavefrontParser implements GeometryFileParser {
     }
 
     // just test the end function?
-    /* private */ Vector3 parseVectorDeclaration(String line) throws ParserException {
+    /* private */ Vector3 parseVectorDeclaration(String line) throws ParsingException {
         var parts = line.split(" ");
 
         if (parts.length < 4) {
-            throw new ParserException("Error parsing vector declaration: less than 3 coordinates");
+            throw new ParsingException("Error parsing vector declaration: less than 3 coordinates");
         }
 
         try {
@@ -90,7 +90,7 @@ public class WavefrontParser implements GeometryFileParser {
             int[] normalIndices
     ) { }
 
-    /* private */ PolygonRecord parsePolygonDeclaration(String line) throws ParserException {
+    /* private */ PolygonRecord parsePolygonDeclaration(String line) throws ParsingException {
         var parts = line.split(" ");
 
         if (parts.length < 4) {
@@ -105,7 +105,7 @@ public class WavefrontParser implements GeometryFileParser {
 
             var vertexParts = vertexDeclaration.split("/");
             if (vertexParts.length == 0) {
-                throw new ParserException("Error parsing polygon declaration: vertex " + i + " has an empty declaration. Maybe there is an extra space.");
+                throw new ParsingException("Error parsing polygon declaration: vertex " + i + " has an empty declaration. Maybe there is an extra space.");
             }
 
             try {
@@ -118,7 +118,7 @@ public class WavefrontParser implements GeometryFileParser {
                     normalIndices[i - 1] = Integer.parseInt(vertexParts[2]);
                 }
             } catch (NumberFormatException e) {
-                throw new ParserException("Error parsing polygon declaration: vertex " + i + " decl. has invalid numbers");
+                throw new ParsingException("Error parsing polygon declaration: vertex " + i + " decl. has invalid numbers");
             }
 
         }

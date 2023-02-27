@@ -1,7 +1,7 @@
 package ua.leonidius.raytracing.math;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.Vector3;
+import ua.leonidius.raytracing.enitites.Vector3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
