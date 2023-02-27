@@ -37,11 +37,12 @@ public class Camera implements ICamera {
         this.pixelWidth = pixelWidth;
     }
 
-    public Vector3 findSensorCenter() {
-        return direction.multiplyBy(focusDistance).add(focusPoint);
+    /* private */ Point findSensorCenter() {
+        return focusPoint.add(direction.multiplyBy(focusDistance));
     }
 
-    public Vector3 findTopLeftPixelCenter() {
+    @Override
+    public Point findTopLeftPixelCenter() {
         var sensorCenter = findSensorCenter();
 
         final double realSensorWidth = sensorWidth * pixelWidth;
@@ -49,7 +50,7 @@ public class Camera implements ICamera {
 
         // TODO: the plane isn't always vetical. Gotta find top left corner through vector operations
 
-        var offsetXY = new Point((-realSensorWidth  + pixelWidth) / 2.0,
+        var offsetXY = new Vector3((-realSensorWidth  + pixelWidth) / 2.0,
                 0,
                 (realSensorHeight - pixelHeight) / 2.0);
 

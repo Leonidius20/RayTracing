@@ -1,6 +1,8 @@
 package ua.leonidius.raytracing.input;
 
 import org.junit.jupiter.api.Test;
+import ua.leonidius.raytracing.enitites.Normal;
+import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.shapes.Triangle;
@@ -37,15 +39,15 @@ class ParsedWavefrontFileTest {
         var shapes = new ParsedWavefrontFile(reader).shapes(new TriangleFactory());
 
         var expected = new ArrayList<IShape3d>();
-        var expectedVertices = new Vector3[] {
-                new Vector3(0.123, 0.234, 0.345),
-                new Vector3(4, 5, 6),
-                new Vector3(7, 4, 6),
+        var expectedVertices = new Point[] {
+                new Point(0.123, 0.234, 0.345),
+                new Point(4, 5, 6),
+                new Point(7, 4, 6),
         };
-        var expectedNormals = new Vector3[] {
-                new Vector3(-0.707, 2, 1).normalize(),
-                new Vector3(0.707, 0, 0.707).normalize(),
-                new Vector3( 1, 0, 4).normalize(),
+        var expectedNormals = new Normal[] {
+                new Normal(-0.707, 2, 1).normalize(),
+                new Normal(0.707, 0, 0.707).normalize(),
+                new Normal( 1, 0, 4).normalize(),
         };
         expected.add(new Triangle(expectedVertices, expectedNormals));
 

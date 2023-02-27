@@ -1,4 +1,4 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.camera;
 
 import org.junit.jupiter.api.Test;
 import ua.leonidius.raytracing.camera.Camera;
@@ -23,7 +23,7 @@ class CameraTest {
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);
 
-        Vector3 expected = new Vector3(-2, 4.5, 6);
+        var expected = new Point(-2, 4.5, 6);
 
         assertEquals(expected, camera.findSensorCenter());
 
@@ -39,7 +39,7 @@ class CameraTest {
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);
 
-        expected = new Vector3(0, 1.6, 0.2);
+        expected = new Point(0, 1.6, 0.2);
         assertEquals(expected, camera.findSensorCenter());
     }
 
@@ -57,8 +57,8 @@ class CameraTest {
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);
 
-        Vector3 expected = new Vector3(-21, 4.5, 25);
-        Vector3 actual = camera.findTopLeftPixelCenter();
+        var expected = new Point(-21, 4.5, 25);
+        var actual = camera.findTopLeftPixelCenter();
 
         assertEquals(expected, actual);
 
@@ -74,7 +74,7 @@ class CameraTest {
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);
 
-        expected = new Vector3(-1.2, 1.6, 0.75);
+        expected = new Point(-1.2, 1.6, 0.75);
         assertEquals(expected, camera.findTopLeftPixelCenter());
     }
 

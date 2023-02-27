@@ -1,8 +1,9 @@
 package ua.leonidius.raytracing.input;
 
-import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.shapes.Triangle;
+import ua.leonidius.raytracing.enitites.Normal;
+import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Vector3;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +21,8 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
     public ArrayList<IShape3d> shapes(ITriangleFactory triangleFactory) throws IOException, ParsingException {
         String line;
 
-        var allVertices = new ArrayList<Vector3>(); // starts with 0 instead of 1, keep in mind
-        var allNormals = new ArrayList<Vector3>();
+        var allVertices = new ArrayList<Point>(); // starts with 0 instead of 1, keep in mind
+        var allNormals = new ArrayList<Normal>();
         var shapes = new ArrayList<IShape3d>();
 
         int lineNumber = 0; // for error messages
@@ -34,17 +35,20 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
 
             try {
                 switch (firstTwoChars) {
-                    case "v " ->
-                            // vertex
-                            allVertices.add(parseVectorDeclaration(line));
+                    case "v " -> {
+                        // vertex
+                        var v = parseVectorDeclaration(line);
+                        allVertices.add(new Point(v.x, v.y, v.z)); // TODO refactor
+                    }
+
                     case "vn" ->
                             // normals
-                            allNormals.add(parseVectorDeclaration(line).normalize());
+                            allNormals.add(parseVectorDeclaration(line).normalize().toNormal()); // TODO refactor
                     case "f " -> {
                         // face (triangle or polygon)
                         var record = parsePolygonDeclaration(line);
-                        Vector3[] vertices = new Vector3[3];
-                        Vector3[] normals = new Vector3[3];
+                        var vertices = new Point[3];
+                        var normals = new Normal[3];
                         for (int i = 0; i < 3; i++) {
                             vertices[i] = allVertices.get(record.vertexIndices[i] - 1);
                             var normalIndex = record.normalIndices[i];

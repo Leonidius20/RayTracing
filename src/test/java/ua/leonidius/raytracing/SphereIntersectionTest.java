@@ -20,9 +20,9 @@ class SphereIntersectionTest {
         var actualT = sphere.findVisibleIntersectionWithRay(new Ray(rayOrigin, rayDirection));
         assertTrue(actualT.isPresent());
 
-        var actualIntersectionPoint = rayDirection.multiplyBy(actualT.getAsDouble()).add(rayOrigin);
+        var actualIntersectionPoint = rayOrigin.add(rayDirection.multiplyBy(actualT.getAsDouble()));
 
-        assertEquals(new Vector3(1.0, 2.0, 2.0), actualIntersectionPoint);
+        assertEquals(new Point(1.0, 2.0, 2.0), actualIntersectionPoint);
     }
 
     @Test

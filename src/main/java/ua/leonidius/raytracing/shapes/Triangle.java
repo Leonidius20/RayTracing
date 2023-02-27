@@ -1,25 +1,26 @@
 package ua.leonidius.raytracing.shapes;
 
 import ua.leonidius.raytracing.ShadingModel;
-import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.algorithm.IShape3d;
+import ua.leonidius.raytracing.enitites.Normal;
+import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
 
 import java.util.Arrays;
 import java.util.OptionalDouble;
 
 public class Triangle implements IShape3d {
 
-    private final Vector3[] vertices;
-    private final Vector3[] normals;
+    private final Point[] vertices;
+    private final Normal[] normals;
 
-
-    public Triangle(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3) {
-        this.vertices = new Vector3[] {vertex1, vertex2, vertex3};
-        this.normals = new Vector3[] {null, null, null};
+    public Triangle(Point vertex1, Point vertex2, Point vertex3) {
+        this.vertices = new Point[] {vertex1, vertex2, vertex3};
+        this.normals = new Normal[] {null, null, null};
     }
 
-    public Triangle(Vector3[] vertices, Vector3[] normals) {
+    public Triangle(Point[] vertices, Normal[] normals) {
         this.vertices = vertices;
         this.normals = normals;
     }
@@ -28,9 +29,9 @@ public class Triangle implements IShape3d {
 
     @Override
     public OptionalDouble findVisibleIntersectionWithRay(Ray ray) {
-        final Vector3 vertex1 = vertices[0];
-        final Vector3 vertex2 = vertices[1];
-        final Vector3 vertex3 = vertices[2];
+        final Point vertex1 = vertices[0];
+        final Point vertex2 = vertices[1];
+        final Point vertex3 = vertices[2];
 
         Vector3 edge1 = vertex2.subtract(vertex1);
         Vector3 edge2 = vertex3.subtract(vertex1);
@@ -48,7 +49,7 @@ public class Triangle implements IShape3d {
 
         f = 1.0 / a;
 
-        Vector3 s = ray.getOrigin().toVector().subtract(vertex1);
+        Vector3 s = ray.getOrigin().subtract(vertex1);
 
         u = f * (s.dotProduct(h));
 
@@ -76,7 +77,7 @@ public class Triangle implements IShape3d {
     }
 
     @Override
-    public Vector3 getNormalAt(Vector3 point, ShadingModel shading) {
+    public Normal getNormalAt(Point point, ShadingModel shading) {
         if (shading == ShadingModel.SMOOTH) {
             return getSmoothShadingNormalAt(point);
         } else {
@@ -84,7 +85,7 @@ public class Triangle implements IShape3d {
         }
     }
 
-    /* private */ Vector3 getSmoothShadingNormalAt(Vector3 point) {
+    /* private */ Normal getSmoothShadingNormalAt(Point point) {
         return getFlatShadingNormal(Winding.CLOCKWISE); // todo
     }
 
@@ -93,18 +94,18 @@ public class Triangle implements IShape3d {
         COUNTER_CLOCKWISE,
     }
 
-    /* private */ Vector3 getFlatShadingNormal(Winding winding) {
-        final Vector3 vertex1 = vertices[0];
-        final Vector3 vertex2 = vertices[1];
-        final Vector3 vertex3 = vertices[2];
+    /* private */ Normal getFlatShadingNormal(Winding winding) {
+        final Point vertex1 = vertices[0];
+        final Point vertex2 = vertices[1];
+        final Point vertex3 = vertices[2];
 
         var edge1 = vertex1.subtract(vertex3);
         var edge2 = vertex2.subtract(vertex3);
 
         if (winding == Winding.CLOCKWISE) {
-            return edge1.crossProduct(edge2).normalize();
+            return edge1.crossProductN(edge2).normalize();
         } else {
-            return edge2.crossProduct(edge1).normalize();
+            return edge2.crossProductN(edge1).normalize();
         }
 
     }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.leonidius.raytracing.*;
 import ua.leonidius.raytracing.camera.Camera;
+import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
@@ -21,7 +22,7 @@ class RendererTest {
     @Test
     public void testRaysShooting() {
         IShape3d shape = mock(IShape3d.class);
-        when(shape.getNormalAt(any(), any())).thenReturn(new Vector3(0, 0, 0)); // to avoid NPE
+        when(shape.getNormalAt(any(), any())).thenReturn(new Normal(0, 0, 0)); // to avoid NPE
 
         var focusPoint = new Point(0.0, 0.1, 0.2);
         double focusDistance = 1.5;
@@ -40,12 +41,12 @@ class RendererTest {
         new Renderer(scene, ShadingModel.FLAT).render();
 
         // expected ray vectors (directions) (normalized)
-        var a = (new Vector3(-1.2, 1.6, 0.75)).subtract(focusPoint).normalize();
-        var b = new Vector3(0, 1.6, 0.75).subtract(focusPoint).normalize();
-        var c = new Vector3(1.2, 1.6, 0.75).subtract(focusPoint).normalize();
-        var d = new Vector3(-1.2, 1.6, -0.35).subtract(focusPoint).normalize();
-        var e = new Vector3(0, 1.6, -0.35).subtract(focusPoint).normalize();
-        var f = new Vector3(1.2, 1.6, -0.35).subtract(focusPoint).normalize();
+        var a = (new Point(-1.2, 1.6, 0.75)).subtract(focusPoint).normalize();
+        var b = new Point(0, 1.6, 0.75).subtract(focusPoint).normalize();
+        var c = new Point(1.2, 1.6, 0.75).subtract(focusPoint).normalize();
+        var d = new Point(-1.2, 1.6, -0.35).subtract(focusPoint).normalize();
+        var e = new Point(0, 1.6, -0.35).subtract(focusPoint).normalize();
+        var f = new Point(1.2, 1.6, -0.35).subtract(focusPoint).normalize();
 
         verify(shape).findVisibleIntersectionWithRay(new Ray(focusPoint, a));
         verify(shape).findVisibleIntersectionWithRay(new Ray(focusPoint, b));
@@ -61,7 +62,7 @@ class RendererTest {
         var sphere = new Sphere(new Point(2, 3, 4), 3);
         scene.add(sphere);
 
-        var pointInQuestion = new Vector3(2, 3, 7);
+        var pointInQuestion = new Point(2, 3, 7);
 
         var renderer = new Renderer(scene, ShadingModel.FLAT);
 

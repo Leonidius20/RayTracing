@@ -21,10 +21,8 @@ public class Ray {
      * @param tParam value of the 't' parameter from the equation
      * @return world coordinates of this point
      */
-    public Vector3 getXyzOnRay(double tParam) {
-        return direction // p = o + dt
-                .multiplyBy(tParam)
-                .add(origin);
+    public Point getXyzOnRay(double tParam) {
+        return origin.add(direction.multiplyBy(tParam)); // p = o + dt
     }
 
     @Override

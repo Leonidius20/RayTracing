@@ -1,7 +1,6 @@
 package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Vector3;
 
 /**
  * This can be any kind of camera and we wanna make the renderer(?) depend on this abstraction
@@ -11,7 +10,7 @@ public interface ICamera {
 
     Point focusPoint();
 
-    Vector3 findTopLeftPixelCenter(); // TODO: replace with point or something
+    Point findTopLeftPixelCenter();
 
     int sensorWidth();
 

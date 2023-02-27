@@ -1,10 +1,11 @@
 package ua.leonidius.raytracing.shapes;
 
-import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.ShadingModel;
-import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.algorithm.IShape3d;
+import ua.leonidius.raytracing.enitites.Normal;
+import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.enitites.Vector3;
 
 import java.util.OptionalDouble;
 
@@ -25,9 +26,7 @@ public class Sphere implements IShape3d {
      * to vector formula of a line p = o + dt, where o is origin, d is direction, p is point
      */
     public OptionalDouble findVisibleIntersectionWithRay(Ray ray) {
-        Vector3 originAsVector = new Vector3(ray.getOrigin().x, ray.getOrigin().y, ray.getOrigin().z);
-
-        Vector3 k = originAsVector.subtract(center);
+        Vector3 k = ray.getOrigin().subtract(center);
 
         // parameters of a quadratic equation
         double a = ray.getDirection().square();
@@ -53,7 +52,7 @@ public class Sphere implements IShape3d {
     }
 
     @Override
-    public Vector3 getNormalAt(Vector3 point, ShadingModel shading) {
-        return point.subtract(center).normalize();
+    public Normal getNormalAt(Point point, ShadingModel shading) {
+        return point.subtract(center).normalize().toNormal();
     }
 }

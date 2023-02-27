@@ -1,16 +1,22 @@
 package ua.leonidius.raytracing.enitites;
 
-public class Point extends Vector3 { // todo: make it extend Vector3?
-
-    //public final double x;
-    //public final double y;
-    //public final double z;
+public class Point extends OrderedXyzTriple {
 
     public Point(double x, double y, double z) {
         super(x, y, z);
-        //this.x = x;
-        //this.y = y;
-       // this.z = z;
+    }
+
+    /**
+     * Get vector that goes from this point to another point
+     * @param other vector destination point
+     * @return constructed vector
+     */
+    public Vector3 subtract(Point other) {
+        return new Vector3(x - other.x, y - other.y, z - other.z);
+    }
+
+    public Point add(Vector3 vector) {
+        return new Point(x + vector.x, y + vector.y, z + vector.z);
     }
 
     /**
@@ -19,20 +25,29 @@ public class Point extends Vector3 { // todo: make it extend Vector3?
      *
      * @return
      */
-    public Point add(double deltaX, double deltaY, double deltaZ) {
+    /*public Point add(double deltaX, double deltaY, double deltaZ) {
         return new Point(x + deltaX, y + deltaY, z + deltaZ);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
         return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0 && Double.compare(point.z, z) == 0;
-    }
+    }*/
 
-    public Vector3 toVector() {
+    /*public Vector3 toVector() {
         return new Vector3(x, y, z);
-    }
+    }*/
+
+    /*
+    OPERATIONS:
+    - convert to location vector
+    - add or subtract vector to/from point (move point by vector)
+    - subtract point from point (get vector between them)
+    - distance between 2 points
+    - multiply by a scalar
+     */
 
 }

@@ -1,18 +1,15 @@
 package ua.leonidius.raytracing;
 
 import org.apache.commons.cli.*;
+import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.algorithm.Renderer;
 import ua.leonidius.raytracing.camera.Camera;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Vector3;
-import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.input.ParsedWavefrontFile;
+import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
-import ua.leonidius.raytracing.shapes.Plane;
-import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.shapes.Sphere;
-import ua.leonidius.raytracing.shapes.Triangle;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 
 import java.io.IOException;
@@ -90,7 +87,7 @@ public class Main {
         (new PngImageWriter(outputFileName)).writeImage(pixels);
     }
 
-    private static Scene createScene() {
+    /*private static Scene createScene() {
         var sphere = new Sphere(new Point(0, 0, 0), 6.5);
         // TODO: test coordinates, see whether they mean what they are supposed to mean
 
@@ -105,9 +102,9 @@ public class Main {
         // why is y = -1? itn't the light shining into camera this way?
 
         var triangle = new Triangle(
-                new Vector3(0, 0, 0),
-                new Vector3(1, 0, 0),
-                new Vector3(0, 0, 1)
+                new Point(0, 0, 0),
+                new Point(1, 0, 0),
+                new Point(0, 0, 1)
         );
 
         var scene = new Scene(camera, lightSource);
@@ -118,6 +115,6 @@ public class Main {
         scene.add(triangle);
 
         return scene;
-    }
+    }*/
 
 }

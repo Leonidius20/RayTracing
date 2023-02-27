@@ -1,6 +1,7 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.*;
+import ua.leonidius.raytracing.Scene;
+import ua.leonidius.raytracing.ShadingModel;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
@@ -37,7 +38,7 @@ public class Renderer {
 
         Point focusPoint = camera.focusPoint();
 
-        Vector3 topLeftPixelCenter = camera.findTopLeftPixelCenter();
+        var topLeftPixelCenter = camera.findTopLeftPixelCenter();
 
         for (int pixelX = 0; pixelX < imageWidth; pixelX++) { // row
             for (int pixelY = 0; pixelY < imageHeight; pixelY++) {
@@ -46,7 +47,7 @@ public class Renderer {
                 Vector3 offset = new Vector3(pixelX * pixelWidth, 0, -pixelY * pixelHeight);
                 // todo: offset is also dependent on rotation of camera. Maybe add different basises?
 
-                Vector3 pixelCenter = topLeftPixelCenter.add(offset);
+                var pixelCenter = topLeftPixelCenter.add(offset);
 
                 // vector from focus point to pixel center
                 Vector3 rayDirection = pixelCenter.subtract(focusPoint)
@@ -74,10 +75,9 @@ public class Renderer {
         return pixels;
     }
 
-    /* private */ double calculateLightAt(IShape3d object, Vector3 point) {
+    /* private */ double calculateLightAt(IShape3d object, Point point) {
         var normal = object.getNormalAt(point, shading);
-        var value = scene.getLightSource().invertedDirection()
-                .dotProduct(normal);
+        var value = normal.dotProduct(scene.getLightSource().invertedDirection());
         return Math.max(0.0, value);
     }
 

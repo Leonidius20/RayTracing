@@ -31,15 +31,7 @@ public class Vector3 {
         return new Vector3(x + other.x, y + other.y, z + other.z);
     }
 
-    public Vector3 add(Point other) {
-        return new Vector3(x + other.x, y + other.y, z + other.z);
-    }
-
     public Vector3 subtract(Vector3 other) {
-        return new Vector3(x - other.x, y - other.y, z - other.z);
-    }
-
-    public Vector3 subtract(Point other) {
         return new Vector3(x - other.x, y - other.y, z - other.z);
     }
 
@@ -96,5 +88,27 @@ public class Vector3 {
                 x * other.y - y * other.x
         );
     }
+
+    public Normal crossProductN(Vector3 other) {
+        return new Normal(
+                y * other.z - z * other.y,
+                z * other.x - x * other.z,
+                x * other.y - y * other.x
+        );
+    }
+
+    public Normal toNormal() {
+        return new Normal(x, y, z);
+    }
+
+    /*
+    operations:
+    - add and subtract vector
+    - cross and dot product
+    - multiply by scalar
+    - divide by scalar
+    - length of vector
+    - length sqared
+     */
 
 }
