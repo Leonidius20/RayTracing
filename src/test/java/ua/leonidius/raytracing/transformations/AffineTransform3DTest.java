@@ -2,6 +2,7 @@ package ua.leonidius.raytracing.transformations;
 
 import org.junit.jupiter.api.Test;
 import ua.leonidius.raytracing.enitites.OrderedXyzTriple;
+import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Vector3;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,11 +44,11 @@ class AffineTransform3DTest {
                 new double[] {0, 0, 0, 1},
         });
 
-        var vector = new Vector3(5, 6, 7);
+        var vector = new Point(5, 6, 7);
 
-        var expected = new double[] {21, 430, 16, 1};
+        var expected = new Point(21, 430, 16);
 
-        assertArrayEquals(expected, matrix2.multiplyBy(vector));
+        assertEquals(expected, matrix2.applyTo(vector));
 
         // todo another test with non-1 4th element
 
@@ -58,8 +59,8 @@ class AffineTransform3DTest {
                 new double[] {5, 3, -0.7, 1},
         });
 
-        expected = new double[] {21, 430, 16, 39.1};
+        expected = new Point(21 / 39.1, 430 / 39.1, 16 / 39.1);
 
-        assertArrayEquals(expected, matrix2.multiplyBy(vector));
+        assertEquals(expected, matrix2.applyTo(vector));
     }
 }

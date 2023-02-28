@@ -1,13 +1,14 @@
 package ua.leonidius.raytracing.transformations;
 
-import ua.leonidius.raytracing.enitites.OrderedXyzTriple;
+import ua.leonidius.raytracing.shapes.IAffineTransform3d;
+import ua.leonidius.raytracing.enitites.Point;
 
 import java.util.Arrays;
 
 /**
  * A base class for affine transformation matrices in 3D space
  */
-public class AffineTransform3d {
+public class AffineTransform3d implements IAffineTransform3d {
 
     protected final double[][] data;
     private static final int MATRIX_DIMENSION = 4;
@@ -34,7 +35,8 @@ public class AffineTransform3d {
         return new AffineTransform3d(ans);
     }
 
-    public double[] multiplyBy(OrderedXyzTriple vector) {
+    @Override
+    public Point applyTo(Point vector) {
         var other = new double[] {vector.x, vector.y, vector.z, 1};
 
         double[] ans = new double[MATRIX_DIMENSION];
@@ -45,7 +47,10 @@ public class AffineTransform3d {
             }
         }
 
-        return ans;
+        return new Point(
+                ans[0] / ans[3],
+                ans[1] / ans[3],
+                ans[2] / ans[3]);
     }
 
     @Override
@@ -71,5 +76,10 @@ public class AffineTransform3d {
     public int hashCode() {
         return Arrays.deepHashCode(data);
     }
-    
+
+
+    private IAffineTransform3d inverseTranspose() {
+        return null; // TODO;
+    }
+
 }

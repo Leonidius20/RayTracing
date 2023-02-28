@@ -1,5 +1,7 @@
 package ua.leonidius.raytracing.enitites;
 
+import ua.leonidius.raytracing.shapes.IAffineTransform3d;
+
 public class Normal extends OrderedXyzTriple implements Cloneable {
 
     public Normal(double x, double y, double z) {
@@ -22,6 +24,12 @@ public class Normal extends OrderedXyzTriple implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("clone not supported");
         }
+    }
+
+    public Normal applyTransform(IAffineTransform3d transform) {
+        // compute inverse transpose
+        return new Normal(x, y, z); // TODO: apply reverse transposed matrix
+        // to the normal vector
     }
     
     /*

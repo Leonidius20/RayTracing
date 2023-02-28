@@ -86,6 +86,7 @@ public class Main {
         //rotation = rotation.multiplyBy(new TranslationMatrix3d(0.1, 0.1, 0.1));
         rotation = new ScaleTransform3d(1.5, 1, 1);
         rotation = rotation.multiplyBy(new RotationZMatrix(-90));
+        rotation = rotation.multiplyBy(new TranslationMatrix3d(0, 0.1, 0));
 
         for (int i = 0; i < shapes.size(); i++) {
             var s = shapes.get(i);

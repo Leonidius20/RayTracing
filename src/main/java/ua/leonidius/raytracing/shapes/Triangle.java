@@ -2,11 +2,7 @@ package ua.leonidius.raytracing.shapes;
 
 import ua.leonidius.raytracing.ShadingModel;
 import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.enitites.Vector3;
-import ua.leonidius.raytracing.transformations.AffineTransform3d;
+import ua.leonidius.raytracing.enitites.*;
 
 import java.util.Arrays;
 import java.util.OptionalDouble;
@@ -111,14 +107,14 @@ public class Triangle implements IShape3d {
 
     }
 
-    public Triangle applyTransform(AffineTransform3d matrix) {
+    public Triangle applyTransform(IAffineTransform3d transformation) {
         var newVertices = new Point[3];
         var newNormals = new Normal[3];
 
         // todo: actual transformation
         for (int i = 0; i < vertices.length; i++) {
 
-            newVertices[i] = vertices[i].applyTransform(matrix);
+            newVertices[i] = transformation.applyTo(vertices[i]);
             newNormals[i] = normals[i].clone();
 
         }
