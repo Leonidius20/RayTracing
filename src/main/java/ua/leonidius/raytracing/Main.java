@@ -101,7 +101,7 @@ public class Main {
         scene.setObjects(shapes);
 
         System.out.println("Read scene file, starting to render");
-        var pixels = new Renderer(scene, ShadingModel.FLAT).render();
+        var pixels = new Renderer(scene, ShadingModel.SMOOTH).render();
 
         (new PngImageWriter(outputFileName)).writeImage(pixels);
     }

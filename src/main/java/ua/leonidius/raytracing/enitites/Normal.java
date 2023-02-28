@@ -17,6 +17,14 @@ public class Normal extends OrderedXyzTriple implements Cloneable {
         return x * other.x + y * other.y + z * other.z;
     }
 
+    public Normal multiplyBy(double scalar) {
+        return new Normal(x * scalar, y * scalar, z * scalar);
+    }
+
+    public Normal add(Normal other) {
+        return new Normal(x + other.x, y + other.y, z + other.z);
+    }
+
     @Override
     public Normal clone() {
         try {

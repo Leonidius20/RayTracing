@@ -83,7 +83,55 @@ public class Triangle implements IShape3d {
     }
 
     /* private */ Normal getSmoothShadingNormalAt(Point point) {
-        return getFlatShadingNormal(Winding.CLOCKWISE); // todo
+        double[] uvw = getBarycentricCoordinates(point);
+        double u = uvw[0];
+        double v = uvw[1];
+        double w = uvw[2];
+        final Normal normalA = normals[0];
+        final Normal normalB = normals[1];
+        final Normal normalC = normals[2];
+        return normalA.multiplyBy(u)
+                .add(normalB.multiplyBy(v))
+                .add(normalC.multiplyBy(w))
+                .normalize();
+    }
+
+    private double[] getBarycentricCoordinates(Point point) {
+        /*
+        Barycentric coordinates are also known as areal coordinates.
+        Although not very commonly used, this term indicates that
+        the coordinates u, v, and w are proportional to the area
+        of the three sub-triangles defined by P,
+        the point located on the triangle,
+         and the triangle's vertices (A, B, C).
+         These three sub-triangles are denoted ABP, BCP, and CAP.
+         */
+        Point a = vertices[0];
+        Point b = vertices[0];
+        Point c = vertices[0];
+
+        Vector3 ab = b.subtract(a);
+        Vector3 ac = c.subtract(a);
+
+
+        // 1. compute area of the triangle
+        double fullTriangleArea = ab.crossProduct(ac).calculateLength() / 2.0;
+
+        // 2. compute area of sub-triangle
+        Vector3 ap = point.subtract(a);
+        double areaPAC = ap.crossProduct(ac).calculateLength() / 2.0;
+        double areaPAB = ap.crossProduct(ab).calculateLength() / 2.0;
+
+        Vector3 cp = point.subtract(c);
+        Vector3 cb = b.subtract(c);
+        double areaCPB = cp.crossProduct(cb).calculateLength() / 2.0;
+
+        // 3. divide
+        double u = areaPAC / fullTriangleArea;
+        double v = areaPAB / fullTriangleArea;
+        double w = areaCPB / fullTriangleArea;
+
+        return new double[] {u, v, w};
     }
 
     enum Winding {

@@ -16,4 +16,13 @@ class Vector3Test {
 
         assertEquals(expected, v1.crossProduct(v2));
     }
+
+    @Test
+    void testMagnitude() {
+        Vector3 v1 = new Vector3(1, 2, 3);
+
+        double expected = 3.74165739;
+
+        assertTrue(Math.abs(v1.calculateLength() - expected) < 1e-7);
+    }
 }

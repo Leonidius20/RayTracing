@@ -5,6 +5,7 @@ import lombok.Setter;
 import ua.leonidius.raytracing.algorithm.ICamera;
 import ua.leonidius.raytracing.algorithm.ILightSource;
 import ua.leonidius.raytracing.algorithm.IShape3d;
+import ua.leonidius.raytracing.enitites.Color;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,8 @@ public class Scene {
     ICamera activeCamera;
     @Getter @Setter
     ILightSource lightSource;
+
+    @Getter Color backgroundColor;
 
     public Scene(ICamera camera, ILightSource light) {
         this.activeCamera = camera;
