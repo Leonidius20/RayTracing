@@ -1,6 +1,6 @@
-package ua.leonidius.raytracing.math;
+package ua.leonidius.raytracing.transformations;
 
-public class TranslationMatrix3d extends TransformMatrix3d {
+public class TranslationMatrix3d extends AffineTransform3d {
 
     public TranslationMatrix3d(double dx, double dy, double dz) {
         super(new double[][]{

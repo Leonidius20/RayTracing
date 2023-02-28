@@ -10,7 +10,12 @@ import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
+import ua.leonidius.raytracing.shapes.Triangle;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
+import ua.leonidius.raytracing.transformations.AffineTransform3d;
+import ua.leonidius.raytracing.transformations.RotationZMatrix;
+import ua.leonidius.raytracing.transformations.ScaleTransform3d;
+import ua.leonidius.raytracing.transformations.TranslationMatrix3d;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -74,6 +79,19 @@ public class Main {
         } catch (ParsingException e) {
             System.err.println(e.getMessage());
             System.exit(-1);
+        }
+
+       // AffineTransform3d rotation = new RotationZMatrix(0);
+        AffineTransform3d rotation = new TranslationMatrix3d(0.1, 0.1, 0.1);
+        //rotation = rotation.multiplyBy(new TranslationMatrix3d(0.1, 0.1, 0.1));
+        rotation = new ScaleTransform3d(1.5, 1, 1);
+        rotation = rotation.multiplyBy(new RotationZMatrix(-90));
+
+        for (int i = 0; i < shapes.size(); i++) {
+            var s = shapes.get(i);
+            if (s instanceof Triangle t) {
+                shapes.set(i, t.applyTransform(rotation));
+            }
         }
 
         var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);

@@ -1,4 +1,4 @@
-package ua.leonidius.raytracing.math;
+package ua.leonidius.raytracing.transformations;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ class RotationXMatrixTest {
         double sin = 0.5;
         double cos = 0.86602540378;
 
-        var expected = new TransformMatrix3d(new double[][]{
+        var expected = new AffineTransform3d(new double[][]{
                 new double[] {1, 0, 0, 0},
                 new double[] {0, cos, sin, 0},
                 new double[] {0, -sin, cos, 0},

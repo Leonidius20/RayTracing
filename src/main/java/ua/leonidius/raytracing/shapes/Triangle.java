@@ -6,6 +6,7 @@ import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.transformations.AffineTransform3d;
 
 import java.util.Arrays;
 import java.util.OptionalDouble;
@@ -108,6 +109,21 @@ public class Triangle implements IShape3d {
             return edge2.crossProductN(edge1).normalize();
         }
 
+    }
+
+    public Triangle applyTransform(AffineTransform3d matrix) {
+        var newVertices = new Point[3];
+        var newNormals = new Normal[3];
+
+        // todo: actual transformation
+        for (int i = 0; i < vertices.length; i++) {
+
+            newVertices[i] = vertices[i].applyTransform(matrix);
+            newNormals[i] = normals[i].clone();
+
+        }
+
+        return new Triangle(newVertices, newNormals);
     }
 
     @Override

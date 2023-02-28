@@ -1,5 +1,8 @@
 package ua.leonidius.raytracing.enitites;
 
+import ua.leonidius.raytracing.transformations.AffineTransform3d;
+import ua.leonidius.raytracing.transformations.TranslationMatrix3d;
+
 public class Point extends OrderedXyzTriple {
 
     public Point(double x, double y, double z) {
@@ -17,6 +20,14 @@ public class Point extends OrderedXyzTriple {
 
     public Point add(Vector3 vector) {
         return new Point(x + vector.x, y + vector.y, z + vector.z);
+    }
+
+    public Point applyTransform(AffineTransform3d transformation) {
+        var result = transformation.multiplyBy(this);
+        double newX = result[0] / result[3];
+        double newY = result[1] / result[3];
+        double newZ = result[2] / result[3];
+        return new Point(newX, newY, newZ);
     }
 
     /**

@@ -1,4 +1,4 @@
-package ua.leonidius.raytracing.math;
+package ua.leonidius.raytracing.transformations;
 
 /**
  * Angle in degrees

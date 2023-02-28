@@ -1,8 +1,8 @@
-package ua.leonidius.raytracing.math;
+package ua.leonidius.raytracing.transformations;
 
-public class ScaleMatrix extends TransformMatrix3d {
+public class ScaleTransform3d extends AffineTransform3d {
 
-    public ScaleMatrix(double scaleX, double scaleY, double scaleZ) {
+    public ScaleTransform3d(double scaleX, double scaleY, double scaleZ) {
         super(new double[][] {
                 new double[] {scaleX, 0, 0, 0},
                 new double[] {0, scaleY, 0, 0},

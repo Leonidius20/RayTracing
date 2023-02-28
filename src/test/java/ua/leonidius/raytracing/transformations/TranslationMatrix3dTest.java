@@ -1,4 +1,4 @@
-package ua.leonidius.raytracing.math;
+package ua.leonidius.raytracing.transformations;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ class TranslationMatrix3dTest {
 
         var actual = new TranslationMatrix3d(dx, dy, dz);
 
-        var expected = new TransformMatrix3d(new double[][]{
+        var expected = new AffineTransform3d(new double[][]{
                 new double[] {1, 0, 0, dx},
                 new double[] {0, 1, 0, dy},
                 new double[] {0, 0, 1, dz},

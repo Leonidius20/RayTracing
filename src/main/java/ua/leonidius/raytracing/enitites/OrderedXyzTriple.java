@@ -1,5 +1,7 @@
 package ua.leonidius.raytracing.enitites;
 
+import ua.leonidius.raytracing.transformations.AffineTransform3d;
+
 import java.util.Objects;
 
 public abstract class OrderedXyzTriple {

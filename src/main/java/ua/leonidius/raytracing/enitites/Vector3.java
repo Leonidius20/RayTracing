@@ -2,16 +2,10 @@ package ua.leonidius.raytracing.enitites;
 
 import java.util.Objects;
 
-public class Vector3 {
-
-    public final double x;
-    public final double y;
-    public final double z;
+public class Vector3 extends OrderedXyzTriple {
 
     public Vector3(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        super(x, y, z);
     }
 
     public double dotProduct(Vector3 other) {
@@ -52,8 +46,9 @@ public class Vector3 {
         return new Vector3(x * scalar, y * scalar, z * scalar);
     }
 
-    @Override
+   /* @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vector3 vector3 = (Vector3) o;
@@ -65,7 +60,7 @@ public class Vector3 {
                 && Math.abs(vector3.z - z) < epsilon;
 
         // return Double.compare(vector3.x, x) == 0 && Double.compare(vector3.y, y) == 0 && Double.compare(vector3.z, z) == 0;
-    }
+    }*/
 
     @Override
     public String toString() {
@@ -76,10 +71,10 @@ public class Vector3 {
                 '}';
     }
 
-    @Override
+    /*@Override
     public int hashCode() {
         return Objects.hash(x, y, z);
-    }
+    }*/
 
     public Vector3 crossProduct(Vector3 other) {
         return new Vector3(

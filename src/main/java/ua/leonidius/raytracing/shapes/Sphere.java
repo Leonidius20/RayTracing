@@ -6,6 +6,7 @@ import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.transformations.AffineTransform3d;
 
 import java.util.OptionalDouble;
 

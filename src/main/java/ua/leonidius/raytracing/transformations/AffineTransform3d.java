@@ -1,35 +1,27 @@
-package ua.leonidius.raytracing.math;
+package ua.leonidius.raytracing.transformations;
 
-import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.enitites.OrderedXyzTriple;
 
 import java.util.Arrays;
 
 /**
  * A base class for affine transformation matrices in 3D space
  */
-public class TransformMatrix3d {
+public class AffineTransform3d {
 
     protected final double[][] data;
     private static final int MATRIX_DIMENSION = 4;
 
-    public TransformMatrix3d() {
+    public AffineTransform3d() {
         this.data = new double[MATRIX_DIMENSION][MATRIX_DIMENSION];
         this.data[MATRIX_DIMENSION - 1][MATRIX_DIMENSION - 1] = 1; // last row 0 0 0 1
     }
 
-    protected TransformMatrix3d(double[][] data) {
+    protected AffineTransform3d(double[][] data) {
         this.data = data;
     }
 
-    public double get(int row, int column) {
-        return data[row][column];
-    }
-
-    public void set(int row, int column, double value) {
-        data[row][column] = value;
-    }
-
-    TransformMatrix3d multiplyBy(TransformMatrix3d other) {
+    public AffineTransform3d multiplyBy(AffineTransform3d other) {
         double[][] ans = new double[MATRIX_DIMENSION][MATRIX_DIMENSION];
 
         for (int i = 0; i < MATRIX_DIMENSION; i++) {
@@ -39,10 +31,10 @@ public class TransformMatrix3d {
                 }
             }
         }
-        return new TransformMatrix3d(ans);
+        return new AffineTransform3d(ans);
     }
 
-    double[] multiplyBy(Vector3 vector) {
+    public double[] multiplyBy(OrderedXyzTriple vector) {
         var other = new double[] {vector.x, vector.y, vector.z, 1};
 
         double[] ans = new double[MATRIX_DIMENSION];
@@ -71,7 +63,7 @@ public class TransformMatrix3d {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || (getClass() != o.getClass() && getClass() != o.getClass().getSuperclass())) return false;
-        TransformMatrix3d that = (TransformMatrix3d) o;
+        AffineTransform3d that = (AffineTransform3d) o;
         return Arrays.deepEquals(data, that.data);
     }
 

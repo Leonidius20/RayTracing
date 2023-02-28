@@ -1,6 +1,6 @@
-package ua.leonidius.raytracing.math;
+package ua.leonidius.raytracing.transformations;
 
-public class RotationZMatrix extends TransformMatrix3d {
+public class RotationZMatrix extends AffineTransform3d {
 
     public RotationZMatrix(double angleD) {
         this(new AngleD(angleD));
