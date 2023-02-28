@@ -12,6 +12,7 @@ import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
+import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.Triangle;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.transformations.AffineTransform3d;
@@ -71,6 +72,10 @@ public class Main {
             }
         }*/
 
+        // adding a sphere
+        var sphere = new Sphere(new Point(0.7, -0.5, 0), 1);
+        shapes.add(sphere);
+
         // creating a scene
         var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);
         var lightSource = new DirectionalLightSource(new Vector3(1, -1, 0).normalize());
@@ -78,7 +83,7 @@ public class Main {
 
         // rendering
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
-        var pixels = new Renderer(scene, ShadingModel.SMOOTH).render();
+        var pixels = new Renderer(scene, ShadingModel.FLAT).render();
 
         // writing result to file
         (new PngImageWriter(arguments.outputFile())).writeImage(pixels);

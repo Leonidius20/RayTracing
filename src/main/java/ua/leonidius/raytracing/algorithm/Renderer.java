@@ -63,6 +63,10 @@ public class Renderer {
                     var intersectionPoint =
                             ray.getXyzOnRay(closestIntersection.tParam);
 
+                    intersectionPoint.add( // fixing float point under trianfle
+                            closestIntersection.object.getNormalAt(
+                                    intersectionPoint, ShadingModel.FLAT).toVector().multiplyBy(1e-6));
+
                     var lightValue = calculateLightAt(
                             closestIntersection.object, intersectionPoint);
 
@@ -79,6 +83,19 @@ public class Renderer {
     /* private */ double calculateLightAt(IShape3d object, Point point) {
         var normal = object.getNormalAt(point, shading);
         var value = normal.dotProduct(scene.getLightSource().invertedDirection());
+        value = Math.max(0.0, value);
+
+        if (value > 1e-7) {
+            // send shadow ray
+            var shadowRay = new Ray(point, scene.getLightSource().invertedDirection());
+            // find any intersection, if found, return 0
+
+            for (IShape3d shape : scene.getObjects()) {
+                OptionalDouble intersectionTparam = object.findVisibleIntersectionWithRay(shadowRay);
+                if (intersectionTparam.isPresent()) return 0.0;
+            }
+        }
+
         return Math.max(0.0, value);
     }
 
