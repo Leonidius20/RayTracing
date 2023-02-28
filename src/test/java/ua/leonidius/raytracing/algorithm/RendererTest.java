@@ -11,6 +11,9 @@ import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.shapes.Sphere;
+import ua.leonidius.raytracing.shapes.Triangle;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -22,7 +25,6 @@ class RendererTest {
     @Test
     public void testRaysShooting() {
         IShape3d shape = mock(IShape3d.class);
-        when(shape.getNormalAt(any(), any())).thenReturn(new Normal(0, 0, 0)); // to avoid NPE
 
         var focusPoint = new Point(0.0, 0.1, 0.2);
         double focusDistance = 1.5;
@@ -58,7 +60,9 @@ class RendererTest {
 
     @Test
     public void testLightCalculation() {
-        var scene = new Scene(null, new DirectionalLightSource(new Vector3(1.0, 2.0, 3.0)));
+        var lVectorUnnormalized = new Vector3(1.0, 2.0, 3.0);
+
+        var scene = new Scene(null, new DirectionalLightSource(lVectorUnnormalized));
         var sphere = new Sphere(new Point(2, 3, 4), 3);
         scene.add(sphere);
 
@@ -66,7 +70,10 @@ class RendererTest {
 
         var renderer = new Renderer(scene, ShadingModel.FLAT);
 
-        assertEquals(3, renderer.calculateLightAt(sphere, pointInQuestion));
+        double expected = 3 / lVectorUnnormalized.calculateLength();
+
+        assertEquals(expected,
+                renderer.calculateLightAt(sphere, pointInQuestion), 1e-7);
     }
 
     @Test
@@ -84,6 +91,51 @@ class RendererTest {
         var intersection = Renderer.findClosestIntersection(ray, scene);
         assertEquals(sphere, intersection.object());
         assertEquals(2, intersection.tParam()); // (0, -1, 0)
+    }
+
+    @Test
+    public void onePixelSceneWithSmoothShadingAndDirectionalLight() {
+        var shapes = new ArrayList<IShape3d>(1);
+
+        // add triangle with normals
+        var vertex1 = new Point(0, 0, 0);
+        var vertex2 = new Point(0, 0, 1);
+        var vertex3 = new Point(1, 1, 0);
+
+        var normal1 = new Normal(0.5, -0.5, -0.1).normalize();
+        var normal2 = new Normal(0.5, 0.1, 0.4).normalize();
+        var normal3 = new Normal(0.5, -0.5, 0).normalize();
+
+        var triangle = new Triangle(
+                new Point[]{vertex1, vertex2, vertex3},
+                new Normal[]{normal1, normal2, normal3}
+        );
+
+        shapes.add(triangle);
+
+        var invertedLightDirection = new Vector3(0, -1, 0);
+        var light = new DirectionalLightSource(invertedLightDirection);
+
+        // camera
+        var focusPoint = new Point(0.3, -1, 0.3);
+        var camera = new Camera(focusPoint, 0.1, 1, 1, 1, 1);
+
+        // scene
+        var scene = new Scene(camera, light, shapes);
+
+        // calc expected pixel value
+        var expectedNormal = normal1.multiplyBy(0.3)
+                .add(normal2.multiplyBy(0.3))
+                .add(normal3.multiplyBy(0.4))
+                .normalize(); // todo order of normals?
+
+        double expectedPixel = expectedNormal.dotProduct(invertedLightDirection);
+
+        // actual pixel value
+        double[][] pixels = (new Renderer(scene, ShadingModel.SMOOTH)).render();
+        double actualPixelValue = pixels[0][0];
+
+        assertEquals(expectedPixel, actualPixelValue, 1e-7);
     }
 
 }

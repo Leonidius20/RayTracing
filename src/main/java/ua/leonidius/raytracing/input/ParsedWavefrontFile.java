@@ -43,7 +43,7 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
 
                     case "vn" ->
                             // normals
-                            allNormals.add(parseVectorDeclaration(line).normalize().toNormal()); // TODO refactor
+                            allNormals.add(parseVectorDeclaration(line).toNormal()); // TODO refactor
                     case "f " -> {
                         // face (triangle or polygon)
                         var record = parsePolygonDeclaration(line);

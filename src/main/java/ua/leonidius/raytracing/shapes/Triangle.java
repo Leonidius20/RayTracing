@@ -96,7 +96,7 @@ public class Triangle implements IShape3d {
                 .normalize();
     }
 
-    private double[] getBarycentricCoordinates(Point point) {
+    /* private */ double[] getBarycentricCoordinates(Point point) {
         /*
         Barycentric coordinates are also known as areal coordinates.
         Although not very commonly used, this term indicates that
@@ -107,8 +107,8 @@ public class Triangle implements IShape3d {
          These three sub-triangles are denoted ABP, BCP, and CAP.
          */
         Point a = vertices[0];
-        Point b = vertices[0];
-        Point c = vertices[0];
+        Point b = vertices[1];
+        Point c = vertices[2];
 
         Vector3 ab = b.subtract(a);
         Vector3 ac = c.subtract(a);

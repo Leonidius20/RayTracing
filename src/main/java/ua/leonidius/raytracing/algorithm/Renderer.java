@@ -6,6 +6,7 @@ import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
 
+import java.util.Optional;
 import java.util.OptionalDouble;
 
 public class Renderer {
@@ -86,6 +87,13 @@ public class Renderer {
     /* private */ static ObjectAndRayIntersection findClosestIntersection(Ray ray, Scene scene) {
         IShape3d closestObject = null;
         Double closestIntersectionTparam = null;
+
+        /*OptionalDouble closestT = scene.getObjects().stream()
+
+                .map(obj -> obj.findVisibleIntersectionWithRay(ray)) // get intersections
+                .filter(OptionalDouble::isPresent)
+                .mapToDouble(OptionalDouble::getAsDouble)
+                .min();*/
 
         for (IShape3d object : scene.getObjects()) {
             OptionalDouble intersectionTparam = object.findVisibleIntersectionWithRay(ray);

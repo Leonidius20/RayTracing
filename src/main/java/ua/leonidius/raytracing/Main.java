@@ -58,7 +58,7 @@ public class Main {
 
         // applying transformations
        // AffineTransform3d rotation = new RotationZMatrix(0);
-        AffineTransform3d rotation = new TranslationMatrix3d(0.1, 0.1, 0.1);
+       /* AffineTransform3d rotation = new TranslationMatrix3d(0.1, 0.1, 0.1);
         //rotation = rotation.multiplyBy(new TranslationMatrix3d(0.1, 0.1, 0.1));
         rotation = new ScaleTransform3d(1.5, 1, 1);
         rotation = rotation.multiplyBy(new RotationZMatrix(-90));
@@ -69,7 +69,7 @@ public class Main {
             if (s instanceof Triangle t) {
                 shapes.set(i, t.applyTransform(rotation));
             }
-        }
+        }*/
 
         // creating a scene
         var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);
