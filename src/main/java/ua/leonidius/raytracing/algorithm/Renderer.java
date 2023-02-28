@@ -63,7 +63,7 @@ public class Renderer {
                     var intersectionPoint =
                             ray.getXyzOnRay(closestIntersection.tParam);
 
-                    intersectionPoint.add( // fixing float point under trianfle
+                    intersectionPoint = intersectionPoint.add( // fixing float point under trianfle
                             closestIntersection.object.getNormalAt(
                                     intersectionPoint, ShadingModel.FLAT).toVector().multiplyBy(1e-6));
 

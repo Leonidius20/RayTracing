@@ -73,12 +73,16 @@ public class Main {
         }*/
 
         // adding a sphere
-        var sphere = new Sphere(new Point(0.7, -0.5, 0), 1);
+        var sphere = new Sphere(new Point(0, 0, 0), 1);
+        shapes.clear(); // todo remove
         shapes.add(sphere);
+        shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
 
         // creating a scene
-        var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);
-        var lightSource = new DirectionalLightSource(new Vector3(1, -1, 0).normalize());
+        // TODO: how does camera have 30 focus dist???
+        // let's do 50mm
+        var camera = new Camera(new Point(0, -7, 0), 0.2, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
+        var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
         var scene = new Scene(camera, lightSource, shapes);
 
         // rendering
