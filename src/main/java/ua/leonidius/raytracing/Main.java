@@ -3,6 +3,8 @@ package ua.leonidius.raytracing;
 import org.apache.commons.cli.*;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.algorithm.Renderer;
+import ua.leonidius.raytracing.arguments.CliArguments;
+import ua.leonidius.raytracing.arguments.MissingCliParameterException;
 import ua.leonidius.raytracing.camera.Camera;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Vector3;
@@ -28,59 +30,33 @@ public class Main {
     private static final int IMAGE_HEIGHT = 480;
 
     public static void main(String[] args) throws IOException {
-        // parsing CLI arguments
-        var options = new Options();
+        // parsing CLI parameters
+        IProgramArguments arguments;
 
-        var outputOption = Option.builder("output")
-                .argName("file")
-                .hasArg()
-                .desc("output file path")
-                .build();
-
-        var inputOption = Option.builder("input")
-                .argName("file")
-                .hasArg()
-                .desc("input file path")
-                .build();
-
-        options.addOption(outputOption);
-        options.addOption(inputOption);
-
-        var parser = new GnuParser();
-        CommandLine line;
         try {
-            line = parser.parse(options, args);
+            arguments = new CliArguments(args);
         } catch (ParseException exp) {
             System.err.println("Parsing CLI args failed.  Reason: " + exp.getMessage());
             return;
-        }
-
-        String outputFileName;
-        if (line.hasOption("output")) {
-            outputFileName = line.getOptionValue("output");
-        } else {
+        } catch (MissingCliParameterException e) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("raytracing", options);
+            formatter.printHelp("raytracing", e.getOptions());
             return;
         }
 
-        String inputFileName;
-        if (line.hasOption("input")) {
-            inputFileName = line.getOptionValue("input");
-        } else {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("raytracing", options);
-            return;
-        }
-
+        // parsing input file
         ArrayList<IShape3d> shapes = null;
         try {
-            shapes = new ParsedWavefrontFile(Files.newBufferedReader(Paths.get(inputFileName))).shapes(new TriangleFactory());
+            shapes = new ParsedWavefrontFile(
+                    Files.newBufferedReader(
+                            Paths.get(arguments.inputFile())))
+                    .shapes(new TriangleFactory());
         } catch (ParsingException e) {
             System.err.println(e.getMessage());
             System.exit(-1);
         }
 
+        // applying transformations
        // AffineTransform3d rotation = new RotationZMatrix(0);
         AffineTransform3d rotation = new TranslationMatrix3d(0.1, 0.1, 0.1);
         //rotation = rotation.multiplyBy(new TranslationMatrix3d(0.1, 0.1, 0.1));
@@ -95,15 +71,17 @@ public class Main {
             }
         }
 
+        // creating a scene
         var camera = new Camera(new Point(0, -1, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0625, 0.0625);
         var lightSource = new DirectionalLightSource(new Vector3(1, -1, 0).normalize());
-        var scene = new Scene(camera, lightSource);
-        scene.setObjects(shapes);
+        var scene = new Scene(camera, lightSource, shapes);
 
-        System.out.println("Read scene file, starting to render");
+        // rendering
+        System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
         var pixels = new Renderer(scene, ShadingModel.SMOOTH).render();
 
-        (new PngImageWriter(outputFileName)).writeImage(pixels);
+        // writing result to file
+        (new PngImageWriter(arguments.outputFile())).writeImage(pixels);
     }
 
     /*private static Scene createScene() {

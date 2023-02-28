@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class Scene {
 
-    @Getter @Setter ArrayList<IShape3d> objects = new ArrayList<>();
+    @Getter private final ArrayList<IShape3d> objects;
     @Getter @Setter
     ICamera activeCamera;
     @Getter @Setter
@@ -20,8 +20,13 @@ public class Scene {
     @Getter Color backgroundColor;
 
     public Scene(ICamera camera, ILightSource light) {
+        this(camera, light, new ArrayList<>());
+    }
+
+    public Scene(ICamera camera, ILightSource light, ArrayList<IShape3d> shapes) {
         this.activeCamera = camera;
         this.lightSource = light;
+        this.objects = shapes;
     }
 
     public void add(IShape3d obj) {
