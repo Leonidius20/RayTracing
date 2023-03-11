@@ -1,12 +1,10 @@
 package ua.leonidius.raytracing.shapes;
 
-import ua.leonidius.raytracing.ShadingModel;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
-import ua.leonidius.raytracing.transformations.AffineTransform3d;
 
 import java.util.OptionalDouble;
 
@@ -53,7 +51,13 @@ public class Sphere implements IShape3d {
     }
 
     @Override
-    public Normal getNormalAt(Point point, ShadingModel shading) {
+    public Normal getRealNormalAt(Point point) {
         return point.subtract(center).normalize().toNormal();
     }
+
+    @Override
+    public Normal getInterpolatedNormalAt(Point point) {
+        return getRealNormalAt(point);
+    }
+
 }

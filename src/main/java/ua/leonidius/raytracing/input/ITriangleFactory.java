@@ -6,6 +6,6 @@ import ua.leonidius.raytracing.shapes.Triangle;
 
 public interface ITriangleFactory {
 
-    Triangle make(Point[] vertices, Normal[] normals); // todo: replace with points and normals
+    Triangle make(Point[] vertices, Normal[] normals);
 
 }

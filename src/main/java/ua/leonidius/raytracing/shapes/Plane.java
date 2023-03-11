@@ -1,13 +1,11 @@
 package ua.leonidius.raytracing.shapes;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.ShadingModel;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
-import ua.leonidius.raytracing.transformations.AffineTransform3d;
 
 import java.util.OptionalDouble;
 
@@ -41,8 +39,12 @@ public class Plane implements IShape3d {
     }
 
     @Override
-    public Normal getNormalAt(Point point, ShadingModel shading) {
-        return normal.normalize();
+    public Normal getRealNormalAt(Point point) {
+        return normal;
     }
 
+    @Override
+    public Normal getInterpolatedNormalAt(Point point) {
+        return normal;
+    }
 }

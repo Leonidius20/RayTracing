@@ -1,7 +1,8 @@
 package ua.leonidius.raytracing.algorithm;
 
+import ua.leonidius.raytracing.Instance;
 import ua.leonidius.raytracing.Scene;
-import ua.leonidius.raytracing.ShadingModel;
+import ua.leonidius.raytracing.enitites.Color;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
@@ -14,24 +15,24 @@ public class Renderer {
     // captures the image with it's sensor...
 
     private final Scene scene;
-    private final ShadingModel shading;
+    private final IIntersectionVisualizer pixelRenderer;
 
-    public Renderer(Scene scene, ShadingModel shading) {
+    public Renderer(Scene scene, IIntersectionVisualizer pixelRenderer) {
         this.scene = scene;
-        this.shading = shading;
+        this.pixelRenderer = pixelRenderer;
     }
 
     /**
      * Render scene and return pixel values
      * @return array of pixel values (camera sensor width x height)
      */
-    public double[][] render() {
+    public Color[][] render() {
         ICamera camera = scene.getActiveCamera();
 
         final int imageWidth = camera.sensorWidth();
         final int imageHeight = camera.sensorHeight();
 
-        double[][] pixels = new double[imageHeight][imageWidth];
+        Color[][] pixels = new Color[imageHeight][imageWidth];
         // set bg color?
 
         final double pixelWidth = camera.pixelWidth();
@@ -56,53 +57,27 @@ public class Renderer {
 
                 Ray ray = new Ray(focusPoint, rayDirection);
 
-                var closestIntersection = findClosestIntersection(ray, scene);
-
-                if (closestIntersection.object != null) {
-                    // calculate lighting
-                    var intersectionPoint =
-                            ray.getXyzOnRay(closestIntersection.tParam);
-
-                    intersectionPoint = intersectionPoint.add( // fixing float point under trianfle
-                            closestIntersection.object.getNormalAt(
-                                    intersectionPoint, ShadingModel.FLAT).toVector().multiplyBy(1e-6));
-
-                    var lightValue = calculateLightAt(
-                            closestIntersection.object, intersectionPoint);
+                var intersectionOptional = findClosestIntersection(ray, scene);
+                if (intersectionOptional.isEmpty()) continue;
+                var intersection = intersectionOptional.get();
 
 
-                    // outer array contains rows (Y value), inner array contains cells from left to right (X value)
-                    pixels[pixelY][pixelX] = lightValue;
-                }
+                // outer array contains rows (Y value), inner array contains cells from left to right (X value)
+                pixels[pixelY][pixelX] = pixelRenderer.renderPixel(intersection);
             }
         }
 
         return pixels;
     }
 
-    /* private */ double calculateLightAt(IShape3d object, Point point) {
-        var normal = object.getNormalAt(point, shading);
-        var value = normal.dotProduct(scene.getLightSource().invertedDirection());
-        value = Math.max(0.0, value);
 
-        if (value > 1e-7) {
-            // send shadow ray
-            var shadowRay = new Ray(point, scene.getLightSource().invertedDirection());
-            // find any intersection, if found, return 0
 
-            for (IShape3d shape : scene.getObjects()) {
-                OptionalDouble intersectionTparam = object.findVisibleIntersectionWithRay(shadowRay);
-                if (intersectionTparam.isPresent()) return 0.0;
-            }
-        }
-
-        return Math.max(0.0, value);
+    static Optional<Intersection> findAnyIntersection(Ray ray, Scene scene) {
+        throw new RuntimeException("not implemented");
     }
 
-    record ObjectAndRayIntersection(Double tParam, IShape3d object) {};
-
-    /* private */ static ObjectAndRayIntersection findClosestIntersection(Ray ray, Scene scene) {
-        IShape3d closestObject = null;
+    /* private */ static Optional<Intersection> findClosestIntersection(Ray ray, Scene scene) {
+        Instance closestObject = null;
         Double closestIntersectionTparam = null;
 
         /*OptionalDouble closestT = scene.getObjects().stream()
@@ -112,8 +87,9 @@ public class Renderer {
                 .mapToDouble(OptionalDouble::getAsDouble)
                 .min();*/
 
-        for (IShape3d object : scene.getObjects()) {
-            OptionalDouble intersectionTparam = object.findVisibleIntersectionWithRay(ray);
+        for (var object : scene.getObjects()) {
+            OptionalDouble intersectionTparam = object.getGeometry()
+                    .findVisibleIntersectionWithRay(ray);
             if (intersectionTparam.isEmpty()) continue;
             if (closestIntersectionTparam == null
                     || intersectionTparam.getAsDouble() < closestIntersectionTparam) {
@@ -122,7 +98,12 @@ public class Renderer {
             }
         }
 
-        return new ObjectAndRayIntersection(closestIntersectionTparam, closestObject);
+        if (closestObject == null) {
+            return Optional.empty();
+        } else {
+            var point = ray.getXyzOnRay(closestIntersectionTparam);
+            return Optional.of(new Intersection(ray, closestObject, closestIntersectionTparam, point));
+        }
     }
 
 }

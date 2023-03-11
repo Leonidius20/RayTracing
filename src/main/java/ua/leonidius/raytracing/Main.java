@@ -13,12 +13,7 @@ import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.shapes.Sphere;
-import ua.leonidius.raytracing.shapes.Triangle;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
-import ua.leonidius.raytracing.transformations.AffineTransform3d;
-import ua.leonidius.raytracing.transformations.RotationZMatrix;
-import ua.leonidius.raytracing.transformations.ScaleTransform3d;
-import ua.leonidius.raytracing.transformations.TranslationMatrix3d;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,15 +74,14 @@ public class Main {
         shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
 
         // creating a scene
-        // TODO: how does camera have 30 focus dist???
-        // let's do 50mm
         var camera = new Camera(new Point(0, -7, 0), 0.2, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
-        var scene = new Scene(camera, lightSource, shapes);
+        var instances = shapes.stream().map(shape -> new Instance(shape, IShadingModel.FLAT)).collect();
+        var scene = new Scene(camera, lightSource, instances);
 
         // rendering
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
-        var pixels = new Renderer(scene, ShadingModel.FLAT).render();
+        var pixels = new Renderer(scene, IShadingModel.FLAT, pixelRenderer).render();
 
         // writing result to file
         (new PngImageWriter(arguments.outputFile())).writeImage(pixels);

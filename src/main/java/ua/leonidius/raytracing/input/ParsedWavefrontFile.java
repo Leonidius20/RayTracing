@@ -17,6 +17,8 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
         this.reader = reader;
     }
 
+
+    // TODO: RETURN TRIAGNLE MESH
     @Override
     public ArrayList<IShape3d> shapes(ITriangleFactory triangleFactory) throws IOException, ParsingException {
         String line;
@@ -38,7 +40,7 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
                     case "v " -> {
                         // vertex
                         var v = parseVectorDeclaration(line);
-                        allVertices.add(new Point(v.x, v.y, v.z)); // TODO refactor
+                        allVertices.add(new Point(v.x, v.y, v.z)); // TODO refactor and clone points or do a mesh
                     }
 
                     case "vn" ->

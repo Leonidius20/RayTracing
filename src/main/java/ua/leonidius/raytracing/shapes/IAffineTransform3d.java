@@ -7,5 +7,6 @@ public interface IAffineTransform3d {
     Point applyTo(Point point);
 
     // TODO: applyTo(Normal) separately
+    // is this where inverse transpose matrix is used?
 
 }

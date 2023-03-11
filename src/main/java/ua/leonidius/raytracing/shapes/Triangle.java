@@ -1,6 +1,5 @@
 package ua.leonidius.raytracing.shapes;
 
-import ua.leonidius.raytracing.ShadingModel;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.*;
 
@@ -74,15 +73,12 @@ public class Triangle implements IShape3d {
     }
 
     @Override
-    public Normal getNormalAt(Point point, ShadingModel shading) {
-        if (shading == ShadingModel.SMOOTH) {
-            return getSmoothShadingNormalAt(point);
-        } else {
-            return getFlatShadingNormal(Winding.CLOCKWISE);
-        }
+    public Normal getRealNormalAt(Point point) {
+        return getFlatShadingNormal(Winding.CLOCKWISE);
     }
 
-    /* private */ Normal getSmoothShadingNormalAt(Point point) {
+    @Override
+    public Normal getInterpolatedNormalAt(Point point) {
         double[] uvw = getBarycentricCoordinates(point);
         double u = uvw[0];
         double v = uvw[1];

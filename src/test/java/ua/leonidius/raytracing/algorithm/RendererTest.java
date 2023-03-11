@@ -5,10 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.leonidius.raytracing.*;
 import ua.leonidius.raytracing.camera.Camera;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.enitites.*;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.Triangle;
@@ -40,7 +37,7 @@ class RendererTest {
         scene.add(shape);
 
         // do render
-        new Renderer(scene, ShadingModel.FLAT).render();
+        new Renderer(scene, IShadingModel.FLAT, pixelRenderer).render();
 
         // expected ray vectors (directions) (normalized)
         var a = (new Point(-1.2, 1.6, 0.75)).subtract(focusPoint).normalize();
@@ -68,7 +65,7 @@ class RendererTest {
 
         var pointInQuestion = new Point(2, 3, 7);
 
-        var renderer = new Renderer(scene, ShadingModel.FLAT);
+        var renderer = new Renderer(scene, IShadingModel.FLAT, pixelRenderer);
 
         double expected = 3 / lVectorUnnormalized.calculateLength();
 
@@ -129,13 +126,15 @@ class RendererTest {
                 .add(normal3.multiplyBy(0.4))
                 .normalize(); // todo order of normals?
 
-        double expectedPixel = expectedNormal.dotProduct(invertedLightDirection);
+        Color expectedPixel = Color.grayscale(
+                expectedNormal.dotProduct(invertedLightDirection));
 
         // actual pixel value
-        double[][] pixels = (new Renderer(scene, ShadingModel.SMOOTH)).render();
-        double actualPixelValue = pixels[0][0];
+        Color[][] pixels = (new Renderer(scene,
+                new TrueColorPixelRenderer(scene))).render();
+        Color actualPixelValue = pixels[0][0];
 
-        assertEquals(expectedPixel, actualPixelValue, 1e-7);
+        assertEquals(expectedPixel, actualPixelValue);
     }
 
 }
