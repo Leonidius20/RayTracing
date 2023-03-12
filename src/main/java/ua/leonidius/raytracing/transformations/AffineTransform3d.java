@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.transformations;
 
+import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.shapes.IAffineTransform3d;
 import ua.leonidius.raytracing.enitites.Point;
 
@@ -51,6 +52,14 @@ public class AffineTransform3d implements IAffineTransform3d {
                 ans[0] / ans[3],
                 ans[1] / ans[3],
                 ans[2] / ans[3]);
+    }
+
+
+    @Override
+    public Normal applyTo(Normal normal) {
+        // compute inverse transpose
+        return new Normal(normal.x, normal.y, normal.z); // TODO: apply reverse transposed matrix
+        // to the normal vector
     }
 
     @Override

@@ -11,13 +11,15 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 
 public class Renderer {
-    // TODO: what if we move this code to Camera lol? i mean, it is camera that
+    // TODO: what if we move the primary ray shooting code to Camera lol?
+    //  i mean, rays direction depend on camera characteristics +
+    // they may be different for, let's say, a perspective / non-perspective cameras
     // captures the image with it's sensor...
 
     private final Scene scene;
-    private final IIntersectionVisualizer pixelRenderer;
+    private final IPixelRenderer pixelRenderer;
 
-    public Renderer(Scene scene, IIntersectionVisualizer pixelRenderer) {
+    public Renderer(Scene scene, IPixelRenderer pixelRenderer) {
         this.scene = scene;
         this.pixelRenderer = pixelRenderer;
     }
@@ -58,12 +60,15 @@ public class Renderer {
                 Ray ray = new Ray(focusPoint, rayDirection);
 
                 var intersectionOptional = findClosestIntersection(ray, scene);
-                if (intersectionOptional.isEmpty()) continue;
+                if (intersectionOptional.isEmpty()) {
+                    pixels[pixelY][pixelX] = scene.getBackgroundColor();
+                    continue;
+                };
                 var intersection = intersectionOptional.get();
 
 
                 // outer array contains rows (Y value), inner array contains cells from left to right (X value)
-                pixels[pixelY][pixelX] = pixelRenderer.renderPixel(intersection);
+                pixels[pixelY][pixelX] = pixelRenderer.renderIntersection(scene, intersection);
             }
         }
 

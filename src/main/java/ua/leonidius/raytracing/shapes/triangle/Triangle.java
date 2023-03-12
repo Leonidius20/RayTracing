@@ -1,7 +1,8 @@
-package ua.leonidius.raytracing.shapes;
+package ua.leonidius.raytracing.shapes.triangle;
 
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.*;
+import ua.leonidius.raytracing.shapes.IAffineTransform3d;
 
 import java.util.Arrays;
 import java.util.OptionalDouble;

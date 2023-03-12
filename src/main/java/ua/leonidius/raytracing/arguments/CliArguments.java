@@ -8,7 +8,7 @@ public class CliArguments implements IProgramArguments {
     private final String inputFile;
     private final String outputFile;
 
-    public CliArguments(String[] args) throws ParseException, MissingCliParameterException {
+    public CliArguments(String[] args) throws MissingCliParameterException, CliArgsParseException {
         // parsing CLI arguments
         var options = new Options();
 
@@ -29,18 +29,26 @@ public class CliArguments implements IProgramArguments {
 
         var parser = new GnuParser();
         CommandLine line;
-        line = parser.parse(options, args);
+
+        try {
+            line = parser.parse(options, args);
+        } catch (ParseException e) {
+            // for 'main' to avoid depending on 'org.apache.commons.cli.ParseException'
+            throw new CliArgsParseException(e.getMessage());
+        }
 
         if (line.hasOption("output")) {
             outputFile = line.getOptionValue("output");
         } else {
-            throw new MissingCliParameterException(options);
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("raytracing", options);
+            throw new MissingCliParameterException();
         }
 
         if (line.hasOption("input")) {
             inputFile = line.getOptionValue("input");
         } else {
-            throw new MissingCliParameterException(options);
+            throw new MissingCliParameterException();
         }
     }
 

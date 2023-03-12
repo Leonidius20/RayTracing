@@ -16,7 +16,7 @@ public class Scene {
     @Getter @Setter
     ILightSource lightSource;
 
-    @Getter Color backgroundColor;
+    @Getter Color backgroundColor = Color.PINK;
 
     public Scene(ICamera camera, ILightSource light) {
         this(camera, light, new ArrayList<>());

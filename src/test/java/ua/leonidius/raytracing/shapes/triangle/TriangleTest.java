@@ -1,10 +1,11 @@
-package ua.leonidius.raytracing.shapes;
+package ua.leonidius.raytracing.shapes.triangle;
 
 import org.junit.jupiter.api.Test;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.shapes.triangle.Triangle;
 
 import java.util.OptionalDouble;
 
@@ -92,7 +93,7 @@ class TriangleTest {
                 .add(normal3.multiplyBy(expectedW))
                 .normalize();
 
-        assertEquals(expected, triangle.getSmoothShadingNormalAt(point));
+        assertEquals(expected, triangle.getInterpolatedNormalAt(point));
     }
 
     @Test

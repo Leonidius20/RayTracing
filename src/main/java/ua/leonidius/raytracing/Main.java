@@ -1,8 +1,10 @@
 package ua.leonidius.raytracing;
 
-import org.apache.commons.cli.*;
 import ua.leonidius.raytracing.algorithm.IShape3d;
+import ua.leonidius.raytracing.algorithm.NormalsPixelRenderer;
 import ua.leonidius.raytracing.algorithm.Renderer;
+import ua.leonidius.raytracing.algorithm.TrueColorPixelRenderer;
+import ua.leonidius.raytracing.arguments.CliArgsParseException;
 import ua.leonidius.raytracing.arguments.CliArguments;
 import ua.leonidius.raytracing.arguments.MissingCliParameterException;
 import ua.leonidius.raytracing.camera.Camera;
@@ -14,11 +16,13 @@ import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
+import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -31,19 +35,17 @@ public class Main {
 
         try {
             arguments = new CliArguments(args);
-        } catch (ParseException exp) {
+        } catch (CliArgsParseException exp) {
             System.err.println("Parsing CLI args failed.  Reason: " + exp.getMessage());
             return;
         } catch (MissingCliParameterException e) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("raytracing", e.getOptions());
             return;
         }
 
         // parsing input file
-        ArrayList<IShape3d> shapes = null;
+        TriangleMesh mesh = null;
         try {
-            shapes = new ParsedWavefrontFile(
+            mesh = new ParsedWavefrontFile(
                     Files.newBufferedReader(
                             Paths.get(arguments.inputFile())))
                     .shapes(new TriangleFactory());
@@ -68,20 +70,24 @@ public class Main {
         }*/
 
         // adding a sphere
+        var shapes = new ArrayList<IShape3d>();
         var sphere = new Sphere(new Point(0, 0, 0), 1);
-        shapes.clear(); // todo remove
+        // mesh.clear(); // todo remove
         shapes.add(sphere);
         shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
+        shapes.addAll(mesh.getFaces());
 
         // creating a scene
         var camera = new Camera(new Point(0, -7, 0), 0.2, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
-        var instances = shapes.stream().map(shape -> new Instance(shape, IShadingModel.FLAT)).collect();
+        var flatShading = new FlatShadingModel();
+        var instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource, instances);
 
         // rendering
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
-        var pixels = new Renderer(scene, IShadingModel.FLAT, pixelRenderer).render();
+        var pixelRenderer = new TrueColorPixelRenderer();
+        var pixels = new Renderer(scene, pixelRenderer).render();
 
         // writing result to file
         (new PngImageWriter(arguments.outputFile())).writeImage(pixels);

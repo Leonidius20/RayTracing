@@ -8,7 +8,7 @@ import ua.leonidius.raytracing.camera.Camera;
 import ua.leonidius.raytracing.enitites.*;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.shapes.Sphere;
-import ua.leonidius.raytracing.shapes.Triangle;
+import ua.leonidius.raytracing.shapes.triangle.Triangle;
 
 import java.util.ArrayList;
 
@@ -34,10 +34,10 @@ class RendererTest {
                 new Camera(
                         focusPoint,focusDistance, heightInPixels, widthInPixels, pixelHeight, pixelWidth),
                 new DirectionalLightSource(new Vector3(0, 0, 0)));
-        scene.add(shape);
+        scene.add(new Instance(shape, new FlatShadingModel()));
 
         // do render
-        new Renderer(scene, IShadingModel.FLAT, pixelRenderer).render();
+        new Renderer(scene, new TrueColorPixelRenderer()).render();
 
         // expected ray vectors (directions) (normalized)
         var a = (new Point(-1.2, 1.6, 0.75)).subtract(focusPoint).normalize();
@@ -61,38 +61,44 @@ class RendererTest {
 
         var scene = new Scene(null, new DirectionalLightSource(lVectorUnnormalized));
         var sphere = new Sphere(new Point(2, 3, 4), 3);
-        scene.add(sphere);
+        var instance = new Instance(sphere, new FlatShadingModel());
+        scene.add(instance);
 
         var pointInQuestion = new Point(2, 3, 7);
 
-        var renderer = new Renderer(scene, IShadingModel.FLAT, pixelRenderer);
+        var pixelRenderer = new TrueColorPixelRenderer();
 
         double expected = 3 / lVectorUnnormalized.calculateLength();
 
         assertEquals(expected,
-                renderer.calculateLightAt(sphere, pointInQuestion), 1e-7);
+                pixelRenderer.calculateLightAt(instance, pointInQuestion, scene), 1e-7);
     }
 
     @Test
     public void testNearestVisibleObjectSelection() {
+        var flatShading = new FlatShadingModel();
+
         var sphere = new Sphere(new Point(0, 0, 0), 1);
+        var sphereI = new Instance(sphere, flatShading);
 
         var sphereBehind = new Sphere(new Point(0, 5, 0), 1);
+        var sphereBehindI = new Instance(sphereBehind, flatShading);
 
         var ray = new Ray(new Point(0, -3, 0), new Vector3(0, 1, 0));
 
         var scene = new Scene(null, null);
-        scene.add(sphereBehind);
-        scene.add(sphere);
+        scene.add(sphereBehindI);
+        scene.add(sphereI);
 
         var intersection = Renderer.findClosestIntersection(ray, scene);
-        assertEquals(sphere, intersection.object());
-        assertEquals(2, intersection.tParam()); // (0, -1, 0)
+        assertTrue(intersection.isPresent());
+        assertEquals(sphereI, intersection.get().object());
+        assertEquals(2, intersection.get().tParam()); // (0, -1, 0)
     }
 
     @Test
     public void onePixelSceneWithSmoothShadingAndDirectionalLight() {
-        var shapes = new ArrayList<IShape3d>(1);
+        var shapes = new ArrayList<Instance>(1);
 
         // add triangle with normals
         var vertex1 = new Point(0, 0, 0);
@@ -108,7 +114,7 @@ class RendererTest {
                 new Normal[]{normal1, normal2, normal3}
         );
 
-        shapes.add(triangle);
+        shapes.add(new Instance(triangle, new FlatShadingModel()));
 
         var invertedLightDirection = new Vector3(0, -1, 0);
         var light = new DirectionalLightSource(invertedLightDirection);
@@ -131,7 +137,7 @@ class RendererTest {
 
         // actual pixel value
         Color[][] pixels = (new Renderer(scene,
-                new TrueColorPixelRenderer(scene))).render();
+                new TrueColorPixelRenderer())).render();
         Color actualPixelValue = pixels[0][0];
 
         assertEquals(expectedPixel, actualPixelValue);

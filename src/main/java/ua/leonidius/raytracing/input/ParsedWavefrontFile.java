@@ -1,9 +1,10 @@
 package ua.leonidius.raytracing.input;
 
-import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.shapes.triangle.Triangle;
+import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,15 +18,13 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
         this.reader = reader;
     }
 
-
-    // TODO: RETURN TRIAGNLE MESH
     @Override
-    public ArrayList<IShape3d> shapes(ITriangleFactory triangleFactory) throws IOException, ParsingException {
+    public TriangleMesh shapes(ITriangleFactory triangleFactory) throws IOException, ParsingException {
         String line;
 
         var allVertices = new ArrayList<Point>(); // starts with 0 instead of 1, keep in mind
         var allNormals = new ArrayList<Normal>();
-        var shapes = new ArrayList<IShape3d>();
+        var triangles = new ArrayList<Triangle>();
 
         int lineNumber = 0; // for error messages
         while ((line = reader.readLine()) != null) {
@@ -45,7 +44,7 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
 
                     case "vn" ->
                             // normals
-                            allNormals.add(parseVectorDeclaration(line).toNormal()); // TODO refactor
+                            allNormals.add(parseVectorDeclaration(line).normalize().toNormal()); // TODO refactor
                     case "f " -> {
                         // face (triangle or polygon)
                         var record = parsePolygonDeclaration(line);
@@ -56,7 +55,7 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
                             var normalIndex = record.normalIndices[i];
                             normals[i] = normalIndex != -1 ? allNormals.get(normalIndex - 1) : null;
                         }
-                        shapes.add(triangleFactory.make(vertices, normals));
+                        triangles.add(triangleFactory.make(vertices, normals));
                     }
                     default -> {
                         // ignore for now
@@ -68,7 +67,7 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
             }
         }
 
-        return shapes;
+        return new TriangleMesh(allVertices, allNormals, triangles);
     }
 
     // just test the end function?

@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.output;
 
+import ua.leonidius.raytracing.enitites.Color;
 import ua.leonidius.raytracing.enitites.Vector3;
 
 import javax.imageio.ImageIO;
@@ -16,7 +17,7 @@ public class PngImageWriter implements ImageWriter {
     }
 
     @Override
-    public void writeImage(double[][] pixels) throws IOException {
+    public void writeImage(Color[][] pixels) throws IOException {
         if (pixels.length == 0) {
             System.out.println("Empty image");
             return;
@@ -30,10 +31,9 @@ public class PngImageWriter implements ImageWriter {
 
         for (int y = 0; y < pixels.length; y++) {
             for (int x = 0; x < pixels[0].length; x++) {
-                Vector3 rgb = new Vector3(255, 255, 255);
-                rgb = rgb.multiplyBy(pixels[y][x]);
+                var color = pixels[y][x];
 
-                int col = ((int)rgb.x << 16) | ((int)rgb.y << 8) | (int)rgb.z;
+                int col = (color.r() << 16) | (color.g() << 8) | color.b();
                 img.setRGB(x, y, col);
             }
         }

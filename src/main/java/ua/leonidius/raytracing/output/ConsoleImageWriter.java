@@ -1,9 +1,11 @@
 package ua.leonidius.raytracing.output;
 
+import ua.leonidius.raytracing.enitites.Color;
+
 public class ConsoleImageWriter implements ImageWriter {
 
     @Override
-    public void writeImage(double[][] pixels) {
+    public void writeImage(Color[][] pixels) {
         if (pixels.length == 0) {
             System.out.println("Empty image");
             return;
@@ -14,9 +16,10 @@ public class ConsoleImageWriter implements ImageWriter {
         }
         System.out.println();
 
-        for (double[] pixelLine : pixels) {
+        for (var pixelLine : pixels) {
             System.out.print("|");
-            for (double pixel : pixelLine) {
+            for (Color pixelC : pixelLine) {
+                float pixel = pixelC.toGrayscale() / 255.0f;
                 if (pixel <= 0) System.out.print(" ");
                 else if (pixel > 0 && pixel <= 0.2) System.out.print(".");
                 else if (pixel > 0.2 && pixel < 0.5) System.out.print("*");

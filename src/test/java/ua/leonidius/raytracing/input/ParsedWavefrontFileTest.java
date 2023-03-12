@@ -5,7 +5,7 @@ import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.shapes.Triangle;
+import ua.leonidius.raytracing.shapes.triangle.Triangle;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 
 import java.io.BufferedReader;
@@ -51,7 +51,7 @@ class ParsedWavefrontFileTest {
         };
         expected.add(new Triangle(expectedVertices, expectedNormals));
 
-        assertEquals(expected, shapes);
+        assertEquals(expected, shapes.getFaces());
     }
 
     @Test
@@ -113,7 +113,7 @@ class ParsedWavefrontFileTest {
         var reader = new ParsedWavefrontFile(Files.newBufferedReader(Path.of(fileUrl.toURI())));
         var triangles = reader.shapes(new TriangleFactory());
         int expectedCount = 5144;
-        assertEquals(expectedCount, triangles.size());
+        assertEquals(expectedCount, triangles.getFaces().size());
     }
 
 }

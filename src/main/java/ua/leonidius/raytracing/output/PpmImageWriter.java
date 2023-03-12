@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.output;
 
+import ua.leonidius.raytracing.enitites.Color;
 import ua.leonidius.raytracing.enitites.Vector3;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class PpmImageWriter implements ImageWriter {
     }
 
     @Override
-    public void writeImage(double[][] pixels) throws IOException {
+    public void writeImage(Color[][] pixels) throws IOException {
         var writer = Files.newBufferedWriter(Path.of(outputFileName));
 
         if (pixels.length == 0) {
@@ -29,12 +30,9 @@ public class PpmImageWriter implements ImageWriter {
         writer.write("255\n");
 
 
-        for (double[] pixelLine : pixels) {
-            for (double pixel : pixelLine) {
-                Vector3 rgb = new Vector3(255, 255, 255);
-                rgb = rgb.multiplyBy(pixel);
-
-                writer.write(rgb.x + " " + rgb.y + " " + rgb.z + '\n');
+        for (var pixelLine : pixels) {
+            for (var pixel : pixelLine) {
+                writer.write(pixel.r() + " " + pixel.g() + " " + pixel.b() + '\n');
             }
 
         }

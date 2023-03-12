@@ -37,12 +37,6 @@ public class Normal extends OrderedXyzTriple implements Cloneable {
     public Vector3 toVector() {
         return new Vector3(x, y, z);
     }
-
-    public Normal applyTransform(IAffineTransform3d transform) {
-        // compute inverse transpose
-        return new Normal(x, y, z); // TODO: apply reverse transposed matrix
-        // to the normal vector
-    }
     
     /*
     operations:

@@ -36,4 +36,12 @@ public abstract class OrderedXyzTriple {
         return Objects.hash(x, y, z);
     }
 
+    @Override
+    public String toString() {
+        return "OrderedXyzTriple{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }
