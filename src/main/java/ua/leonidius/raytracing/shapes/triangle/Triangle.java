@@ -157,7 +157,7 @@ public class Triangle implements IShape3d {
 
     }
 
-    public Triangle applyTransform(IAffineTransform3d transformation) {
+    /*public Triangle applyTransform(IAffineTransform3d transformation) {
         var newVertices = new Point[3];
         var newNormals = new Normal[3];
 
@@ -170,7 +170,7 @@ public class Triangle implements IShape3d {
         }
 
         return new Triangle(newVertices, newNormals);
-    }
+    }*/
 
     @Override
     public String toString() {

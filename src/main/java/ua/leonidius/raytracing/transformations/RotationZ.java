@@ -1,12 +1,12 @@
 package ua.leonidius.raytracing.transformations;
 
-public class RotationZMatrix extends AffineTransform3d {
+public class RotationZ extends AffineTransform3d {
 
-    public RotationZMatrix(double angleD) {
+    public RotationZ(double angleD) {
         this(new AngleD(angleD));
     }
 
-    public RotationZMatrix(AngleD angleD) {
+    public RotationZ(AngleD angleD) {
         super(new double[][]{
                 new double[] {angleD.cos(), -angleD.sin(), 0, 0},
                 new double[] {angleD.sin(), angleD.cos(), 0, 0},

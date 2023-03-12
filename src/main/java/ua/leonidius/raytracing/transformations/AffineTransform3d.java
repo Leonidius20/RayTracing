@@ -23,7 +23,7 @@ public class AffineTransform3d implements IAffineTransform3d {
         this.data = data;
     }
 
-    public AffineTransform3d multiplyBy(AffineTransform3d other) {
+    public AffineTransform3d combineWith(AffineTransform3d other) {
         double[][] ans = new double[MATRIX_DIMENSION][MATRIX_DIMENSION];
 
         for (int i = 0; i < MATRIX_DIMENSION; i++) {

@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class RotationXMatrixTest {
+class RotationXTest {
 
     @Test
     void constructorTest() {
         double angleDegrees = 30;
-        var actual = new RotationXMatrix(angleDegrees);
+        var actual = new RotationX(angleDegrees);
 
         double sin = 0.5;
         double cos = 0.86602540378;

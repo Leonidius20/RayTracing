@@ -9,10 +9,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 
 public class Renderer {
-    // TODO: what if we move the primary ray shooting code to Camera lol?
-    //  i mean, rays direction depend on camera characteristics +
-    // they may be different for, let's say, a perspective / non-perspective cameras
-    // captures the image with it's sensor...
 
     private final Scene scene;
     private final IPixelRenderer pixelRenderer;

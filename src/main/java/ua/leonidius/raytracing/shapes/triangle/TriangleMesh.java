@@ -19,18 +19,13 @@ public class TriangleMesh {
         this.faces = faces;
     }
 
-    TriangleMesh applyTransform(IAffineTransform3d transform) {
-        var newVertices = new ArrayList<Point>(vertices.size());
-        var newNormals = new ArrayList<Normal>(normals.size());
-
+    public void applyTransformDestructive(IAffineTransform3d transform) {
         for (Point vertex : vertices) {
-            newVertices.add(transform.applyTo(vertex));
+            vertex.absorb(transform.applyTo(vertex));
         }
         for (var normal : normals) {
-            newNormals.add(transform.applyTo(normal));
+            normal.absorb(transform.applyTo(normal));
         }
-        // todo note: the faces array is the same
-        return new TriangleMesh(newVertices, newNormals, faces);
     }
 
 }

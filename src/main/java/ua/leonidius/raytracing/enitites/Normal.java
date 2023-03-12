@@ -25,15 +25,6 @@ public class Normal extends OrderedXyzTriple implements Cloneable {
         return new Normal(x + other.x, y + other.y, z + other.z);
     }
 
-    @Override
-    public Normal clone() {
-        try {
-            return (Normal) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException("clone not supported");
-        }
-    }
-
     public Vector3 toVector() {
         return new Vector3(x, y, z);
     }

@@ -4,20 +4,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ScaleTransform3dTest {
+class TranslationTest {
 
     @Test
     void constructorTest() {
-        double scaleX = 1.5;
-        double scaleY = 9.8;
-        double scaleZ = 5.44;
+        double dx = 1.5;
+        double dy = 9.8;
+        double dz = 5.44;
 
-        var actual = new ScaleTransform3d(scaleX, scaleY, scaleZ);
+        var actual = new Translation(dx, dy, dz);
 
         var expected = new AffineTransform3d(new double[][]{
-                new double[] {scaleX, 0, 0, 0},
-                new double[] {0, scaleY, 0, 0},
-                new double[] {0, 0, scaleZ, 0},
+                new double[] {1, 0, 0, dx},
+                new double[] {0, 1, 0, dy},
+                new double[] {0, 0, 1, dz},
                 new double[] {0, 0, 0, 1},
         });
 

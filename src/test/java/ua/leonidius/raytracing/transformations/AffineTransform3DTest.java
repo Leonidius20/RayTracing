@@ -1,9 +1,7 @@
 package ua.leonidius.raytracing.transformations;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.enitites.OrderedXyzTriple;
 import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Vector3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +30,7 @@ class AffineTransform3DTest {
                 new double[] {0, 0, 0, 1},
         });
 
-        assertEquals(expectedResult, matrix1.multiplyBy(matrix2));
+        assertEquals(expectedResult, matrix1.combineWith(matrix2));
     }
 
     @Test

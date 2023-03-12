@@ -1,6 +1,5 @@
 package ua.leonidius.raytracing;
 
-import ua.leonidius.raytracing.algorithm.DepthMapPixelRenderer;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.algorithm.Renderer;
 import ua.leonidius.raytracing.algorithm.TrueColorPixelRenderer;
@@ -16,6 +15,7 @@ import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
+import ua.leonidius.raytracing.transformations.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,23 +54,15 @@ public class Main {
         }
 
         // applying transformations
-       // AffineTransform3d rotation = new RotationZMatrix(0);
-       /* AffineTransform3d rotation = new TranslationMatrix3d(0.1, 0.1, 0.1);
-        //rotation = rotation.multiplyBy(new TranslationMatrix3d(0.1, 0.1, 0.1));
-        rotation = new ScaleTransform3d(1.5, 1, 1);
-        rotation = rotation.multiplyBy(new RotationZMatrix(-90));
-        rotation = rotation.multiplyBy(new TranslationMatrix3d(0, 0.1, 0));
+        AffineTransform3d transform = new Scaling(1.5, 1, 1);
+        transform = transform.combineWith(new RotationZ(-110));
+        transform = transform.combineWith(new RotationX(45));
+        transform = transform.combineWith(new Translation(-0.5, -0.1, 0.1));
 
-        for (int i = 0; i < shapes.size(); i++) {
-            var s = shapes.get(i);
-            if (s instanceof Triangle t) {
-                shapes.set(i, t.applyTransform(rotation));
-            }
-        }*/
-
-        // adding a sphere
+        mesh.applyTransformDestructive(transform);
 
         var shapes = new ArrayList<IShape3d>(mesh.getFaces());
+
         //var sphere = new Sphere(new Point(0, 0, 0), 1);
 
         //shapes.add(sphere);
@@ -79,7 +71,7 @@ public class Main {
         // creating a scene
         var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.8, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
-        var flatShading = new PhongShadingModel();
+        var flatShading = new FlatShadingModel();
         var instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource, instances);
 

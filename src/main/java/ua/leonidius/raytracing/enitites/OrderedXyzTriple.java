@@ -8,9 +8,9 @@ public abstract class OrderedXyzTriple {
 
     private static final double COMPARISON_PRECISION = 1e-7;
 
-    public final double x;
-    public final double y;
-    public final double z;
+    public double x;
+    public double y;
+    public double z;
 
     public OrderedXyzTriple(double x, double y, double z) {
         this.x = x;
@@ -43,5 +43,11 @@ public abstract class OrderedXyzTriple {
                 ", y=" + y +
                 ", z=" + z +
                 '}';
+    }
+
+    public void absorb(OrderedXyzTriple other) {
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
     }
 }
