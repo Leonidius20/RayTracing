@@ -85,7 +85,7 @@ public class Main {
 
         // rendering
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
-        var pixelRenderer = new DepthMapPixelRenderer();
+        var pixelRenderer = new TrueColorPixelRenderer();
         var pixels = new Renderer(scene, pixelRenderer).render();
 
         // writing result to file
