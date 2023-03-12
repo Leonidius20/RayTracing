@@ -1,6 +1,7 @@
 package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Ray;
 
 /**
  * This can be any kind of camera and we wanna make the renderer(?) depend on this abstraction
@@ -19,5 +20,7 @@ public interface ICamera {
     double pixelWidth();
 
     double pixelHeight();
+
+    Ray getRayForPixel(int pixelX, int pixelY);
 
 }

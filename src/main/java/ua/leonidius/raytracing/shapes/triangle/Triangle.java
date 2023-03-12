@@ -87,9 +87,9 @@ public class Triangle implements IShape3d {
         final Normal normalA = normals[0];
         final Normal normalB = normals[1];
         final Normal normalC = normals[2];
-        return normalA.multiplyBy(u)
-                .add(normalB.multiplyBy(v))
-                .add(normalC.multiplyBy(w))
+        return normalB.multiplyBy(u)
+                .add(normalC.multiplyBy(v))
+                .add(normalA.multiplyBy(w))
                 .normalize();
     }
 
@@ -107,28 +107,33 @@ public class Triangle implements IShape3d {
         Point b = vertices[1];
         Point c = vertices[2];
 
-        Vector3 ab = b.subtract(a);
-        Vector3 ac = c.subtract(a);
-
-
         // 1. compute area of the triangle
-        double fullTriangleArea = ab.crossProduct(ac).calculateLength() / 2.0;
+        double fullTriangleArea = areaOfTriangle(a, b, c);
 
         // 2. compute area of sub-triangle
-        Vector3 ap = point.subtract(a);
-        double areaPAC = ap.crossProduct(ac).calculateLength() / 2.0;
-        double areaPAB = ap.crossProduct(ab).calculateLength() / 2.0;
-
-        Vector3 cp = point.subtract(c);
-        Vector3 cb = b.subtract(c);
-        double areaCPB = cp.crossProduct(cb).calculateLength() / 2.0;
+        double areaU = areaOfTriangle(point, a, c);
+        double areaV = areaOfTriangle(point, a, b);
 
         // 3. divide
-        double u = areaPAC / fullTriangleArea;
-        double v = areaPAB / fullTriangleArea;
-        double w = areaCPB / fullTriangleArea;
+        double u = areaU / fullTriangleArea;
+        double v = areaV / fullTriangleArea;
+        double w = 1 - (u + v);
 
         return new double[] {u, v, w};
+    }
+
+    /**
+     * compute an area of a triangle built on 3 points. Used for barycentric coordinates
+     * calculation
+     * @param p1
+     * @param p2
+     * @param p3
+     * @return
+     */
+    private static double areaOfTriangle(Point p1, Point p2, Point p3) {
+        Vector3 ab = p2.subtract(p1);
+        Vector3 ac = p3.subtract(p1);
+        return ab.crossProduct(ac).calculateLength() / 2.0;
     }
 
     enum Winding {

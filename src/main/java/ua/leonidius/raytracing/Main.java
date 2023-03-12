@@ -70,17 +70,17 @@ public class Main {
         }*/
 
         // adding a sphere
-        var shapes = new ArrayList<IShape3d>();
-        var sphere = new Sphere(new Point(0, 0, 0), 1);
-        // mesh.clear(); // todo remove
-        shapes.add(sphere);
-        shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
-        shapes.addAll(mesh.getFaces());
+
+        var shapes = new ArrayList<IShape3d>(mesh.getFaces());
+        //var sphere = new Sphere(new Point(0, 0, 0), 1);
+
+        //shapes.add(sphere);
+       // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
 
         // creating a scene
-        var camera = new Camera(new Point(0, -7, 0), 0.2, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
+        var camera = new Camera(new Point(0, -2.4, 0), 0.8, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
-        var flatShading = new FlatShadingModel();
+        var flatShading = new PhongShadingModel();
         var instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource, instances);
 
