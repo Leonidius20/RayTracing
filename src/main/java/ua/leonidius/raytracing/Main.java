@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing;
 
+import ua.leonidius.raytracing.algorithm.DepthMapPixelRenderer;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.algorithm.Renderer;
 import ua.leonidius.raytracing.algorithm.TrueColorPixelRenderer;
@@ -84,7 +85,7 @@ public class Main {
 
         // rendering
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
-        var pixelRenderer = new TrueColorPixelRenderer();
+        var pixelRenderer = new DepthMapPixelRenderer();
         var pixels = new Renderer(scene, pixelRenderer).render();
 
         // writing result to file
