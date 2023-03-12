@@ -9,17 +9,9 @@ import ua.leonidius.raytracing.enitites.Ray;
  */
 public interface ICamera {
 
-    Point focusPoint();
-
-    Point findTopLeftPixelCenter();
-
     int sensorWidth();
 
     int sensorHeight();
-
-    double pixelWidth();
-
-    double pixelHeight();
 
     Ray getRayForPixel(int pixelX, int pixelY);
 

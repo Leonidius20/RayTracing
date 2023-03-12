@@ -1,9 +1,7 @@
 package ua.leonidius.raytracing.camera;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.camera.Camera;
 import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Vector3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +16,7 @@ class CameraTest {
         double pixelHeight = 2;
         double pixelWidth = 2;
 
-        Camera camera = new Camera(
+        PerspectiveCamera camera = new PerspectiveCamera(
                 focusPoint, focusDistance,
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);
@@ -34,7 +32,7 @@ class CameraTest {
         resolutionWidth = 3;
         pixelHeight = 1.1;
         pixelWidth = 1.2;
-        camera = new Camera(
+        camera = new PerspectiveCamera(
                 focusPoint, focusDistance,
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);
@@ -52,7 +50,7 @@ class CameraTest {
         double pixelHeight = 2;
         double pixelWidth = 2;
 
-        Camera camera = new Camera(
+        PerspectiveCamera camera = new PerspectiveCamera(
                 focusPoint, focusDistance,
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);
@@ -69,7 +67,7 @@ class CameraTest {
         resolutionWidth = 3;
         pixelHeight = 1.1;
         pixelWidth = 1.2;
-        camera = new Camera(
+        camera = new PerspectiveCamera(
                 focusPoint, focusDistance,
                 resolutionHeight, resolutionWidth,
                 pixelHeight, pixelWidth);

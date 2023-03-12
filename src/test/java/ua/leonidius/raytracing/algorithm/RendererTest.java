@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.leonidius.raytracing.*;
-import ua.leonidius.raytracing.camera.Camera;
+import ua.leonidius.raytracing.camera.PerspectiveCamera;
 import ua.leonidius.raytracing.enitites.*;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.shapes.Sphere;
@@ -31,7 +31,7 @@ class RendererTest {
         double pixelWidth = 1.2;
 
         Scene scene = new Scene(
-                new Camera(
+                new PerspectiveCamera(
                         focusPoint,focusDistance, heightInPixels, widthInPixels, pixelHeight, pixelWidth),
                 new DirectionalLightSource(new Vector3(0, 0, 0)));
         scene.add(new Instance(shape, new FlatShadingModel()));
@@ -121,7 +121,7 @@ class RendererTest {
 
         // camera
         var focusPoint = new Point(0.3, -1, 0.3);
-        var camera = new Camera(focusPoint, 0.1, 1, 1, 1, 1);
+        var camera = new PerspectiveCamera(focusPoint, 0.1, 1, 1, 1, 1);
 
         // scene
         var scene = new Scene(camera, light, shapes);

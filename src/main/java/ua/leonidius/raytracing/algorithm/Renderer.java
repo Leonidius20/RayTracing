@@ -3,9 +3,7 @@ package ua.leonidius.raytracing.algorithm;
 import ua.leonidius.raytracing.Instance;
 import ua.leonidius.raytracing.Scene;
 import ua.leonidius.raytracing.enitites.Color;
-import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.enitites.Vector3;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -37,35 +35,18 @@ public class Renderer {
         Color[][] pixels = new Color[imageHeight][imageWidth];
         // set bg color?
 
-        final double pixelWidth = camera.pixelWidth();
-        final double pixelHeight = camera.pixelHeight();
-
-        Point focusPoint = camera.focusPoint();
-
-        var topLeftPixelCenter = camera.findTopLeftPixelCenter();
-
         for (int pixelX = 0; pixelX < imageWidth; pixelX++) { // row
             for (int pixelY = 0; pixelY < imageHeight; pixelY++) {
 
-                // todo: remove vector creation for better performance
-                Vector3 offset = new Vector3(pixelX * pixelWidth, 0, -pixelY * pixelHeight);
-                // todo: offset is also dependent on rotation of camera. Maybe add different basises?
+               var ray = camera.getRayForPixel(pixelX, pixelY);
 
-                var pixelCenter = topLeftPixelCenter.add(offset);
-
-                // vector from focus point to pixel center
-                Vector3 rayDirection = pixelCenter.subtract(focusPoint)
-                        .normalize();
-
-                Ray ray = new Ray(focusPoint, rayDirection);
-
-                var intersectionOptional = findClosestIntersection(ray, scene);
+                var intersectionOptional =
+                        findClosestIntersection(ray, scene);
                 if (intersectionOptional.isEmpty()) {
                     pixels[pixelY][pixelX] = scene.getBackgroundColor();
                     continue;
                 };
                 var intersection = intersectionOptional.get();
-
 
                 // outer array contains rows (Y value), inner array contains cells from left to right (X value)
                 pixels[pixelY][pixelX] = pixelRenderer.renderIntersection(scene, intersection);
@@ -74,8 +55,6 @@ public class Renderer {
 
         return pixels;
     }
-
-
 
     static Optional<Intersection> findAnyIntersection(Ray ray, Scene scene) {
         throw new RuntimeException("not implemented");

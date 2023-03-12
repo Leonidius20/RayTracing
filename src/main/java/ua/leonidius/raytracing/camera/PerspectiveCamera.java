@@ -3,9 +3,10 @@ package ua.leonidius.raytracing.camera;
 import lombok.Getter;
 import ua.leonidius.raytracing.algorithm.ICamera;
 import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
 
-public class Camera implements ICamera {
+public class PerspectiveCamera implements ICamera {
 
     final Point focusPoint;
 
@@ -27,7 +28,9 @@ public class Camera implements ICamera {
     final double pixelHeight;
     final double pixelWidth;
 
-    public Camera(Point focusPoint, /*Vector3 cameraDirection,*/ double focusDistance, int sensorHeight, int sensorWidth, double pixelHeight, double pixelWidth) {
+    private final Point topLeftPixelCenter;
+
+    public PerspectiveCamera(Point focusPoint, /*Vector3 cameraDirection,*/ double focusDistance, int sensorHeight, int sensorWidth, double pixelHeight, double pixelWidth) {
         this.focusPoint = focusPoint;
         //this.cameraDirection = cameraDirection.normalize();
         this.focusDistance = focusDistance;
@@ -35,13 +38,14 @@ public class Camera implements ICamera {
         this.sensorWidth = sensorWidth;
         this.pixelHeight = pixelHeight;
         this.pixelWidth = pixelWidth;
+
+        this.topLeftPixelCenter = findTopLeftPixelCenter();
     }
 
     /* private */ Point findSensorCenter() {
         return focusPoint.add(direction.multiplyBy(focusDistance));
     }
 
-    @Override
     public Point findTopLeftPixelCenter() {
         var sensorCenter = findSensorCenter();
 
@@ -68,17 +72,16 @@ public class Camera implements ICamera {
     }
 
     @Override
-    public double pixelHeight() {
-        return pixelHeight;
+    public Ray getRayForPixel(int pixelX, int pixelY) {
+        Vector3 offset = new Vector3(pixelX * pixelWidth, 0, -pixelY * pixelHeight);
+        // todo: offset is also dependent on rotation of camera.
+        var pixelCenter = topLeftPixelCenter.add(offset);
+
+        // vector from focus point to pixel center
+        Vector3 rayDirection = pixelCenter.subtract(focusPoint)
+                .normalize();
+
+        return new Ray(focusPoint, rayDirection);
     }
 
-    @Override
-    public double pixelWidth() {
-        return pixelWidth;
-    }
-
-    @Override
-    public Point focusPoint() {
-        return focusPoint;
-    }
 }
