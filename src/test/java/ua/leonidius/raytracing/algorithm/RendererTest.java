@@ -37,7 +37,7 @@ class RendererTest {
         scene.add(new Instance(shape, new FlatShadingModel()));
 
         // do render
-        new Renderer(scene, new TrueColorPixelRenderer()).render();
+        new Renderer(scene, new TrueColorPixelRenderer(), (p, j , jj, jjj, jjjj) -> {}).render();
 
         // expected ray vectors (directions) (normalized)
         var a = (new Point(-1.2, 1.6, 0.75)).subtract(focusPoint).normalize();
@@ -137,7 +137,7 @@ class RendererTest {
 
         // actual pixel value
         Color[][] pixels = (new Renderer(scene,
-                new TrueColorPixelRenderer())).render();
+                new TrueColorPixelRenderer(), (p, j , jj, jjj, jjjj) -> {})).render();
         Color actualPixelValue = pixels[0][0];
 
         assertEquals(expectedPixel, actualPixelValue);

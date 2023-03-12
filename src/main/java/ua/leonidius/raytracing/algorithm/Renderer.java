@@ -5,6 +5,7 @@ import ua.leonidius.raytracing.Scene;
 import ua.leonidius.raytracing.enitites.Color;
 import ua.leonidius.raytracing.enitites.Ray;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
@@ -12,10 +13,12 @@ public class Renderer {
 
     private final Scene scene;
     private final IPixelRenderer pixelRenderer;
+    private final IMonitoringCallback monitor;
 
-    public Renderer(Scene scene, IPixelRenderer pixelRenderer) {
+    public Renderer(Scene scene, IPixelRenderer pixelRenderer, IMonitoringCallback monitor) {
         this.scene = scene;
         this.pixelRenderer = pixelRenderer;
+        this.monitor = monitor;
     }
 
     /**
@@ -29,10 +32,24 @@ public class Renderer {
         final int imageHeight = camera.sensorHeight();
 
         Color[][] pixels = new Color[imageHeight][imageWidth];
+        for (Color[] row : pixels) {
+            Arrays.fill(row, Color.BLACK);
+        }
         // set bg color?
+
+        int pixelCount = 0;
+        int startX = 0;
+        int startY = 0;// for monitoring
 
         for (int pixelX = 0; pixelX < imageWidth; pixelX++) { // row
             for (int pixelY = 0; pixelY < imageHeight; pixelY++) {
+                pixelCount++;
+                if (pixelCount >= 400) {
+                    pixelCount = 0;
+                    monitor.shareProgress(pixels, startX, startY, pixelX - 1, pixelY - 1);
+                    startX = pixelX;
+                    startY = pixelY;
+                }
 
                var ray = camera.getRayForPixel(pixelX, pixelY);
 
@@ -48,6 +65,8 @@ public class Renderer {
                 pixels[pixelY][pixelX] = pixelRenderer.renderIntersection(scene, intersection);
             }
         }
+
+        monitor.shareProgress(pixels, startX, startY, imageWidth - 1, imageHeight - 1);
 
         return pixels;
     }

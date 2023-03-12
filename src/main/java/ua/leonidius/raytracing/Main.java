@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing;
 
+import ua.leonidius.raytracing.algorithm.IMonitoringCallback;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.algorithm.Renderer;
 import ua.leonidius.raytracing.algorithm.TrueColorPixelRenderer;
@@ -17,16 +18,24 @@ import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 import ua.leonidius.raytracing.transformations.*;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class Main {
+public class Main implements IMonitoringCallback {
 
     private static final int IMAGE_WIDTH = 854;
     private static final int IMAGE_HEIGHT = 480;
+
+    private static JLabel jLabel;
+    private static BufferedImage img; // for monitoring
 
     public static void main(String[] args) throws IOException {
         // parsing CLI parameters
@@ -75,13 +84,49 @@ public class Main {
         var instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource, instances);
 
+        // showing gui
+        var frame = new JFrame("Ray Tracing");
+
+        img = new BufferedImage(camera.sensorWidth(), camera.sensorHeight(),
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D    graphics = img.createGraphics();
+
+        graphics.setColor ( new Color( 20, 20, 20 ) );
+        graphics.fillRect ( 0, 0, img.getWidth(), img.getHeight() );
+        var imgIcon = new ImageIcon(img);
+        jLabel = new JLabel(imgIcon);
+
+
+        // imgIcon.setImage(ImageIO.read(new File("results/lab2.png")));
+
+        frame.add(jLabel);
+
+        frame.pack();
+        frame.setVisible(true);
+
         // rendering
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
         var pixelRenderer = new TrueColorPixelRenderer();
-        var pixels = new Renderer(scene, pixelRenderer).render();
+
+        var pixels = new Renderer(scene, pixelRenderer, new Main()).render();
 
         // writing result to file
         (new PngImageWriter(arguments.outputFile())).writeImage(pixels);
+
+    }
+
+    @Override
+    public void shareProgress(ua.leonidius.raytracing.enitites.Color[][] pixels, int startX, int startY, int endX, int endY) {
+        for (int x = startX; x <= endX; x++){
+            for (int y = 0; y < pixels.length; y++)
+            {
+                var color = pixels[y][x];
+
+                int col = (color.r() << 16) | (color.g() << 8) | color.b();
+                img.setRGB(x, y, col);
+            }
+        }
+        jLabel.repaint();
     }
 
     /*private static Scene createScene() {
