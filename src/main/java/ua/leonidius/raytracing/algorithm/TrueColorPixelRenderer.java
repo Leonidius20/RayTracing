@@ -1,12 +1,10 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.Instance;
 import ua.leonidius.raytracing.Scene;
 import ua.leonidius.raytracing.enitites.Color;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
-
-import java.util.OptionalDouble;
+import ua.leonidius.raytracing.primitives.Instance;
 
 public class TrueColorPixelRenderer implements IPixelRenderer {
 
@@ -36,8 +34,8 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
             // find any intersection, if found, return 0
 
             for (var shape : scene.getObjects()) {
-                OptionalDouble intersectionTparam = shape.getGeometry().findVisibleIntersectionWithRay(shadowRay);
-                if (intersectionTparam.isPresent()) return 0.0;
+                var intersection = shape.findVisibleIntersectionWithRay(shadowRay);
+                if (intersection.isPresent()) return 0.0;
             }
         }
 

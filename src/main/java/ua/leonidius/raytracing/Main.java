@@ -1,9 +1,7 @@
 package ua.leonidius.raytracing;
 
-import ua.leonidius.raytracing.algorithm.IMonitoringCallback;
-import ua.leonidius.raytracing.algorithm.IShape3d;
+import ua.leonidius.raytracing.algorithm.*;
 import ua.leonidius.raytracing.algorithm.Renderer;
-import ua.leonidius.raytracing.algorithm.TrueColorPixelRenderer;
 import ua.leonidius.raytracing.arguments.CliArgsParseException;
 import ua.leonidius.raytracing.arguments.CliArguments;
 import ua.leonidius.raytracing.arguments.MissingCliParameterException;
@@ -14,15 +12,14 @@ import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
+import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 import ua.leonidius.raytracing.transformations.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -81,7 +78,7 @@ public class Main implements IMonitoringCallback {
         var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.8, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
         var flatShading = new FlatShadingModel();
-        var instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource, instances);
 
         // showing gui

@@ -1,6 +1,6 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.Instance;
+import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 

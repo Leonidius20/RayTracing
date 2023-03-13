@@ -1,13 +1,11 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.Instance;
 import ua.leonidius.raytracing.Scene;
 import ua.leonidius.raytracing.enitites.Color;
 import ua.leonidius.raytracing.enitites.Ray;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.OptionalDouble;
 
 public class Renderer {
 
@@ -71,38 +69,21 @@ public class Renderer {
         return pixels;
     }
 
-    static Optional<Intersection> findAnyIntersection(Ray ray, Scene scene) {
-        throw new RuntimeException("not implemented");
-    }
-
     /* private */ static Optional<Intersection> findClosestIntersection(Ray ray, Scene scene) {
-        Instance closestObject = null;
-        Double closestIntersectionTparam = null;
-
-        /*OptionalDouble closestT = scene.getObjects().stream()
-
-                .map(obj -> obj.findVisibleIntersectionWithRay(ray)) // get intersections
-                .filter(OptionalDouble::isPresent)
-                .mapToDouble(OptionalDouble::getAsDouble)
-                .min();*/
+        Optional<Intersection> closestIntersection = Optional.empty();
 
         for (var object : scene.getObjects()) {
-            OptionalDouble intersectionTparam = object.getGeometry()
+            var intersection = object
                     .findVisibleIntersectionWithRay(ray);
-            if (intersectionTparam.isEmpty()) continue;
-            if (closestIntersectionTparam == null
-                    || intersectionTparam.getAsDouble() < closestIntersectionTparam) {
-                closestIntersectionTparam = intersectionTparam.getAsDouble();
-                closestObject = object;
+            if (intersection.isEmpty()) continue;
+
+            if (closestIntersection.isEmpty()
+                    || intersection.get().tParam() < closestIntersection.get().tParam()) {
+                closestIntersection = intersection;
             }
         }
 
-        if (closestObject == null) {
-            return Optional.empty();
-        } else {
-            var point = ray.getXyzOnRay(closestIntersectionTparam);
-            return Optional.of(new Intersection(ray, closestObject, closestIntersectionTparam, point));
-        }
+        return closestIntersection;
     }
 
 }

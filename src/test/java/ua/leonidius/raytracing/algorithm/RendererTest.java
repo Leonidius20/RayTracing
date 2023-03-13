@@ -7,6 +7,7 @@ import ua.leonidius.raytracing.*;
 import ua.leonidius.raytracing.camera.PerspectiveCamera;
 import ua.leonidius.raytracing.enitites.*;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
+import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.triangle.Triangle;
 
@@ -98,7 +99,7 @@ class RendererTest {
 
     @Test
     public void onePixelSceneWithSmoothShadingAndDirectionalLight() {
-        var shapes = new ArrayList<Instance>(1);
+        ArrayList<IPrimitive> shapes = new ArrayList<>(1);
 
         // add triangle with normals
         var vertex1 = new Point(0, 0, 0);
