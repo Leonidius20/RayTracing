@@ -13,6 +13,7 @@ import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.primitives.Instance;
+import ua.leonidius.raytracing.primitives.kdtree.KdTree;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 import ua.leonidius.raytracing.transformations.*;
@@ -79,10 +80,13 @@ public class Main implements IMonitoringCallback {
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
         var flatShading = new FlatShadingModel();
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
-        var scene = new Scene(camera, lightSource, instances);
+        var kdTree = KdTree.buildFor(instances);
+        var scene = new Scene(camera, lightSource);
+        scene.add(kdTree);
 
         // showing gui
         var frame = new JFrame("Ray Tracing");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         img = new BufferedImage(camera.sensorWidth(), camera.sensorHeight(),
                 BufferedImage.TYPE_INT_RGB);
@@ -106,6 +110,10 @@ public class Main implements IMonitoringCallback {
         var pixelRenderer = new TrueColorPixelRenderer();
 
         var pixels = new Renderer(scene, pixelRenderer, new Main()).render();
+
+        System.out.println("Done.");
+        frame.setVisible(false);
+        frame.dispose();
 
         // writing result to file
         (new PngImageWriter(arguments.outputFile())).writeImage(pixels);

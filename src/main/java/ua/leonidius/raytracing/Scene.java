@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 public class Scene {
 
+    // TODO: method to compute bounding box of the entire scene
+
     @Getter private final ArrayList<IPrimitive> objects;
     @Getter @Setter
     ICamera activeCamera;
@@ -30,7 +32,7 @@ public class Scene {
         this.objects = shapes;
     }
 
-    public void add(Instance obj) {
+    public void add(IPrimitive obj) {
         objects.add(obj);
     }
 

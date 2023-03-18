@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.shapes.triangle;
 
+import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.*;
-import ua.leonidius.raytracing.shapes.IAffineTransform3d;
 
 import java.util.Arrays;
 import java.util.OptionalDouble;
@@ -193,5 +193,9 @@ public class Triangle implements IShape3d {
         int result = Arrays.hashCode(vertices);
         result = 31 * result + Arrays.hashCode(normals);
         return result;
+    }
+
+    public BoundingBox computeBoundingBox() {
+        return new BoundingBox(vertices[0], vertices[1]).includePoint(vertices[2]);
     }
 }
