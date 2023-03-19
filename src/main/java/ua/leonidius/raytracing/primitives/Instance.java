@@ -1,6 +1,7 @@
 package ua.leonidius.raytracing.primitives;
 
 import lombok.Getter;
+import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.IShadingModel;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
 import ua.leonidius.raytracing.algorithm.IShape3d;
@@ -42,4 +43,8 @@ public class Instance implements IPrimitive {
         return Optional.of(new Intersection(ray, this, t, point));
     }
 
+    @Override
+    public BoundingBox computeBoundingBox() {
+        return geometry.computeBoundingBox();
+    }
 }

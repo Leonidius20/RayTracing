@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.shapes;
 
+import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
@@ -60,4 +61,8 @@ public class Sphere implements IShape3d {
         return getRealNormalAt(point);
     }
 
+    @Override
+    public BoundingBox computeBoundingBox() {
+        throw new RuntimeException("not implemented: Sphere bounding box"); // TODO
+    }
 }

@@ -5,11 +5,12 @@ import ua.leonidius.raytracing.algorithm.IPrimitive;
 import ua.leonidius.raytracing.algorithm.Intersection;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.primitives.Aggregate;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class KdTree implements IPrimitive {
+public class KdTree extends Aggregate {
 
     interface INode {
 
@@ -30,24 +31,21 @@ public class KdTree implements IPrimitive {
 
     }
 
-    private INode root;
-    private BoundingBox boundingBox;
-    private ArrayList<IPrimitive> primitives; // todo remove
+    private final INode root;
+    private final BoundingBox boundingBox;
 
-    private KdTree() {}
+    // private KdTree() {}
 
-    public static KdTree buildFor(ArrayList<IPrimitive> primitives) {
-        var tree = new KdTree();
-        tree.primitives = primitives;
-        tree.boundingBox = tree.calcBoundingBox(primitives);
-        tree.root = new LeafNode(primitives);
-        return tree;
+    public KdTree(ArrayList<IPrimitive> primitives) {
+        super(primitives);
+        boundingBox = calcBoundingBox();
+        root = new LeafNode(primitives);
     }
 
     @Override
     public Optional<Intersection> findVisibleIntersectionWithRay(Ray ray) {
         var intersectionWithAABB
-                = boundingBox.findVisibleIntersectionWith(ray);
+                = boundingBox.findVisibleIntersectionWithRay(ray);
         if (intersectionWithAABB.isEmpty()) return Optional.empty();
 
         // dumb code next
@@ -73,16 +71,5 @@ public class KdTree implements IPrimitive {
         return boundingBox;
     }
 
-    private BoundingBox calcBoundingBox(ArrayList<IPrimitive> primitives) {
-        if (primitives.size() == 0)
-            return new BoundingBox(new Point(0, 0, 0), new Point(0, 0, 0));
 
-        var bounds = primitives.get(0).computeBoundingBox();
-
-        for (int i = 1; i < primitives.size(); i++) {
-            bounds = bounds.combineWith(primitives.get(i).computeBoundingBox());
-        }
-
-        return bounds;
-    }
 }

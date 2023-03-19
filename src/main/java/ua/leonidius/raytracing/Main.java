@@ -12,6 +12,7 @@ import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
+import ua.leonidius.raytracing.primitives.DumbAggregate;
 import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.primitives.kdtree.KdTree;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
@@ -80,9 +81,11 @@ public class Main implements IMonitoringCallback {
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
         var flatShading = new FlatShadingModel();
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
-        var kdTree = KdTree.buildFor(instances);
+        var kdTree = new DumbAggregate(instances);
         var scene = new Scene(camera, lightSource);
         scene.add(kdTree);
+        // instances.forEach(scene::add);
+        // scene.add(new BoundingBox(new Point(0.5, 0.5, 0.5), new Point(1, 1, 1)));
 
         // showing gui
         var frame = new JFrame("Ray Tracing");

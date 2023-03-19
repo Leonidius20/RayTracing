@@ -195,6 +195,7 @@ public class Triangle implements IShape3d {
         return result;
     }
 
+    @Override
     public BoundingBox computeBoundingBox() {
         return new BoundingBox(vertices[0], vertices[1]).includePoint(vertices[2]);
     }

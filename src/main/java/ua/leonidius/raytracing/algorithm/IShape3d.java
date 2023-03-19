@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.algorithm;
 
+import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
@@ -13,6 +14,8 @@ public interface IShape3d {
     Normal getRealNormalAt(Point point);
 
     Normal getInterpolatedNormalAt(Point point);
+
+    BoundingBox computeBoundingBox();
 
     // TODO: watch lecture about transformations once more
     // and find out what should be transformed and how

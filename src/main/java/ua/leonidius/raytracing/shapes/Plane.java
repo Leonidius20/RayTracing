@@ -1,6 +1,7 @@
 package ua.leonidius.raytracing.shapes;
 
 import lombok.Getter;
+import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
@@ -46,5 +47,10 @@ public class Plane implements IShape3d {
     @Override
     public Normal getInterpolatedNormalAt(Point point) {
         return normal;
+    }
+
+    @Override
+    public BoundingBox computeBoundingBox() {
+        throw new RuntimeException("not implemented: Sphere bounding box"); // TODO
     }
 }
