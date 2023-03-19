@@ -14,7 +14,6 @@ import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.primitives.DumbAggregate;
 import ua.leonidius.raytracing.primitives.Instance;
-import ua.leonidius.raytracing.primitives.kdtree.KdTree;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 import ua.leonidius.raytracing.transformations.*;
@@ -36,6 +35,8 @@ public class Main implements IMonitoringCallback {
     private static JLabel jLabel;
     private static BufferedImage img; // for monitoring
 
+    private static JFrame frame;
+
     public static void main(String[] args) throws IOException {
         // parsing CLI parameters
         IProgramArguments arguments;
@@ -49,83 +50,78 @@ public class Main implements IMonitoringCallback {
             return;
         }
 
-        // parsing input file
-        TriangleMesh mesh = null;
-        try {
-            mesh = new ParsedWavefrontFile(
-                    Files.newBufferedReader(
-                            Paths.get(arguments.inputFile())))
-                    .shapes(new TriangleFactory());
-        } catch (ParsingException e) {
-            System.err.println(e.getMessage());
-            System.exit(-1);
+        if (arguments.demoMode()) {
+            System.out.println("Launching in demo mode");
         }
 
+        // parsing input file
+        var mesh = parseMesh(arguments.inputFile());
+
         // applying transformations
-        AffineTransform3d transform = new Scaling(1.5, 1, 1);
-        transform = transform.combineWith(new RotationZ(-110));
-        transform = transform.combineWith(new RotationX(45));
-        transform = transform.combineWith(new Translation(-0.5, -0.1, 0.1));
+        applyDestructiveTransforms(mesh);
 
-        mesh.applyTransformDestructive(transform);
+        var shapes = new ArrayList<IShape3d>(mesh.getFaces());        
 
-        var shapes = new ArrayList<IShape3d>(mesh.getFaces());
-
-        //var sphere = new Sphere(new Point(0, 0, 0), 1);
-
-        //shapes.add(sphere);
-       // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
-
-        // creating a scene
-        var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.8, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
-        var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
-        var flatShading = new FlatShadingModel();
-        ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
-        var kdTree = new DumbAggregate(instances);
-        var scene = new Scene(camera, lightSource);
-        scene.add(kdTree);
-        // instances.forEach(scene::add);
-        // scene.add(new BoundingBox(new Point(0.5, 0.5, 0.5), new Point(1, 1, 1)));
-
-        // showing gui
-        var frame = new JFrame("Ray Tracing");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        img = new BufferedImage(camera.sensorWidth(), camera.sensorHeight(),
-                BufferedImage.TYPE_INT_RGB);
-        Graphics2D    graphics = img.createGraphics();
-
-        graphics.setColor ( new Color( 20, 20, 20 ) );
-        graphics.fillRect ( 0, 0, img.getWidth(), img.getHeight() );
-        var imgIcon = new ImageIcon(img);
-        jLabel = new JLabel(imgIcon);
-
-
-        // imgIcon.setImage(ImageIO.read(new File("results/lab2.png")));
-
-        frame.add(jLabel);
-
-        frame.pack();
-        frame.setVisible(true);
-
-        // rendering
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
         var pixelRenderer = new TrueColorPixelRenderer();
 
-        var pixels = new Renderer(scene, pixelRenderer, new Main()).render();
+        if (!arguments.demoMode()) {
+             // creating a scene
+            var scene = createScene(shapes, true);
 
-        System.out.println("Done.");
-        frame.setVisible(false);
-        frame.dispose();
+            // showing gui
+            showGUI();
+
+            // rendering
+       
+            var pixels = new Renderer(scene, pixelRenderer, new Main()).render();
+
+            System.out.println("Done.");
+            closeGui();
 
         // writing result to file
         (new PngImageWriter(arguments.outputFile())).writeImage(pixels);
+        } else {
+            // creating a non-accelerated scene
+            var scene = createScene(shapes, false);
+            // showing gui
+            showGUI();
 
+            var monitor = new Main();
+
+            // rendering without acceleration
+            long startTime = System.nanoTime();
+            new Renderer(scene, pixelRenderer, monitor).render();
+            long endTime = System.nanoTime();
+
+            
+
+            long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+
+            System.out.println("Slow result: " + duration / 1000000 + " ms");
+
+            // clear the canvas
+            clearBufferedImage(img);
+
+            // creating an accelerated scene
+            scene = createScene(shapes, true);
+
+            // rendering with acceleration
+            startTime = System.nanoTime();
+            new Renderer(scene, pixelRenderer, monitor).render();
+            endTime = System.nanoTime();
+
+            duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+
+            System.out.println("Fast result: " + duration / 1000000 + " ms");
+
+            closeGui();
+        }
     }
 
     @Override
     public void shareProgress(ua.leonidius.raytracing.enitites.Color[][] pixels, int startX, int startY, int endX, int endY) {
-        for (int x = startX; x <= endX; x++){
+        for (int x = startX; x <= endX; x++) {
             for (int y = 0; y < pixels.length; y++)
             {
                 var color = pixels[y][x];
@@ -137,34 +133,91 @@ public class Main implements IMonitoringCallback {
         jLabel.repaint();
     }
 
-    /*private static Scene createScene() {
-        var sphere = new Sphere(new Point(0, 0, 0), 6.5);
-        // TODO: test coordinates, see whether they mean what they are supposed to mean
+    private static void showGUI() {
+        frame = new JFrame("Ray Tracing");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        var sphereBehind = new Sphere(new Point(9 + 6, 2, 0), 4);
-        var sphereBehind2 = new Sphere(new Point(9 - 32, 4, 0 + 16), 4);
+        img = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT,
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D    graphics = img.createGraphics();
 
-        var plane = new Plane(new Point(0, 8, 0), new Vector3(0, -1, 1));
+        graphics.setColor ( new Color( 20, 20, 20 ) );
+        graphics.fillRect ( 0, 0, img.getWidth(), img.getHeight() );
+        graphics.dispose();
+        var imgIcon = new ImageIcon(img);
+        jLabel = new JLabel(imgIcon);
 
-        var camera = new Camera(new Point(0, -28, 0), 30, IMAGE_HEIGHT, IMAGE_WIDTH, 0.125, 0.125);
 
-        var lightSource = new DirectionalLightSource(new Vector3(-1, -1, 0).normalize());
-        // why is y = -1? itn't the light shining into camera this way?
+        // imgIcon.setImage(ImageIO.read(new File("results/lab2.png")));
 
-        var triangle = new Triangle(
-                new Point(0, 0, 0),
-                new Point(1, 0, 0),
-                new Point(0, 0, 1)
-        );
+        frame.add(jLabel);
 
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    private static void closeGui() {
+        frame.setVisible(false);
+        frame.dispose();
+    }
+
+    private static TriangleMesh parseMesh(String inputFile) throws IOException {
+        TriangleMesh mesh = null;
+        try {
+            mesh = new ParsedWavefrontFile(
+                    Files.newBufferedReader(
+                            Paths.get(inputFile)))
+                    .shapes(new TriangleFactory());
+        } catch (ParsingException e) {
+            System.err.println(e.getMessage());
+            System.exit(-1);
+        }
+        return mesh;
+    }
+
+    private static void applyDestructiveTransforms(TriangleMesh mesh) {
+        AffineTransform3d transform = new Scaling(1.5, 1, 1);
+        transform = transform.combineWith(new RotationZ(-110));
+        transform = transform.combineWith(new RotationX(45));
+        transform = transform.combineWith(new Translation(-0.5, -0.1, 0.1));
+
+        mesh.applyTransformDestructive(transform);
+    }
+
+    private static Scene createScene(ArrayList<IShape3d> shapes, boolean accelerate) {
+//var sphere = new Sphere(new Point(0, 0, 0), 1);
+
+        //shapes.add(sphere);
+       // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
+
+        var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.8, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
+        var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
+        var flatShading = new FlatShadingModel();
+        ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource);
-        //scene.addObject(sphere);
-        //scene.addObject(sphereBehind);
-        //scene.addObject(sphereBehind2);
-        //scene.addObject(plane);
-        scene.add(triangle);
-
+        if (accelerate) {
+            var kdTree = new DumbAggregate(instances);
+       
+            scene.add(kdTree);
+        } else {
+            instances.forEach(scene::add);
+        }
         return scene;
-    }*/
+    }
+
+    private static class EmptyRenderingMonitor implements IMonitoringCallback {
+        @Override
+        public void shareProgress(ua.leonidius.raytracing.enitites.Color[][] pixels, int startX, int startY, int endX, int endY) {
+        }
+    }
+
+    private static void clearBufferedImage(BufferedImage img) {
+        Graphics2D graphics = img.createGraphics();
+
+        graphics.setPaint ( new Color ( 0, 0, 0 ) );
+        graphics.fillRect ( 0, 0, img.getWidth(), img.getHeight() );
+
+        graphics.dispose();
+    }
 
 }

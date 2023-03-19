@@ -9,7 +9,7 @@
             "name": "Launch with Arguments",
             "request": "launch",
             "mainClass": "ua.leonidius.raytracing.Main",
-            "args": "--input cow.obj --output output.png"
+            "args": "--input cow.obj --output output2.png -d"
         },
         {
             "type": "java",

@@ -7,6 +7,7 @@ public class CliArguments implements IProgramArguments {
 
     private final String inputFile;
     private final String outputFile;
+    private final boolean demoMode;
 
     public CliArguments(String[] args) throws MissingCliParameterException, CliArgsParseException {
         // parsing CLI arguments
@@ -14,6 +15,7 @@ public class CliArguments implements IProgramArguments {
 
         var outputOption = Option.builder("output")
                 .argName("file")
+                .longOpt("output")
                 .hasArg()
                 .desc("output file path")
                 .build();
@@ -24,8 +26,14 @@ public class CliArguments implements IProgramArguments {
                 .desc("input file path")
                 .build();
 
+        var demoOption = Option.builder("d")
+                .desc("demo mode")
+                .longOpt("demo")
+                .build();
+
         options.addOption(outputOption);
         options.addOption(inputOption);
+        options.addOption(demoOption);
 
         var parser = new GnuParser();
         CommandLine line;
@@ -50,6 +58,8 @@ public class CliArguments implements IProgramArguments {
         } else {
             throw new MissingCliParameterException();
         }
+
+        demoMode = line.hasOption("demo");
     }
 
     @Override
@@ -60,6 +70,11 @@ public class CliArguments implements IProgramArguments {
     @Override
     public String outputFile() {
         return outputFile;
+    }
+
+    @Override
+    public boolean demoMode() {
+        return demoMode;
     }
 
 }

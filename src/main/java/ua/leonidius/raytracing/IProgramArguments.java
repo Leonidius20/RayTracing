@@ -6,4 +6,10 @@ public interface IProgramArguments {
 
     String outputFile();
 
+    /**
+     * Defines whether to render the scene with and without acceleration structures
+     * and compare the time.
+     */
+    boolean demoMode();
+
 }
