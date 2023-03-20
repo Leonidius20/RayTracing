@@ -42,6 +42,8 @@ public class KdTree extends Aggregate {
 
         @Override
         public Optional<Intersection> checkIntersection(Ray ray, RayFragment fragment) {
+            this.info.traversed = true;
+
             // idk when this happens but who knows maybe it does
             if (fragment.tMin() > fragment.tMax()) {
                 return Optional.empty();
@@ -90,6 +92,8 @@ public class KdTree extends Aggregate {
 
         @Override
         public Optional<Intersection> checkIntersection(Ray ray, RayFragment fragment) {
+            this.info.traversed = true;
+
             Optional<Intersection> closestIntersection = Optional.empty();
 
             // again idk if this is needed
@@ -117,8 +121,18 @@ public class KdTree extends Aggregate {
         }
     }
 
-    record NodeDebugInfo(int depth, String type, int primitivesNumber) {
+    private static class NodeDebugInfo {
+        final int depth;
+        final String type;
+        final int primitivesNumber;
+        boolean traversed;
 
+        private NodeDebugInfo(int depth, String type, int primitivesNumber) {
+            this.depth = depth;
+            this.type = type;
+            this.primitivesNumber = primitivesNumber;
+            this.traversed = false;
+        }
     }
 
     /**
@@ -142,10 +156,15 @@ public class KdTree extends Aggregate {
         super(primitives);
         this.splitChooser = splitChooser;
         boundingBox = calcBoundingBox();
-        root = buildTree(primitives, 0, boundingBox);
-        // maxDepth = (int) (8 + 1.3 * Math.log(primitives.size()));
-        maxDepth = 1;// todo remove
+
+       // maxDepth = 2;// todo remove
+        maxDepth = (int) (8 + 1.3 * Math.log(primitives.size()));
+
         minPrimitivesNumberInLeaf = 10; //  todo choose
+
+        root = buildTree(primitives, 0, boundingBox);
+
+
     }
 
     INode buildTree(ArrayList<IPrimitive> themPrimitives, int currentDepth, BoundingBox currentAABB) {

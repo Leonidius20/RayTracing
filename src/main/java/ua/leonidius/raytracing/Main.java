@@ -71,7 +71,7 @@ public class Main implements IMonitoringCallback {
 
         if (!arguments.demoMode()) {
              // creating a scene
-            var scene = createScene(shapes, false);
+            var scene = createScene(shapes, true);
 
             // showing gui
             showGUI();
