@@ -50,4 +50,19 @@ public abstract class OrderedXyzTriple {
         this.y = other.y;
         this.z = other.z;
     }
+
+    public double getValue(Axis axis) {
+        switch (axis) {
+            case X -> {
+                return x;
+            }
+            case Y -> {
+                return y;
+            }
+            case Z -> {
+                return z;
+            }
+        }
+        throw new RuntimeException("unknown axis");
+    }
 }

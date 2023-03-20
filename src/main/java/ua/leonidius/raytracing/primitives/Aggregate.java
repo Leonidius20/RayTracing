@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public abstract class Aggregate implements IPrimitive {
 
-    protected final ArrayList<IPrimitive> primitives;
+    private final ArrayList<IPrimitive> primitives;
 
     protected Aggregate(ArrayList<IPrimitive> primitives) {
         this.primitives = primitives;
@@ -26,6 +26,10 @@ public abstract class Aggregate implements IPrimitive {
         }
 
         return bounds;
+    }
+
+    protected ArrayList<IPrimitive> allPrimitives() {
+        return primitives;
     }
 
 }

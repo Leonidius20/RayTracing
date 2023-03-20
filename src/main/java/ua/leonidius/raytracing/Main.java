@@ -14,6 +14,8 @@ import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.primitives.DumbAggregate;
 import ua.leonidius.raytracing.primitives.Instance;
+import ua.leonidius.raytracing.primitives.kdtree.KdTree;
+import ua.leonidius.raytracing.primitives.kdtree.MiddleSplitChooser;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 import ua.leonidius.raytracing.transformations.*;
@@ -52,6 +54,8 @@ public class Main implements IMonitoringCallback {
 
         if (arguments.demoMode()) {
             System.out.println("Launching in demo mode");
+        } else {
+            System.out.println("Launching in regular mode");
         }
 
         // parsing input file
@@ -67,20 +71,25 @@ public class Main implements IMonitoringCallback {
 
         if (!arguments.demoMode()) {
              // creating a scene
-            var scene = createScene(shapes, true);
+            var scene = createScene(shapes, false);
 
             // showing gui
             showGUI();
 
             // rendering
-       
+
+            long startTime = System.nanoTime();
             var pixels = new Renderer(scene, pixelRenderer, new Main()).render();
+            long endTime = System.nanoTime();
+
+            long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+            System.out.println("Time elapsed: " + duration / 1000000 + " ms");
 
             System.out.println("Done.");
             closeGui();
 
-        // writing result to file
-        (new PngImageWriter(arguments.outputFile())).writeImage(pixels);
+            // writing result to file
+            (new PngImageWriter(arguments.outputFile())).writeImage(pixels);
         } else {
             // creating a non-accelerated scene
             var scene = createScene(shapes, false);
@@ -196,7 +205,7 @@ public class Main implements IMonitoringCallback {
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource);
         if (accelerate) {
-            var kdTree = new DumbAggregate(instances);
+            var kdTree = new KdTree(instances, new MiddleSplitChooser()); // todo create one
        
             scene.add(kdTree);
         } else {

@@ -11,6 +11,7 @@ public class Triangle implements IShape3d {
 
     private final Point[] vertices;
     private final Normal[] normals;
+    private BoundingBox cachedBoundingBox = null; // todo: invalidate after affine transformation
 
     public Triangle(Point vertex1, Point vertex2, Point vertex3) {
         this.vertices = new Point[] {vertex1, vertex2, vertex3};
@@ -197,6 +198,9 @@ public class Triangle implements IShape3d {
 
     @Override
     public BoundingBox computeBoundingBox() {
-        return new BoundingBox(vertices[0], vertices[1]).includePoint(vertices[2]);
+        if (cachedBoundingBox == null) {
+            cachedBoundingBox = new BoundingBox(vertices[0], vertices[1]).includePoint(vertices[2]);
+        }
+        return cachedBoundingBox;
     }
 }

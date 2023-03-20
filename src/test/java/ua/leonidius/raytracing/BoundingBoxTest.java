@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 
 import ua.leonidius.raytracing.algorithm.Intersection;
+import ua.leonidius.raytracing.enitites.Axis;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
 import ua.leonidius.raytracing.enitites.Vector3;
@@ -45,8 +46,6 @@ public class BoundingBoxTest {
 
         var intersection = bb.findVisibleIntersectionWithRay(ray);
 
-        intersection.ifPresent(value -> System.out.println(value.tParam()));
-
         assertTrue(intersection.isEmpty());
     }
 
@@ -68,4 +67,11 @@ public class BoundingBoxTest {
 
         assertEquals(bb.includePoint(additionalPoint), expectedBB);
     }
+
+    @Test
+    void maximumExtentTest() {
+        var bb = new BoundingBox(new Point(1, 2, 3), new Point(6, 6, 4));
+        assertEquals(Axis.X, bb.maximumExtentAxis());
+    }
+
 }

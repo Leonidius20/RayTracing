@@ -1,7 +1,9 @@
 package ua.leonidius.raytracing;
 
+import lombok.Getter;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
 import ua.leonidius.raytracing.algorithm.Intersection;
+import ua.leonidius.raytracing.enitites.Axis;
 import ua.leonidius.raytracing.enitites.Normal;
 import ua.leonidius.raytracing.enitites.Point;
 import ua.leonidius.raytracing.enitites.Ray;
@@ -16,8 +18,8 @@ import java.util.stream.Stream;
  */
 public class BoundingBox {
 
-    private Point minPoint;
-    private Point maxPoint;
+    @Getter private Point minPoint;
+    @Getter private Point maxPoint;
 
     private BoundingBox() {}
 
@@ -66,7 +68,7 @@ public class BoundingBox {
         return bb;
     }
 
-    public Optional<Intersection> findVisibleIntersectionWithRay(Ray ray) {
+    public Optional<RayFragment> findVisibleIntersectionWithRay(Ray ray) {
         //throw new RuntimeException("not impl");
 
         /*Plane parallelToXoZMin = new Plane(minPoint, new Normal(0, -1, 0));
@@ -140,7 +142,8 @@ public class BoundingBox {
             return Optional.empty();
         }
 
-        return Optional.of(new Intersection(ray, null, tmin, ray.getXyzOnRay(tmin)));
+        // return Optional.of(new Intersection(ray, null, tmin, ray.getXyzOnRay(tmin)));
+        return Optional.of(new RayFragment(tmin, tmax));
     }
 
     Point minPoint() {
@@ -170,4 +173,25 @@ public class BoundingBox {
     public int hashCode() {
         return minPoint.hashCode() + maxPoint.hashCode();
     }
+
+    public Axis maximumExtentAxis() {
+        var currentMaxExtent = Axis.X;
+        var currentMaxEdge = maxPoint.x - minPoint.x;
+
+        // y
+        var yEdge = maxPoint.y - minPoint.y;
+        if (yEdge > currentMaxEdge) {
+            currentMaxEdge = yEdge;
+            currentMaxExtent = Axis.Y;
+        }
+
+        var zEdge = maxPoint.z - minPoint.z;
+        if (zEdge > currentMaxEdge) {
+            // currentMaxEdge = zEdge;
+            currentMaxExtent = Axis.Z;
+        }
+
+        return currentMaxExtent;
+    }
+
 }

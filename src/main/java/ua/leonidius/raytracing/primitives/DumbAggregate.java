@@ -22,7 +22,7 @@ public class DumbAggregate extends Aggregate {
         if (boundingBox.findVisibleIntersectionWithRay(ray).isPresent()) {
             Optional<Intersection> closestIntersection = Optional.empty();
 
-            for (var object : primitives) {
+            for (var object : allPrimitives()) {
                 var intersection = object
                         .findVisibleIntersectionWithRay(ray);
                 if (intersection.isEmpty()) continue;
