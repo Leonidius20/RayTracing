@@ -63,6 +63,8 @@ public class Sphere implements IShape3d {
 
     @Override
     public BoundingBox computeBoundingBox() {
-        throw new RuntimeException("not implemented: Sphere bounding box"); // TODO
+        var minPoint = new Point(center.x - radius, center.y - radius, center.z - radius);
+        var maxPoint = new Point(center.x + radius, center.y + radius, center.z + radius);
+        return new BoundingBox(minPoint, maxPoint);
     }
 }

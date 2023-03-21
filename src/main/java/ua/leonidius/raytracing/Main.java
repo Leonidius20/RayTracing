@@ -12,13 +12,14 @@ import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.output.PngImageWriter;
-import ua.leonidius.raytracing.primitives.DumbAggregate;
 import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.primitives.kdtree.KdTree;
+import ua.leonidius.raytracing.primitives.kdtree.KdTreeRecursiveIntersectionFinder;
+import ua.leonidius.raytracing.primitives.kdtree.KdTreeValidator;
 import ua.leonidius.raytracing.primitives.kdtree.MiddleSplitChooser;
+import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
-import ua.leonidius.raytracing.transformations.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,8 +32,8 @@ import java.util.stream.Collectors;
 
 public class Main implements IMonitoringCallback {
 
-    private static final int IMAGE_WIDTH = 854;
-    private static final int IMAGE_HEIGHT = 480;
+    private static final int IMAGE_WIDTH = 1900;
+    private static final int IMAGE_HEIGHT = 1200;
 
     private static JLabel jLabel;
     private static BufferedImage img; // for monitoring
@@ -177,6 +178,13 @@ public class Main implements IMonitoringCallback {
                     Files.newBufferedReader(
                             Paths.get(inputFile)))
                     .shapes(new TriangleFactory());
+
+            for (var shape : mesh.getFaces() ){
+                 if (shape.getVertices()[0].equals(shape.getVertices()[1]) && shape.getVertices()[1].equals(shape.getVertices()[2])){
+                     System.out.println("Found degenerate triangle");
+                 }
+
+            }
         } catch (ParsingException e) {
             System.err.println(e.getMessage());
             System.exit(-1);
@@ -185,29 +193,39 @@ public class Main implements IMonitoringCallback {
     }
 
     private static void applyDestructiveTransforms(TriangleMesh mesh) {
-        AffineTransform3d transform = new Scaling(1.5, 1, 1);
+        /*AffineTransform3d transform = new Scaling(1.5, 1, 1);
         transform = transform.combineWith(new RotationZ(-110));
         transform = transform.combineWith(new RotationX(45));
         transform = transform.combineWith(new Translation(-0.5, -0.1, 0.1));
 
-        mesh.applyTransformDestructive(transform);
+        mesh.applyTransformDestructive(transform);*/
     }
 
     private static Scene createScene(ArrayList<IShape3d> shapes, boolean accelerate) {
-//var sphere = new Sphere(new Point(0, 0, 0), 1);
+        var sphere = new Sphere(new Point(0, 3, 0), 1);
 
         //shapes.add(sphere);
-       // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
+        // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
 
-        var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.8, IMAGE_HEIGHT, IMAGE_WIDTH, 0.0005, 0.0005);
+        var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.9, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
         var flatShading = new FlatShadingModel();
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource);
         if (accelerate) {
-            var kdTree = new KdTree(instances, new MiddleSplitChooser()); // todo create one
+            var kdTree = new KdTree(instances, new MiddleSplitChooser(), new KdTreeRecursiveIntersectionFinder());
+
+            var validator = new KdTreeValidator();
+            // validator.validate(kdTree);
        
-            scene.add(kdTree);
+            scene.add(kdTree); // todo get back
+            var box1 = ((KdTree.InteriorNode)kdTree.root).rightChild().boundingBox();
+            System.out.println("Split by " + ((KdTree.InteriorNode)kdTree.root).splitAxis().toString());
+
+
+           // scene.add(new Instance(BoxOutline.fromAABB(sphere.computeBoundingBox()), flatShading));
+           // scene.add(new Instance(sphere, flatShading));
+            //scene.add(new Instance(BoxOutline.fromAABB(box1), flatShading));
         } else {
             instances.forEach(scene::add);
         }

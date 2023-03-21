@@ -133,8 +133,13 @@ public class BoundingBox {
             tmin = Math.max(tmin, Math.min(tz1, tz2));
             tmax = Math.min(tmax, Math.max(tz1, tz2));
         //}
+        if (tmax >= Math.max(0.0, tmin)) { // it has to be this way because of NaN behavior
+            return Optional.of(new RayFragment(tmin, tmax));
+        } else {
+            return Optional.empty();
+        }
 
-        if (tmax < 0) {
+        /*if (tmax < 0) {
             return Optional.empty();
         }
 
@@ -143,7 +148,7 @@ public class BoundingBox {
         }
 
         // return Optional.of(new Intersection(ray, null, tmin, ray.getXyzOnRay(tmin)));
-        return Optional.of(new RayFragment(tmin, tmax));
+        return Optional.of(new RayFragment(tmin, tmax));*/
     }
 
     Point minPoint() {

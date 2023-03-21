@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.shapes.triangle;
 
+import lombok.Getter;
 import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.enitites.*;
@@ -9,7 +10,7 @@ import java.util.OptionalDouble;
 
 public class Triangle implements IShape3d {
 
-    private final Point[] vertices;
+    @Getter private final Point[] vertices; // todo remove getter
     private final Normal[] normals;
     private BoundingBox cachedBoundingBox = null; // todo: invalidate after affine transformation
 

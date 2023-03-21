@@ -58,6 +58,48 @@ public class BoundingBoxTest {
     }
 
     @Test
+    void testFindVisibleIntersectionWith_parallelRay() {
+        var bb = new BoundingBox(new Point(1, 1, 1), new Point(2, 2, 2));
+        var ray = new Ray(new Point(500, 0, 2), new Vector3(0, 1, 0));
+
+        var intersection = bb.findVisibleIntersectionWithRay(ray);
+        var result
+                = intersection.isEmpty();
+        assertTrue(result);
+
+        bb = new BoundingBox(new Point(1, 1, 1), new Point(2, 2, 2));
+        ray = new Ray(new Point(2, 0, 500), new Vector3(0, 1, 0));
+
+        intersection = bb.findVisibleIntersectionWithRay(ray);
+
+        assertTrue(intersection.isEmpty());
+    }
+
+    /*@Test
+    void testFindVisibleIntersectionWith_rayStartsInside() {
+        var bb = new BoundingBox(new Point(1, 1, 1), new Point(2, 2, 2));
+        var ray = new Ray(new Point(1.5, 1.5, 1.5), new Vector3(0, 1, 0));
+
+        var intersection = bb.findVisibleIntersectionWithRay(ray);
+
+        assertTrue(intersection.isEmpty());
+    }*/
+
+    @Test
+    void testFindVisibleIntersectionWith_edgeCase() {
+        var bb = new BoundingBox(new Point(1, 1, 1), new Point(2, 2, 2));
+        var ray = new Ray(new Point(1, 0, 1), new Vector3(0, 1, 0));
+
+        var intersection = bb.findVisibleIntersectionWithRay(ray);
+
+        assertTrue(intersection.isPresent());
+
+        ray = new Ray(new Point(0, 0, 0), new Vector3(1, 1, 1).normalize());
+        intersection = bb.findVisibleIntersectionWithRay(ray);
+        assertTrue(intersection.isPresent());
+    }
+
+    @Test
     void testIncludePoint() {
         var bb = new BoundingBox(new Point(1, -7, 3), new Point(2, 2, 3));
         
