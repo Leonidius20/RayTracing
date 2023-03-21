@@ -73,6 +73,13 @@ public class BoundingBoxTest {
         intersection = bb.findVisibleIntersectionWithRay(ray);
 
         assertTrue(intersection.isEmpty());
+
+        bb = new BoundingBox(new Point(1, 1, 1), new Point(2, 2, 2));
+        ray = new Ray(new Point(2, 0, 2), new Vector3(0, 1, 0));
+
+        intersection = bb.findVisibleIntersectionWithRay(ray);
+
+        assertFalse(intersection.isEmpty());
     }
 
     /*@Test

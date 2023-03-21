@@ -8,6 +8,12 @@ import ua.leonidius.raytracing.primitives.Instance;
 
 public class TrueColorPixelRenderer implements IPixelRenderer {
 
+    private final boolean shadowsEnabled;
+
+    public TrueColorPixelRenderer(boolean shadowsEnabled) {
+        this.shadowsEnabled = shadowsEnabled;
+    }
+
     @Override
     public Color renderIntersection(Scene scene, Intersection intersection) {
         var intersectionPoint = intersection.point();
@@ -28,17 +34,19 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
         var value = normal.dotProduct(scene.getLightSource().invertedDirection());
         value = Math.max(0.0, value);
 
-       if (value > 1e-7) {
-            // send shadow ray
-            var shadowRay = new Ray(point, scene.getLightSource().invertedDirection());
-            // find any intersection, if found, return 0
+        if (shadowsEnabled) {
+            if (value > 1e-7) {
+                // send shadow ray
+                var shadowRay = new Ray(point, scene.getLightSource().invertedDirection());
+                // find any intersection, if found, return 0
 
-            for (var shape : scene.getObjects()) {
-                var intersection = shape.findVisibleIntersectionWithRay(shadowRay);
-                // todo: replace with 'find any intersection' instead of finding the closest one
-                if (intersection.isPresent()) return 0.0;
+                for (var shape : scene.getObjects()) {
+                    var intersection = shape.findVisibleIntersectionWithRay(shadowRay);
+                    // todo: replace with 'find any intersection' instead of finding the closest one
+                    if (intersection.isPresent()) return 0.0;
+                }
             }
-       }
+        }
 
         return Math.max(0.0, value);
     }

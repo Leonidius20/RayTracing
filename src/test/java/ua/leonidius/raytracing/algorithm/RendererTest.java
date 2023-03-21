@@ -38,7 +38,7 @@ class RendererTest {
         scene.add(new Instance(shape, new FlatShadingModel()));
 
         // do render
-        new Renderer(scene, new TrueColorPixelRenderer(), (p, j , jj, jjj, jjjj) -> {}).render();
+        new Renderer(scene, mock(IPixelRenderer.class), (p, j , jj, jjj, jjjj) -> {}).render();
 
         // expected ray vectors (directions) (normalized)
         var a = (new Point(-1.2, 1.6, 0.75)).subtract(focusPoint).normalize();
@@ -57,7 +57,7 @@ class RendererTest {
     }
 
     @Test
-    public void testLightCalculation() {
+    public void testLightCalculation_noShadows() {
         var lVectorUnnormalized = new Vector3(1.0, 2.0, 3.0);
 
         var scene = new Scene(null, new DirectionalLightSource(lVectorUnnormalized));
@@ -67,7 +67,7 @@ class RendererTest {
 
         var pointInQuestion = new Point(2, 3, 7);
 
-        var pixelRenderer = new TrueColorPixelRenderer();
+        var pixelRenderer = new TrueColorPixelRenderer(false);
 
         double expected = 3 / lVectorUnnormalized.calculateLength();
 
@@ -138,7 +138,7 @@ class RendererTest {
 
         // actual pixel value
         Color[][] pixels = (new Renderer(scene,
-                new TrueColorPixelRenderer(), (p, j , jj, jjj, jjjj) -> {})).render();
+                new TrueColorPixelRenderer(true), (p, j , jj, jjj, jjjj) -> {})).render();
         Color actualPixelValue = pixels[0][0];
 
         assertEquals(expectedPixel, actualPixelValue);

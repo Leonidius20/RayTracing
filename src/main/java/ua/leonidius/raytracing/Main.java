@@ -17,6 +17,7 @@ import ua.leonidius.raytracing.primitives.kdtree.KdTree;
 import ua.leonidius.raytracing.primitives.kdtree.KdTreeRecursiveIntersectionFinder;
 import ua.leonidius.raytracing.primitives.kdtree.KdTreeValidator;
 import ua.leonidius.raytracing.primitives.kdtree.MiddleSplitChooser;
+import ua.leonidius.raytracing.shapes.BoxOutline;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
@@ -28,12 +29,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class Main implements IMonitoringCallback {
 
-    private static final int IMAGE_WIDTH = 1900;
-    private static final int IMAGE_HEIGHT = 1200;
+    private static final int IMAGE_WIDTH = 1280;
+    private static final int IMAGE_HEIGHT = 720;
+
+    private static final boolean ACCELERATE = true;
+    private static final boolean SHADOWS_ENABLED = false;
 
     private static JLabel jLabel;
     private static BufferedImage img; // for monitoring
@@ -68,11 +74,11 @@ public class Main implements IMonitoringCallback {
         var shapes = new ArrayList<IShape3d>(mesh.getFaces());        
 
         System.out.println("Read scene file (" + shapes.size() + " objects), starting to render");
-        var pixelRenderer = new TrueColorPixelRenderer();
+        var pixelRenderer = new TrueColorPixelRenderer(SHADOWS_ENABLED);
 
         if (!arguments.demoMode()) {
              // creating a scene
-            var scene = createScene(shapes, true);
+            var scene = createScene(shapes, ACCELERATE);
 
             // showing gui
             showGUI();
@@ -207,7 +213,7 @@ public class Main implements IMonitoringCallback {
         //shapes.add(sphere);
         // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
 
-        var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.9, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
+        var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.6, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
         var flatShading = new FlatShadingModel();
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
@@ -219,13 +225,35 @@ public class Main implements IMonitoringCallback {
             // validator.validate(kdTree);
        
             scene.add(kdTree); // todo get back
-            var box1 = ((KdTree.InteriorNode)kdTree.root).rightChild().boundingBox();
-            System.out.println("Split by " + ((KdTree.InteriorNode)kdTree.root).splitAxis().toString());
+
+
+            Queue<KdTree.INode> queue = new LinkedList<>();
+            queue.add(kdTree.root);
+            while (!queue.isEmpty()) {
+                var node = queue.poll();
+                if (node instanceof KdTree.InteriorNode interiorNode) {
+                    queue.add(interiorNode.leftChild());
+                    queue.add(interiorNode.rightChild());
+                } else if (node instanceof KdTree.LeafNode leafNode) {
+                    var box = leafNode.debugInfo().aabb;
+                    var boxOutline = BoxOutline.fromAABB(box);
+                    //scene.add(new Instance(boxOutline, flatShading));
+                }
+            }
+
+            var box1 = ((KdTree.InteriorNode)((KdTree.InteriorNode)((KdTree.InteriorNode)kdTree.root).rightChild()).rightChild()).leftChild() .debugInfo().aabb;
+            var box2 = ((KdTree.InteriorNode)((KdTree.InteriorNode)((KdTree.InteriorNode)kdTree.root).rightChild()).rightChild()).rightChild() .debugInfo().aabb;
+
+//            box2.getMaxPoint().z -= 0.33;
+  //          box2.getMinPoint().z -= 0.33;
+
+            System.out.println("Split by " + (((KdTree.InteriorNode)((KdTree.InteriorNode)((KdTree.InteriorNode) kdTree.root).rightChild()).rightChild())).splitAxis().toString());
 
 
            // scene.add(new Instance(BoxOutline.fromAABB(sphere.computeBoundingBox()), flatShading));
            // scene.add(new Instance(sphere, flatShading));
             //scene.add(new Instance(BoxOutline.fromAABB(box1), flatShading));
+            //scene.add(new Instance(BoxOutline.fromAABB(box2), flatShading));
         } else {
             instances.forEach(scene::add);
         }

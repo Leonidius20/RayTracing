@@ -16,13 +16,13 @@ public class KdTree extends Aggregate {
     public interface INode {
         // Optional<Intersection> checkIntersection(Ray ray, RayFragment fragment);
         NodeDebugInfo debugInfo();
-        BoundingBox boundingBox();
+        //BoundingBox boundingBox();
     }
 
     public record InteriorNode(INode leftChild,
                         INode rightChild,
                         Axis splitAxis, double splitCoordinate,
-                        BoundingBox aabb,
+                        //BoundingBox aabb,
                         NodeDebugInfo info) implements INode {
 
         /*@Override
@@ -70,15 +70,16 @@ public class KdTree extends Aggregate {
             return info;
         }
 
-        @Override
-        public BoundingBox boundingBox() {
-            return aabb;
-        }
+       // @Override
+        //public BoundingBox boundingBox() {
+           // return aabb;
+       // }
     }
 
-    record LeafNode(
+    public record LeafNode(
             ArrayList<IPrimitive> leafPrimitives,
-            NodeDebugInfo info, BoundingBox aabb) implements INode {
+            NodeDebugInfo info//,
+            /*BoundingBox aabb*/) implements INode {
 
         /*@Override
         public Optional<Intersection> checkIntersection(Ray ray, RayFragment fragment) {
@@ -110,23 +111,25 @@ public class KdTree extends Aggregate {
             return info;
         }
 
-        @Override
+        /*@Override
         public BoundingBox boundingBox() {
             return aabb;
-        }
+        }*/
     }
 
-    static class NodeDebugInfo {
+    public static class NodeDebugInfo {
         final int depth;
         final String type;
         final int primitivesNumber;
         boolean traversed;
+        public BoundingBox aabb;
 
-        private NodeDebugInfo(int depth, String type, int primitivesNumber) {
+        private NodeDebugInfo(int depth, String type, int primitivesNumber, BoundingBox aabb) {
             this.depth = depth;
             this.type = type;
             this.primitivesNumber = primitivesNumber;
             this.traversed = false;
+            this.aabb = aabb;
         }
     }
 
@@ -154,8 +157,8 @@ public class KdTree extends Aggregate {
         this.visitor = visitor;
         boundingBox = calcBoundingBox();
 
-        maxDepth = 6;// todo remove
-        //maxDepth = (int) (8 + 1.3 * Math.log(primitives.size())) / 2;
+
+        maxDepth = (int) (8 + 1.3 * Math.log(primitives.size())) / 2;
         // i've added /2
 
         minPrimitivesNumberInLeaf = 50; //  todo choose
@@ -165,7 +168,8 @@ public class KdTree extends Aggregate {
 
     }
 
-    INode buildTree(ArrayList<IPrimitive> themPrimitives, int currentDepth, BoundingBox currentAABB) {
+    INode buildTree(ArrayList<IPrimitive> themPrimitives, int currentDepth,
+                    BoundingBox currentAABB) {
         // return new LeafNode(primitives);
 
         if (themPrimitives.size() < minPrimitivesNumberInLeaf
@@ -186,23 +190,41 @@ public class KdTree extends Aggregate {
 
             var leftAABB = new BoundingBox(currentAABB.getMinPoint(),
                     replaceValueInPoint(currentAABB.getMaxPoint(), splitAxis, splitCoordinate));
+            /*for (var axis : Axis.values()) {
+                replaceValueInPoint(leftAABB.getMinPoint(), axis, leftAABB.getMinPoint().getValue(axis) - 0.0001);
+                replaceValueInPoint(leftAABB.getMaxPoint(), axis, leftAABB.getMaxPoint().getValue(axis) + 0.0001);
+            }*/
 
-            var rightAABB = new BoundingBox(replaceValueInPoint(currentAABB.getMinPoint(), splitAxis, splitCoordinate),
+           var rightAABB = new BoundingBox(replaceValueInPoint(currentAABB.getMinPoint(), splitAxis, splitCoordinate),
                     currentAABB.getMaxPoint());
+            /*for (var axis : Axis.values()) {
+                replaceValueInPoint(rightAABB.getMinPoint(), axis, rightAABB.getMinPoint().getValue(axis) - 0.0001);
+                replaceValueInPoint(rightAABB.getMaxPoint(), axis, rightAABB.getMaxPoint().getValue(axis) + 0.0001);
+            }*/
 
             // create children
             // check who is on the left and who is on the right
             var primitivesOnTheLeft = new ArrayList<IPrimitive>();
             var primitivesOnTheRight = new ArrayList<IPrimitive>();
 
+            boolean added = false;
             for (var primitive : themPrimitives) {
-                if (primitive.computeBoundingBox().getMinPoint().getValue(splitAxis) <= splitCoordinate) {
+                added = false;
+                if (primitive.computeBoundingBox().getMinPoint().getValue(splitAxis) <= splitCoordinate + 0.0001) {
                     primitivesOnTheLeft.add(primitive);
+                    added = true;
                 }
                 // NOTE: if value is equal it's added in both
-                if (primitive.computeBoundingBox().getMaxPoint().getValue(splitAxis) >= splitCoordinate) {
+               if (primitive.computeBoundingBox().getMaxPoint().getValue(splitAxis) >= splitCoordinate - 0.0001) {
+                    primitivesOnTheRight.add(primitive);
+                    added = true;
+                }
+                if (!added) {
+                    System.out.println("ERROR: primitive not added to any child");
+                    primitivesOnTheLeft.add(primitive);
                     primitivesOnTheRight.add(primitive);
                 }
+               // todo keep track of     added
             }
 
             //todo
@@ -210,8 +232,8 @@ public class KdTree extends Aggregate {
             var leftChild = buildTree(primitivesOnTheLeft, currentDepth + 1, leftAABB);
             var rightChild = buildTree(primitivesOnTheRight, currentDepth + 1, rightAABB);
 
-            return new InteriorNode(leftChild, rightChild, splitAxis, splitCoordinate, currentAABB,
-                    new NodeDebugInfo(currentDepth, "interior", themPrimitives.size()));
+            return new InteriorNode(leftChild, rightChild, splitAxis, splitCoordinate,
+                    new NodeDebugInfo(currentDepth, "interior", themPrimitives.size(), currentAABB));
         }
     }
 
@@ -226,7 +248,7 @@ public class KdTree extends Aggregate {
     }
 
     private static LeafNode createLeaf(ArrayList<IPrimitive> themPrimitives, int currentDepth, BoundingBox box) {
-        return new LeafNode(themPrimitives, new NodeDebugInfo(currentDepth, "leaf", themPrimitives.size()), box);
+        return new LeafNode(themPrimitives, new NodeDebugInfo(currentDepth, "leaf", themPrimitives.size(), box));
     }
 
     private static Point replaceValueInPoint(Point point, Axis axis, double newValue) {

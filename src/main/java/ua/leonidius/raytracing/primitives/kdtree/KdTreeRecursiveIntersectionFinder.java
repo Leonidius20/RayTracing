@@ -19,9 +19,9 @@ public class KdTreeRecursiveIntersectionFinder extends IKdTreeVisitor<Optional<I
         node.info().traversed = true;
 
         // idk when this happens but who knows maybe it does
-        if (fragment.tMin() > fragment.tMax()) {
+       /* if (fragment.tMin() > fragment.tMax()) {
             return Optional.empty();
-        }
+        }*/
 
         // compute distance to split plane along ray
         double tSplit = (node.splitCoordinate() - ray.getOrigin().getValue(node.splitAxis()))
@@ -38,10 +38,8 @@ public class KdTreeRecursiveIntersectionFinder extends IKdTreeVisitor<Optional<I
         // if the ray enters and exits only the left sub-box
         // or if it goes in inverse direction starting from the split plane
         if (tSplit > fragment.tMax() || tSplit <= 0) {
-            //return firstChild.checkIntersection(ray, fragment);
             return visit(firstChild, ray, fragment);
         } else if (tSplit < fragment.tMin()) { // if the ray enters and exits only the right sub box
-            ///return secondChild.checkIntersection(ray, fragment);
             return visit(secondChild, ray, fragment);
         } else {
             // if the ray enters both sub-boxes
@@ -73,6 +71,8 @@ public class KdTreeRecursiveIntersectionFinder extends IKdTreeVisitor<Optional<I
             var intersection = object
                     .findVisibleIntersectionWithRay(ray);
             if (intersection.isEmpty()) continue;
+            if (intersection.get().tParam() > fragment.tMax()
+                    || intersection.get().tParam() < fragment.tMin()) continue;
 
             if (closestIntersection.isEmpty()
                     || intersection.get().tParam() < closestIntersection.get().tParam()) {
