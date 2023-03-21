@@ -21,6 +21,7 @@ import ua.leonidius.raytracing.shapes.BoxOutline;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
+import ua.leonidius.raytracing.transformations.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +40,7 @@ public class Main implements IMonitoringCallback {
     private static final int IMAGE_HEIGHT = 720;
 
     private static final boolean ACCELERATE = true;
-    private static final boolean SHADOWS_ENABLED = false;
+    private static final boolean SHADOWS_ENABLED = true;
 
     private static JLabel jLabel;
     private static BufferedImage img; // for monitoring
@@ -199,12 +200,28 @@ public class Main implements IMonitoringCallback {
     }
 
     private static void applyDestructiveTransforms(TriangleMesh mesh) {
-        /*AffineTransform3d transform = new Scaling(1.5, 1, 1);
-        transform = transform.combineWith(new RotationZ(-110));
-        transform = transform.combineWith(new RotationX(45));
-        transform = transform.combineWith(new Translation(-0.5, -0.1, 0.1));
+        // combine with works in reverse way
+        /*AffineTransform3d transform = new RotationX(90);
+        mesh.applyTransformDestructive(transform);
 
+       transform =new RotationZ(-45);
+        mesh.applyTransformDestructive(transform);
+
+        transform = new Translation(0, 3, -0.5);
         mesh.applyTransformDestructive(transform);*/
+
+        var rotationX = new RotationX(90);
+        var rotationZ = new RotationZ(-45);
+        var translation = new Translation(0, 3, -0.5);
+
+        var transform = translation.combineWith(rotationZ).combineWith(rotationX);
+               // rotationX.combineWith(rotationZ).combineWith(translation);
+
+        //transform = transform.combineWith(new Translation(0, 3, -0.5));
+     //   transform = transform.combineWith(
+
+        mesh.applyTransformDestructive(transform);
+
     }
 
     private static Scene createScene(ArrayList<IShape3d> shapes, boolean accelerate) {
@@ -213,7 +230,7 @@ public class Main implements IMonitoringCallback {
         //shapes.add(sphere);
         // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
 
-        var camera = new PerspectiveCamera(new Point(0, -2.4, 0), 0.6, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
+        var camera = new PerspectiveCamera(new Point(0, -3.4, 0), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
         var flatShading = new FlatShadingModel();
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
