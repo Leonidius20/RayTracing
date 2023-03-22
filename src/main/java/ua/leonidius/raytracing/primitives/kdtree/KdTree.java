@@ -224,10 +224,8 @@ public class KdTree extends Aggregate {
                     primitivesOnTheLeft.add(primitive);
                     primitivesOnTheRight.add(primitive);
                 }
-               // todo keep track of     added
-            }
 
-            //todo
+            }
 
             var leftChild = buildTree(primitivesOnTheLeft, currentDepth + 1, leftAABB);
             var rightChild = buildTree(primitivesOnTheRight, currentDepth + 1, rightAABB);
