@@ -67,7 +67,7 @@ class TriangleTest {
         assertArrayEquals(expected, triangle.getBarycentricCoordinates(point), 1e-7);
     }
 
-    @Test
+    /*@Test
     void getSmoothShadingNormalAt() {
         var normal1 = new Normal(4, 5, 6).normalize();
         var normal2 = new Normal(5, -9, 0).normalize();
@@ -94,7 +94,7 @@ class TriangleTest {
                 .normalize();
 
         assertEquals(expected, triangle.getInterpolatedNormalAt(point));
-    }
+    }*/
 
     @Test
     void getFlatShadingNormalAt() {

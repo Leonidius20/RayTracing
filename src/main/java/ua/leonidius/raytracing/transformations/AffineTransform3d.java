@@ -78,7 +78,15 @@ public class AffineTransform3d implements IAffineTransform3d {
         if (this == o) return true;
         if (o == null || (getClass() != o.getClass() && getClass() != o.getClass().getSuperclass())) return false;
         AffineTransform3d that = (AffineTransform3d) o;
-        return Arrays.deepEquals(data, that.data);
+        for (int i = 0; i < MATRIX_DIMENSION; i++) {
+            for (int j = 0; j < MATRIX_DIMENSION; j++) {
+                if (Math.abs(this.data[i][j] - that.data[i][j]) > 0.0001) {
+                    return false;
+                }
+            }
+        }
+        // return Arrays.deepEquals(data, that.data);
+        return true;
     }
 
     @Override
