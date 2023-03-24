@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.primitives.kdtree;
 
-import ua.leonidius.raytracing.RayFragment;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
-import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.entities.Ray;
+import ua.leonidius.raytracing.entities.RayFragment;
 
 import java.util.List;
 

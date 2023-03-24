@@ -1,4 +1,4 @@
-package ua.leonidius.raytracing.enitites;
+package ua.leonidius.raytracing.entities;
 
 import java.util.Objects;
 

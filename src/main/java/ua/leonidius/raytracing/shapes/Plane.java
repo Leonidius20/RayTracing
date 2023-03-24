@@ -1,12 +1,8 @@
 package ua.leonidius.raytracing.shapes;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.entities.*;
 
 import java.util.OptionalDouble;
 

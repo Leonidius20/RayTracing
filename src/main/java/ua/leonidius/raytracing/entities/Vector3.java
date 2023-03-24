@@ -1,6 +1,4 @@
-package ua.leonidius.raytracing.enitites;
-
-import java.util.Objects;
+package ua.leonidius.raytracing.entities;
 
 public class Vector3 extends OrderedXyzTriple {
 

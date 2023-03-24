@@ -1,4 +1,4 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.entities;
 
 /**
  * Contains the max and the mix values of a ray's T parameter. This corresponds to

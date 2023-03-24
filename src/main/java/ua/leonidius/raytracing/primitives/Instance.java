@@ -1,14 +1,14 @@
 package ua.leonidius.raytracing.primitives;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.BoundingBox;
-import ua.leonidius.raytracing.IShadingModel;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
+import ua.leonidius.raytracing.algorithm.IShadingModel;
 import ua.leonidius.raytracing.algorithm.IShape3d;
 import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.entities.BoundingBox;
+import ua.leonidius.raytracing.entities.Normal;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Ray;
 
 import java.util.Optional;
 
@@ -21,7 +21,7 @@ public class Instance implements IPrimitive {
 
     // shader?
 
-    @Getter private final IShadingModel shadingModel; // todo: remove, integrate with shader?
+    @Getter private final IShadingModel shadingModel;
 
     public Instance(IShape3d geometry, IShadingModel shadingModel) {
         this.geometry = geometry;

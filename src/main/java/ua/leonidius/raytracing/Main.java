@@ -1,13 +1,13 @@
 package ua.leonidius.raytracing;
 
-import ua.leonidius.raytracing.algorithm.*;
 import ua.leonidius.raytracing.algorithm.Renderer;
+import ua.leonidius.raytracing.algorithm.*;
 import ua.leonidius.raytracing.arguments.CliArgsParseException;
 import ua.leonidius.raytracing.arguments.CliArguments;
 import ua.leonidius.raytracing.arguments.MissingCliParameterException;
 import ua.leonidius.raytracing.camera.PerspectiveCamera;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Vector3;
 import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
@@ -17,11 +17,14 @@ import ua.leonidius.raytracing.primitives.kdtree.KdTree;
 import ua.leonidius.raytracing.primitives.kdtree.KdTreeRecursiveIntersectionFinder;
 import ua.leonidius.raytracing.primitives.kdtree.KdTreeValidator;
 import ua.leonidius.raytracing.primitives.kdtree.MiddleSplitChooser;
+import ua.leonidius.raytracing.shading.FlatShadingModel;
 import ua.leonidius.raytracing.shapes.BoxOutline;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
-import ua.leonidius.raytracing.transformations.*;
+import ua.leonidius.raytracing.transformations.RotationX;
+import ua.leonidius.raytracing.transformations.RotationZ;
+import ua.leonidius.raytracing.transformations.Translation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -137,7 +140,7 @@ public class Main implements IMonitoringCallback {
     }
 
     @Override
-    public void shareProgress(ua.leonidius.raytracing.enitites.Color[][] pixels, int startX, int startY, int endX, int endY) {
+    public void shareProgress(ua.leonidius.raytracing.entities.Color[][] pixels, int startX, int startY, int endX, int endY) {
         for (int x = startX; x <= endX; x++) {
             for (int y = 0; y < pixels.length; y++)
             {
@@ -279,7 +282,7 @@ public class Main implements IMonitoringCallback {
 
     private static class EmptyRenderingMonitor implements IMonitoringCallback {
         @Override
-        public void shareProgress(ua.leonidius.raytracing.enitites.Color[][] pixels, int startX, int startY, int endX, int endY) {
+        public void shareProgress(ua.leonidius.raytracing.entities.Color[][] pixels, int startX, int startY, int endX, int endY) {
         }
     }
 

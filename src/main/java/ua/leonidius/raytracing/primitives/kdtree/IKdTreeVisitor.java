@@ -1,10 +1,7 @@
 package ua.leonidius.raytracing.primitives.kdtree;
 
-import ua.leonidius.raytracing.RayFragment;
-import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.enitites.Ray;
-
-import java.util.Optional;
+import ua.leonidius.raytracing.entities.Ray;
+import ua.leonidius.raytracing.entities.RayFragment;
 
 public abstract class IKdTreeVisitor<T> {
 

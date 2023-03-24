@@ -1,11 +1,11 @@
 package ua.leonidius.raytracing.primitives.kdtree;
 
-import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
 import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.enitites.Axis;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.entities.Axis;
+import ua.leonidius.raytracing.entities.BoundingBox;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.primitives.Aggregate;
 
 import java.util.ArrayList;

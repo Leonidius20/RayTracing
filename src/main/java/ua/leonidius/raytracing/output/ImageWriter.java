@@ -1,6 +1,6 @@
 package ua.leonidius.raytracing.output;
 
-import ua.leonidius.raytracing.enitites.Color;
+import ua.leonidius.raytracing.entities.Color;
 
 import java.io.IOException;
 

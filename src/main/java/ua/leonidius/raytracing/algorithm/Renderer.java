@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.Scene;
-import ua.leonidius.raytracing.enitites.Color;
-import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.entities.Color;
+import ua.leonidius.raytracing.entities.Ray;
 
 import java.util.Arrays;
 import java.util.Optional;

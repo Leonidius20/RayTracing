@@ -1,17 +1,8 @@
-package ua.leonidius.raytracing;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+package ua.leonidius.raytracing.entities;
 
 import org.junit.jupiter.api.Test;
 
-
-import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.enitites.Axis;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.enitites.Vector3;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoundingBoxTest {
 

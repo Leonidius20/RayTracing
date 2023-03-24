@@ -1,12 +1,12 @@
 package ua.leonidius.raytracing.primitives;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.BoundingBox;
-import ua.leonidius.raytracing.IShadingModel;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
+import ua.leonidius.raytracing.algorithm.IShadingModel;
 import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.entities.BoundingBox;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.shapes.triangle.Triangle;
 
 import java.util.ArrayList;

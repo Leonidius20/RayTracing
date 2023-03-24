@@ -1,7 +1,7 @@
 package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.Scene;
-import ua.leonidius.raytracing.enitites.Color;
+import ua.leonidius.raytracing.entities.Color;
 
 public class DepthMapPixelRenderer implements IPixelRenderer {
 

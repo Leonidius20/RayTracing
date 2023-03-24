@@ -3,19 +3,21 @@ package ua.leonidius.raytracing.algorithm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.leonidius.raytracing.*;
+import ua.leonidius.raytracing.Scene;
 import ua.leonidius.raytracing.camera.PerspectiveCamera;
-import ua.leonidius.raytracing.enitites.*;
+import ua.leonidius.raytracing.entities.*;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
 import ua.leonidius.raytracing.primitives.Instance;
+import ua.leonidius.raytracing.shading.FlatShadingModel;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.triangle.Triangle;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class RendererTest {

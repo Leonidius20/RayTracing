@@ -1,6 +1,4 @@
-package ua.leonidius.raytracing.enitites;
-
-import ua.leonidius.raytracing.transformations.AffineTransform3d;
+package ua.leonidius.raytracing.entities;
 
 import java.util.Objects;
 

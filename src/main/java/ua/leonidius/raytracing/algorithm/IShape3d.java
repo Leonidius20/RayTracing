@@ -1,9 +1,9 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.BoundingBox;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.entities.BoundingBox;
+import ua.leonidius.raytracing.entities.Normal;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Ray;
 
 import java.util.OptionalDouble;
 

@@ -1,6 +1,4 @@
-package ua.leonidius.raytracing.enitites;
-
-import ua.leonidius.raytracing.shapes.IAffineTransform3d;
+package ua.leonidius.raytracing.entities;
 
 public class Normal extends OrderedXyzTriple implements Cloneable {
 

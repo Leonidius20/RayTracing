@@ -5,8 +5,7 @@ import lombok.Setter;
 import ua.leonidius.raytracing.algorithm.ICamera;
 import ua.leonidius.raytracing.algorithm.ILightSource;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
-import ua.leonidius.raytracing.enitites.Color;
-import ua.leonidius.raytracing.primitives.Instance;
+import ua.leonidius.raytracing.entities.Color;
 
 import java.util.ArrayList;
 

@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.shapes.triangle;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.entities.Normal;
+import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.shapes.IAffineTransform3d;
 
 import java.util.ArrayList;

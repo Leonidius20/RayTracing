@@ -1,9 +1,9 @@
 package ua.leonidius.raytracing.camera;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.entities.Point;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CameraTest {
 

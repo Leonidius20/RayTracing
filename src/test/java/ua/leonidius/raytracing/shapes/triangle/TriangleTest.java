@@ -1,11 +1,10 @@
 package ua.leonidius.raytracing.shapes.triangle;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Vector3;
-import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.shapes.triangle.Triangle;
+import ua.leonidius.raytracing.entities.Normal;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Ray;
+import ua.leonidius.raytracing.entities.Vector3;
 
 import java.util.OptionalDouble;
 

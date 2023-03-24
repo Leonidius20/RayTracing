@@ -1,7 +1,6 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
+import ua.leonidius.raytracing.entities.Ray;
 
 /**
  * This can be any kind of camera and we wanna make the renderer(?) depend on this abstraction

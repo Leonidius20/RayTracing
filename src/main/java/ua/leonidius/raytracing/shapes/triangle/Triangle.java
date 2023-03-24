@@ -1,9 +1,8 @@
 package ua.leonidius.raytracing.shapes.triangle;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.enitites.*;
+import ua.leonidius.raytracing.entities.*;
 
 import java.util.Arrays;
 import java.util.OptionalDouble;

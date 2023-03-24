@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.enitites.Vector3;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Ray;
+import ua.leonidius.raytracing.entities.Vector3;
 
 // light source abstraction for Renderer to depend on
 public interface ILightSource {

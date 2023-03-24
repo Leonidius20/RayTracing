@@ -1,8 +1,9 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.shading;
 
+import ua.leonidius.raytracing.algorithm.IShadingModel;
 import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.entities.Normal;
+import ua.leonidius.raytracing.entities.Point;
 
 public class PhongShadingModel implements IShadingModel {
 

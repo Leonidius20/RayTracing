@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.primitives.kdtree;
 
-import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
-import ua.leonidius.raytracing.enitites.Axis;
+import ua.leonidius.raytracing.entities.Axis;
+import ua.leonidius.raytracing.entities.BoundingBox;
 
 import java.util.ArrayList;
 

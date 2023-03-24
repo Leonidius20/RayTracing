@@ -1,12 +1,12 @@
 package ua.leonidius.raytracing.input;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Vector3;
 import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.shapes.triangle.Triangle;
+import ua.leonidius.raytracing.entities.Normal;
+import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Vector3;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
+import ua.leonidius.raytracing.shapes.triangle.Triangle;
 
 import java.io.BufferedReader;
 import java.io.IOException;

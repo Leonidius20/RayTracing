@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.primitives;
 
-import ua.leonidius.raytracing.BoundingBox;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
-import ua.leonidius.raytracing.enitites.Point;
+import ua.leonidius.raytracing.entities.BoundingBox;
+import ua.leonidius.raytracing.entities.Point;
 
 import java.util.ArrayList;
 

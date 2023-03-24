@@ -1,17 +1,8 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.entities;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.algorithm.IPrimitive;
-import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.enitites.Axis;
-import ua.leonidius.raytracing.enitites.Normal;
-import ua.leonidius.raytracing.enitites.Point;
-import ua.leonidius.raytracing.enitites.Ray;
-import ua.leonidius.raytracing.shapes.Plane;
 
 import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.stream.Stream;
 
 /**
  * AABB (axis-aligned bounding box). Represented by two opposite vertices

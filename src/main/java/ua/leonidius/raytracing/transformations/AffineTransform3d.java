@@ -1,8 +1,8 @@
 package ua.leonidius.raytracing.transformations;
 
-import ua.leonidius.raytracing.enitites.Normal;
+import ua.leonidius.raytracing.entities.Normal;
+import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.shapes.IAffineTransform3d;
-import ua.leonidius.raytracing.enitites.Point;
 
 import java.util.Arrays;
 

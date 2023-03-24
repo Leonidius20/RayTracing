@@ -1,6 +1,6 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.enitites.Color;
+import ua.leonidius.raytracing.entities.Color;
 
 public interface IMonitoringCallback {
 
