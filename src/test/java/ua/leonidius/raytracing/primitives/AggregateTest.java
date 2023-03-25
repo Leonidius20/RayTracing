@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static ua.leonidius.raytracing.primitives.PrimitivesFactory.newTriangle;
 
 public class AggregateTest {
 
@@ -37,11 +38,12 @@ public class AggregateTest {
 
     @Test
     void testCalcBoundingBox() {
-        var triangle1 = new Triangle(new Point(0, 0, 0), new Point(0.5, 0.5, 0), new Point(0, 1, 1));
-        var triangle2 = new Triangle(new Point(4, 4, 4), new Point(5, 3, 1), new Point(0, 1, 0));
-        ArrayList<IPrimitive> primitives = Stream.of(triangle1, triangle2)
-                .map(s -> new Instance(s, mock(IShadingModel.class)))
-                .collect(Collectors.toCollection(ArrayList::new));
+        var triangle1 = newTriangle(new Point(0, 0, 0), new Point(0.5, 0.5, 0), new Point(0, 1, 1));
+        var triangle2 = newTriangle(new Point(4, 4, 4), new Point(5, 3, 1), new Point(0, 1, 0));
+
+        ArrayList<IPrimitive> primitives = new ArrayList<>(2);
+        primitives.add(triangle1);
+        primitives.add(triangle2);
         var aggregate = new SomeAggregate(primitives);
 
         var expected = new BoundingBox(new Point(0, 0, 0), new Point(5, 4, 4));

@@ -1,10 +1,7 @@
 package ua.leonidius.raytracing.primitives;
 
 import lombok.Getter;
-import ua.leonidius.raytracing.algorithm.IPrimitive;
-import ua.leonidius.raytracing.algorithm.IShadingModel;
-import ua.leonidius.raytracing.algorithm.IShape3d;
-import ua.leonidius.raytracing.algorithm.Intersection;
+import ua.leonidius.raytracing.algorithm.*;
 import ua.leonidius.raytracing.entities.BoundingBox;
 import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
@@ -15,17 +12,20 @@ import java.util.Optional;
 /**
  * Instance of geometry with some material and some shading
  */
-public class Instance implements IPrimitive {
+public class Instance implements IInstance {
 
-    @Getter private final IShape3d geometry;
+    private final IShape3d geometry;
 
     // shader?
 
     @Getter private final IShadingModel shadingModel;
 
-    public Instance(IShape3d geometry, IShadingModel shadingModel) {
+    @Getter private final IMaterial material;
+
+    public Instance(IShape3d geometry, IShadingModel shadingModel, IMaterial material) {
         this.geometry = geometry;
         this.shadingModel = shadingModel;
+        this.material = material;
     }
 
     public Normal getNormal(Point point) {
@@ -46,5 +46,15 @@ public class Instance implements IPrimitive {
     @Override
     public BoundingBox computeBoundingBox() {
         return geometry.computeBoundingBox();
+    }
+
+    @Override
+    public IMaterial material() {
+        return material;
+    }
+
+    @Override
+    public IShape3d geometry() {
+        return geometry;
     }
 }

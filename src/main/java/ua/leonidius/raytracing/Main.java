@@ -8,9 +8,11 @@ import ua.leonidius.raytracing.arguments.MissingCliParameterException;
 import ua.leonidius.raytracing.camera.PerspectiveCamera;
 import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.Vector3;
+import ua.leonidius.raytracing.entities.spectrum.RGBSpectrum;
 import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
+import ua.leonidius.raytracing.material.LambertMaterial;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.primitives.kdtree.KdTree;
@@ -234,9 +236,10 @@ public class Main implements IMonitoringCallback {
         // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
 
         var camera = new PerspectiveCamera(new Point(0, -3.4, 0), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
-        var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize());
+        var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize(), new RGBSpectrum(1, 1, 1));
         var flatShading = new FlatShadingModel();
-        ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading)).collect(Collectors.toCollection(ArrayList::new));
+        var lambertMaterial = new LambertMaterial(new RGBSpectrum(1, 0, 0));
+        ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading, lambertMaterial)).collect(Collectors.toCollection(ArrayList::new));
         var scene = new Scene(camera, lightSource);
         if (accelerate) {
             var kdTree = new KdTree(instances, new MiddleSplitChooser(), new KdTreeRecursiveIntersectionFinder());

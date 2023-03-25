@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.primitives;
 
+import ua.leonidius.raytracing.algorithm.IMaterial;
 import ua.leonidius.raytracing.algorithm.IPrimitive;
 import ua.leonidius.raytracing.entities.BoundingBox;
 import ua.leonidius.raytracing.entities.Point;

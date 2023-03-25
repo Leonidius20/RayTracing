@@ -34,4 +34,8 @@ public record Color(int r, int g, int b) {
         return (int) (0.3 * r + 0.59 * g + 0.11 * b);
     }
 
+    public static Color fromFloatUnitInterval(double r, double g, double b) {
+        return new Color((int) (255 * r), (int) (255 * g), (int) (255 * b));
+    }
+
 }
