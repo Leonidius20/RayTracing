@@ -14,12 +14,12 @@ public class MatteMaterial implements IMaterial {
     }
 
     @Override
-    public Ray[] createSecondaryRays(Ray ray, Intersection intersection) {
-        return new Ray[0];
+    public Ray createSecondaryRay(Ray ray, Intersection intersection) {
+        return null; // todo: random ray
     }
 
     @Override
-    public ISpectrum brdf(Ray ray, Intersection intersection, ISpectrum[] secondaryRayResults) {
+    public ISpectrum brdf(Ray ray, Intersection intersection, ISpectrum secondaryRayResult) {
         return color;
     }
 

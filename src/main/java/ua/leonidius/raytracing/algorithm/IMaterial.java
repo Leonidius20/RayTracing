@@ -5,9 +5,9 @@ import ua.leonidius.raytracing.entities.Ray;
 
 public interface IMaterial {
 
-    Ray[] createSecondaryRays(Ray ray, Intersection intersection);
+    Ray createSecondaryRay(Ray ray, Intersection intersection);
 
     // brdf
-    ISpectrum brdf(Ray ray, Intersection intersection, ISpectrum[] secondaryRayResults);
+    ISpectrum brdf(Ray ray, Intersection intersection, ISpectrum secondaryRayResult);
 
 }

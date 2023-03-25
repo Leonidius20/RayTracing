@@ -18,7 +18,7 @@ public class MirrorMaterial implements IMaterial {
     }
 
     @Override
-    public Ray[] createSecondaryRays(Ray ray, Intersection intersection) {
+    public Ray createSecondaryRay(Ray ray, Intersection intersection) {
         var normal = intersection.object().getNormal(intersection.point());
         var inverseIncidentDirection = ray.getDirection().multiplyBy(-1);
 
@@ -28,13 +28,12 @@ public class MirrorMaterial implements IMaterial {
                 .subtract(inverseIncidentDirection);
 
         // trace ray into the outgoing direction
-        var reflectedRay = new Ray(intersection.point(), outgoingDirection);
-        return new Ray[] { reflectedRay };
+        return new Ray(intersection.point(), outgoingDirection);
     }
 
     @Override
-    public ISpectrum brdf(Ray ray, Intersection intersection, ISpectrum[] secondaryRayResults) {
-        return secondaryRayResults[0].multiplyBy(color);
+    public ISpectrum brdf(Ray ray, Intersection intersection, ISpectrum secondaryRayResult) {
+        return secondaryRayResult.multiplyBy(color);
     }
 
 }

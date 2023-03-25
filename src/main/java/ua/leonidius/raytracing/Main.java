@@ -280,6 +280,7 @@ public class Main implements IMonitoringCallback {
         } else {
             instances.forEach(scene::add);
         }
+        scene.add(new Instance(new Sphere(new Point(1, 2, 0.75), 0.25), flatShading, new MatteMaterial(new RGBSpectrum(1, 0, 0))));
         scene.add(new Instance(new Sphere(new Point(1, 2, 0.25), 0.25), flatShading, new MirrorMaterial(new RGBSpectrum(1, 1, 1))));
         scene.add(new Instance(new Plane(new Point(0, 0, 0), new Normal(0, 0, 1)), flatShading, new MatteMaterial(new RGBSpectrum(0, 0, 1))));
         return scene;

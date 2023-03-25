@@ -5,6 +5,7 @@ import ua.leonidius.raytracing.entities.Color;
 import ua.leonidius.raytracing.entities.ISpectrum;
 import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.entities.spectrum.RGBSpectrum;
+import ua.leonidius.raytracing.material.MirrorMaterial;
 
 public class TrueColorPixelRenderer implements IPixelRenderer {
 
@@ -17,7 +18,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
     @Override
     public Color renderIntersection(Scene scene, Intersection intersection) {
         var lightValue = calculateLightAt(
-                fixFloatingPointImprecision(intersection),
+                intersection,
                 scene
         );
 
@@ -28,7 +29,14 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
      * Handling of primary ray hitting a surface
      */
     /* private */ ISpectrum calculateLightAt(Intersection intersection, Scene scene) {
+
+        intersection = fixFloatingPointImprecision(intersection);
+
         // todo account for recursion depth
+
+        // todo multiple light sources
+        // just add light values from all light sources
+        // main loop going through all light sources
 
         var instance = intersection.object();
         var point = intersection.point();
@@ -36,26 +44,31 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
 
         var cosine = normal.dotProduct(scene.getLightSource().invertedDirection());
         cosine = Math.max(0.0, cosine); // todo: replace with abs ?
+        // todo: let the material calculate the cosine??
+        // i don't think mirror material should be affected by cosine
 
-        var emptyColorArray = new ISpectrum[0];
-        var secondaryRays = instance.material().createSecondaryRays(intersection.ray(), intersection);
+
+        var secondaryRay = instance.material().createSecondaryRay(intersection.ray(), intersection);
         ISpectrum color;
-        if (secondaryRays.length == 0) {
-            color = instance.material().brdf(intersection.ray(), intersection, emptyColorArray);
+        if (secondaryRay == null) {
+            color = instance.material().brdf(intersection.ray(), intersection, null);
         } else {
             // trace secondary rays
-            var secondaryRayResults = new ISpectrum[secondaryRays.length];
-            for (int i = 0; i < secondaryRays.length; i++) {
-                var secondaryRay = secondaryRays[i];
-                var secondaryIntersection = Renderer.findClosestIntersection(secondaryRay, scene); // todo refactor, eliminate dependency on Renderer
-                if (secondaryIntersection.isPresent()) {
-                    secondaryRayResults[i] = calculateLightAt(secondaryIntersection.get(), scene);
-                } else {
-                    secondaryRayResults[i] = new RGBSpectrum(0, 0, 0);
-                }
+            ISpectrum secondaryRayResult;
+
+            var secondaryIntersection = Renderer.findClosestIntersection(secondaryRay, scene); // todo refactor, eliminate dependency on Renderer
+            if (secondaryIntersection.isPresent()) {
+                secondaryRayResult = calculateLightAt(secondaryIntersection.get(), scene);
+            } else {
+                secondaryRayResult = new RGBSpectrum(0, 0, 0);
             }
 
-            color = instance.material().brdf(intersection.ray(), intersection, secondaryRayResults);
+            color = instance.material().brdf(intersection.ray(), intersection, secondaryRayResult);
+
+            // todo remove, it's only a test
+            if (instance.material() instanceof MirrorMaterial m) {
+                return color; // no shadows and no cosine
+            }
         }
 
         if (shadowsEnabled) {
