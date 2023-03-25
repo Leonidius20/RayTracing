@@ -6,13 +6,15 @@ import ua.leonidius.raytracing.arguments.CliArgsParseException;
 import ua.leonidius.raytracing.arguments.CliArguments;
 import ua.leonidius.raytracing.arguments.MissingCliParameterException;
 import ua.leonidius.raytracing.camera.PerspectiveCamera;
+import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.Vector3;
 import ua.leonidius.raytracing.entities.spectrum.RGBSpectrum;
 import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
 import ua.leonidius.raytracing.light.DirectionalLightSource;
-import ua.leonidius.raytracing.material.LambertMaterial;
+import ua.leonidius.raytracing.material.MatteMaterial;
+import ua.leonidius.raytracing.material.MirrorMaterial;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.primitives.kdtree.KdTree;
@@ -21,6 +23,7 @@ import ua.leonidius.raytracing.primitives.kdtree.KdTreeValidator;
 import ua.leonidius.raytracing.primitives.kdtree.MiddleSplitChooser;
 import ua.leonidius.raytracing.shading.FlatShadingModel;
 import ua.leonidius.raytracing.shapes.BoxOutline;
+import ua.leonidius.raytracing.shapes.Plane;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
@@ -217,7 +220,7 @@ public class Main implements IMonitoringCallback {
 
         var rotationX = new RotationX(90);
         var rotationZ = new RotationZ(-45);
-        var translation = new Translation(0, 3, -0.5);
+        var translation = new Translation(0, 3, 0);
 
         var transform = translation.combineWith(rotationZ).combineWith(rotationX);
                // rotationX.combineWith(rotationZ).combineWith(translation);
@@ -230,16 +233,13 @@ public class Main implements IMonitoringCallback {
     }
 
     private static Scene createScene(ArrayList<IShape3d> shapes, boolean accelerate) {
-        var sphere = new Sphere(new Point(0, 3, 0), 1);
 
-        //shapes.add(sphere);
-        // shapes.add(new Sphere(new Point(1, -2, 2 ), 0.5));
-
-        var camera = new PerspectiveCamera(new Point(0, -3.4, 0), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
+        var camera = new PerspectiveCamera(new Point(0.3, -3.4, 0.5), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
         var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize(), new RGBSpectrum(1, 1, 1));
         var flatShading = new FlatShadingModel();
-        var lambertMaterial = new LambertMaterial(new RGBSpectrum(1, 0, 0));
+        var lambertMaterial = new MatteMaterial(new RGBSpectrum(1, 0.75, 0));
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading, lambertMaterial)).collect(Collectors.toCollection(ArrayList::new));
+
         var scene = new Scene(camera, lightSource);
         if (accelerate) {
             var kdTree = new KdTree(instances, new MiddleSplitChooser(), new KdTreeRecursiveIntersectionFinder());
@@ -280,6 +280,8 @@ public class Main implements IMonitoringCallback {
         } else {
             instances.forEach(scene::add);
         }
+        scene.add(new Instance(new Sphere(new Point(1, 2, 0.25), 0.25), flatShading, new MirrorMaterial(new RGBSpectrum(1, 1, 1))));
+        scene.add(new Instance(new Plane(new Point(0, 0, 0), new Normal(0, 0, 1)), flatShading, new MatteMaterial(new RGBSpectrum(0, 0, 1))));
         return scene;
     }
 

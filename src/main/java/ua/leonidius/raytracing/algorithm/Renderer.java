@@ -69,7 +69,7 @@ public class Renderer {
         return pixels;
     }
 
-    /* private */ static Optional<Intersection> findClosestIntersection(Ray ray, Scene scene) {
+    /* private */ public static Optional<Intersection> findClosestIntersection(Ray ray, Scene scene) {
         Optional<Intersection> closestIntersection = Optional.empty();
 
         for (var object : scene.getObjects()) {

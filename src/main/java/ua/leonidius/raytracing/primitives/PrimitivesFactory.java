@@ -4,7 +4,7 @@ import ua.leonidius.raytracing.algorithm.IShadingModel;
 import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.spectrum.RGBSpectrum;
-import ua.leonidius.raytracing.material.LambertMaterial;
+import ua.leonidius.raytracing.material.MatteMaterial;
 import ua.leonidius.raytracing.shading.FlatShadingModel;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.triangle.Triangle;
@@ -13,7 +13,7 @@ import ua.leonidius.raytracing.shapes.triangle.Triangle;
 public final class PrimitivesFactory {
 
     private static final IShadingModel flatShadingModel = new FlatShadingModel();
-    private static final LambertMaterial defaultMaterial = new LambertMaterial(new RGBSpectrum(1, 1, 1));
+    private static final MatteMaterial defaultMaterial = new MatteMaterial(new RGBSpectrum(1, 1, 1));
 
     public static Instance newTriangle(Point a, Point b, Point c) {
         return new Instance(new Triangle(a, b, c),

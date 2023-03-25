@@ -28,17 +28,35 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
      * Handling of primary ray hitting a surface
      */
     /* private */ ISpectrum calculateLightAt(Intersection intersection, Scene scene) {
+        // todo account for recursion depth
+
         var instance = intersection.object();
         var point = intersection.point();
         var normal = instance.getNormal(point);
 
         var cosine = normal.dotProduct(scene.getLightSource().invertedDirection());
-        cosine = Math.max(0.0, cosine);
+        cosine = Math.max(0.0, cosine); // todo: replace with abs ?
 
-        var spectrum =
-                instance.material().brdf(intersection.ray(), intersection)
-                        .multiplyBy(scene.getLightSource().color())
-                        .multiplyBy(cosine);
+        var emptyColorArray = new ISpectrum[0];
+        var secondaryRays = instance.material().createSecondaryRays(intersection.ray(), intersection);
+        ISpectrum color;
+        if (secondaryRays.length == 0) {
+            color = instance.material().brdf(intersection.ray(), intersection, emptyColorArray);
+        } else {
+            // trace secondary rays
+            var secondaryRayResults = new ISpectrum[secondaryRays.length];
+            for (int i = 0; i < secondaryRays.length; i++) {
+                var secondaryRay = secondaryRays[i];
+                var secondaryIntersection = Renderer.findClosestIntersection(secondaryRay, scene); // todo refactor, eliminate dependency on Renderer
+                if (secondaryIntersection.isPresent()) {
+                    secondaryRayResults[i] = calculateLightAt(secondaryIntersection.get(), scene);
+                } else {
+                    secondaryRayResults[i] = new RGBSpectrum(0, 0, 0);
+                }
+            }
+
+            color = instance.material().brdf(intersection.ray(), intersection, secondaryRayResults);
+        }
 
         if (shadowsEnabled) {
             if (cosine > 1e-7) {
@@ -54,7 +72,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
             }
         }
 
-        return spectrum;
+        return color.multiplyBy(cosine);
     }
 
     /**
