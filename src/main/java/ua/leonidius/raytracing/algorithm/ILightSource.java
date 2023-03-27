@@ -10,7 +10,19 @@ public interface ILightSource {
 
     Ray buildRayFrom(Point point);
 
-    Vector3 invertedDirection(); // TODO: remove, it's temp shitcode
+    /**
+     * Returns a vector pointing from a given point to the light source
+     * @param point point to calculate the direction from
+     * @return direction vector
+     */
+    Vector3 directionFromPoint(Point point);
+
+    /**
+     * Returns the illumination at a given point from this light assuming no obstructions
+     * @param point point to calculate the illumination at
+     * @return illumination value
+     */
+    //double getIlluminationAtPoint(Point point); // do we need this?
 
     ISpectrum color();
 

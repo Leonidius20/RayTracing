@@ -35,9 +35,20 @@ public class PerspectiveCamera implements ICamera {
 
     private final Point topLeftPixelCenter;
 
-    private final ISampler sampler = new StratifiedSampler(4); // TODO: dependency injection
+    private final ISampler sampler;
 
+    @Deprecated
     public PerspectiveCamera(Point focusPoint, /*Vector3 cameraDirection,*/ double focusDistance, int sensorHeight, int sensorWidth, double pixelHeight, double pixelWidth) {
+        this(focusPoint, /*cameraDirection,*/ focusDistance, sensorHeight, sensorWidth, pixelHeight, pixelWidth, new OneSampleSampler());
+        // todo remove dependency on OneSampleSampler
+    }
+
+    public PerspectiveCamera(Point focusPoint,
+                            /*Vector3 cameraDirection,*/
+                             double focusDistance,
+                             int sensorHeight, int sensorWidth,
+                             double pixelHeight, double pixelWidth,
+                             ISampler sampler) {
         this.focusPoint = focusPoint;
         //this.cameraDirection = cameraDirection.normalize();
         this.focusDistance = focusDistance;
@@ -47,6 +58,7 @@ public class PerspectiveCamera implements ICamera {
         this.pixelWidth = pixelWidth;
 
         this.topLeftPixelCenter = findTopLeftPixelCenter();
+        this.sampler = sampler;
     }
 
     /* private */ Point findSensorCenter() {

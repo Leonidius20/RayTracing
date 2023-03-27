@@ -9,6 +9,8 @@ import ua.leonidius.raytracing.material.MirrorMaterial;
 
 public class TrueColorPixelRenderer implements IPixelRenderer {
 
+    private final int MAX_RECURSION_DEPTH = 5;
+
     private final boolean shadowsEnabled;
 
     public TrueColorPixelRenderer(boolean shadowsEnabled) {
@@ -19,7 +21,8 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
     public Color renderIntersection(Scene scene, Intersection intersection) {
         var lightValue = calculateLightAt(
                 intersection,
-                scene
+                scene,
+                0
         );
 
         return lightValue.toRGB();
@@ -28,7 +31,10 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
     /**
      * Handling of primary ray hitting a surface
      */
-    /* private */ ISpectrum calculateLightAt(Intersection intersection, Scene scene) {
+    /* private */ ISpectrum calculateLightAt(Intersection intersection, Scene scene, int recursionDepth) {
+        if (recursionDepth > MAX_RECURSION_DEPTH) {
+            return new RGBSpectrum(0, 0, 0);
+        }
 
         intersection = fixFloatingPointImprecision(intersection);
 
@@ -42,7 +48,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
         var point = intersection.point();
         var normal = instance.getNormal(point);
 
-        var cosine = normal.dotProduct(scene.getLightSource().invertedDirection());
+        var cosine = normal.dotProduct(scene.getLightSources().get(0).directionFromPoint(point));
         cosine = Math.max(0.0, cosine); // todo: replace with abs ?
         // todo: let the material calculate the cosine??
         // i don't think mirror material should be affected by cosine
@@ -58,7 +64,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
 
             var secondaryIntersection = Renderer.findClosestIntersection(secondaryRay, scene); // todo refactor, eliminate dependency on Renderer
             if (secondaryIntersection.isPresent()) {
-                secondaryRayResult = calculateLightAt(secondaryIntersection.get(), scene);
+                secondaryRayResult = calculateLightAt(secondaryIntersection.get(), scene, recursionDepth + 1);
             } else {
                 secondaryRayResult = new RGBSpectrum(0, 0, 0);
             }
@@ -74,7 +80,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
         if (shadowsEnabled) {
             if (cosine > 1e-7) {
                 // send shadow ray
-                var shadowRay = new Ray(point, scene.getLightSource().invertedDirection());
+                var shadowRay = new Ray(point, scene.getLightSources().get(0).directionFromPoint(point));
                 // find any intersection, if found, return 0
 
                 for (var shape : scene.getObjects()) {

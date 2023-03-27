@@ -8,21 +8,18 @@ import ua.leonidius.raytracing.arguments.MissingCliParameterException;
 import ua.leonidius.raytracing.camera.PerspectiveCamera;
 import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
-import ua.leonidius.raytracing.entities.Vector3;
 import ua.leonidius.raytracing.entities.spectrum.RGBSpectrum;
 import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
-import ua.leonidius.raytracing.light.DirectionalLightSource;
+import ua.leonidius.raytracing.light.PointLight;
 import ua.leonidius.raytracing.material.MatteMaterial;
 import ua.leonidius.raytracing.material.MirrorMaterial;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.primitives.kdtree.KdTree;
 import ua.leonidius.raytracing.primitives.kdtree.KdTreeRecursiveIntersectionFinder;
-import ua.leonidius.raytracing.primitives.kdtree.KdTreeValidator;
 import ua.leonidius.raytracing.primitives.kdtree.MiddleSplitChooser;
 import ua.leonidius.raytracing.shading.FlatShadingModel;
-import ua.leonidius.raytracing.shapes.BoxOutline;
 import ua.leonidius.raytracing.shapes.Plane;
 import ua.leonidius.raytracing.shapes.Sphere;
 import ua.leonidius.raytracing.shapes.factories.TriangleFactory;
@@ -38,8 +35,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class Main implements IMonitoringCallback {
@@ -209,33 +204,20 @@ public class Main implements IMonitoringCallback {
 
     private static void applyDestructiveTransforms(TriangleMesh mesh) {
         // combine with works in reverse way
-        /*AffineTransform3d transform = new RotationX(90);
-        mesh.applyTransformDestructive(transform);
-
-       transform =new RotationZ(-45);
-        mesh.applyTransformDestructive(transform);
-
-        transform = new Translation(0, 3, -0.5);
-        mesh.applyTransformDestructive(transform);*/
-
         var rotationX = new RotationX(90);
         var rotationZ = new RotationZ(-45);
         var translation = new Translation(0, 3, 0);
 
         var transform = translation.combineWith(rotationZ).combineWith(rotationX);
-               // rotationX.combineWith(rotationZ).combineWith(translation);
-
-        //transform = transform.combineWith(new Translation(0, 3, -0.5));
-     //   transform = transform.combineWith(
 
         mesh.applyTransformDestructive(transform);
-
     }
 
     private static Scene createScene(ArrayList<IShape3d> shapes, boolean accelerate) {
 
         var camera = new PerspectiveCamera(new Point(0.3, -3.4, 0.5), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
-        var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize(), new RGBSpectrum(1, 1, 1));
+        // var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize(), new RGBSpectrum(0.5, 0.5, 0.5));
+        var lightSource = new PointLight(new Point(3, -3, 3), new RGBSpectrum(1, 1, 1));
         var flatShading = new FlatShadingModel();
         var lambertMaterial = new MatteMaterial(new RGBSpectrum(1, 0.75, 0));
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading, lambertMaterial)).collect(Collectors.toCollection(ArrayList::new));
@@ -243,53 +225,15 @@ public class Main implements IMonitoringCallback {
         var scene = new Scene(camera, lightSource);
         if (accelerate) {
             var kdTree = new KdTree(instances, new MiddleSplitChooser(), new KdTreeRecursiveIntersectionFinder());
-
-            var validator = new KdTreeValidator();
-            // validator.validate(kdTree);
        
-            scene.add(kdTree); // todo get back
-
-
-            Queue<KdTree.INode> queue = new LinkedList<>();
-            queue.add(kdTree.root);
-            while (!queue.isEmpty()) {
-                var node = queue.poll();
-                if (node instanceof KdTree.InteriorNode interiorNode) {
-                    queue.add(interiorNode.leftChild());
-                    queue.add(interiorNode.rightChild());
-                } else if (node instanceof KdTree.LeafNode leafNode) {
-                    var box = leafNode.debugInfo().aabb;
-                    var boxOutline = BoxOutline.fromAABB(box);
-                    //scene.add(new Instance(boxOutline, flatShading));
-                }
-            }
-
-            var box1 = ((KdTree.InteriorNode)((KdTree.InteriorNode)((KdTree.InteriorNode)kdTree.root).rightChild()).rightChild()).leftChild() .debugInfo().aabb;
-            var box2 = ((KdTree.InteriorNode)((KdTree.InteriorNode)((KdTree.InteriorNode)kdTree.root).rightChild()).rightChild()).rightChild() .debugInfo().aabb;
-
-//            box2.getMaxPoint().z -= 0.33;
-  //          box2.getMinPoint().z -= 0.33;
-
-            System.out.println("Split by " + (((KdTree.InteriorNode)((KdTree.InteriorNode)((KdTree.InteriorNode) kdTree.root).rightChild()).rightChild())).splitAxis().toString());
-
-
-           // scene.add(new Instance(BoxOutline.fromAABB(sphere.computeBoundingBox()), flatShading));
-           // scene.add(new Instance(sphere, flatShading));
-            //scene.add(new Instance(BoxOutline.fromAABB(box1), flatShading));
-            //scene.add(new Instance(BoxOutline.fromAABB(box2), flatShading));
+            scene.add(kdTree);
         } else {
             instances.forEach(scene::add);
         }
-        scene.add(new Instance(new Sphere(new Point(1, 2, 0.75), 0.25), flatShading, new MatteMaterial(new RGBSpectrum(1, 0, 0))));
-        scene.add(new Instance(new Sphere(new Point(1, 2, 0.25), 0.25), flatShading, new MirrorMaterial(new RGBSpectrum(1, 1, 1))));
+        scene.add(new Instance(new Sphere(new Point(1, 2, 0.25), 0.25), flatShading, new MatteMaterial(new RGBSpectrum(1, 0, 0))));
+        scene.add(new Instance(new Sphere(new Point(1, 2, 0.75), 0.25), flatShading, new MirrorMaterial(new RGBSpectrum(1, 1, 1))));
         scene.add(new Instance(new Plane(new Point(0, 0, 0), new Normal(0, 0, 1)), flatShading, new MatteMaterial(new RGBSpectrum(0, 0, 1))));
         return scene;
-    }
-
-    private static class EmptyRenderingMonitor implements IMonitoringCallback {
-        @Override
-        public void shareProgress(ua.leonidius.raytracing.entities.Color[][] pixels, int startX, int startY, int endX, int endY) {
-        }
     }
 
     private static void clearBufferedImage(BufferedImage img) {

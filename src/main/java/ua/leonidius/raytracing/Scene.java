@@ -11,13 +11,11 @@ import java.util.ArrayList;
 
 public class Scene {
 
-    // TODO: method to compute bounding box of the entire scene
-
     @Getter private final ArrayList<IPrimitive> objects;
-    @Getter @Setter
-    ICamera activeCamera;
-    @Getter @Setter
-    ILightSource lightSource;
+
+    @Getter @Setter ICamera activeCamera;
+
+    @Getter @Setter ArrayList<ILightSource> lightSources;
 
     @Getter Color backgroundColor = Color.PINK;
 
@@ -25,14 +23,30 @@ public class Scene {
         this(camera, light, new ArrayList<>());
     }
 
+    @Deprecated
     public Scene(ICamera camera, ILightSource light, ArrayList<IPrimitive> shapes) {
         this.activeCamera = camera;
-        this.lightSource = light;
+        this.lightSources = new ArrayList<>();
+        this.lightSources.add(light);
         this.objects = shapes;
+    }
+
+    public Scene(ICamera camera) {
+        this.activeCamera = camera;
+        this.lightSources = new ArrayList<>();
+        this.objects = new ArrayList<>();
     }
 
     public void add(IPrimitive obj) {
         objects.add(obj);
+    }
+
+    public void add(ILightSource light) {
+        lightSources.add(light);
+    }
+
+    public void setBackgroundColor(Color color) {
+        this.backgroundColor = color;
     }
 
 }

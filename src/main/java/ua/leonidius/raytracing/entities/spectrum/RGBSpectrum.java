@@ -25,6 +25,17 @@ public class RGBSpectrum implements ISpectrum {
         // todo: implement in a better way
     }
 
+    @Override
+    public ISpectrum add(ISpectrum spectrum) {
+        if (spectrum instanceof RGBSpectrum rgbSpectrum) {
+            return new RGBSpectrum(
+                    Math.max(1.0, r() + rgbSpectrum.r()),
+                    Math.max(1.0, g() + rgbSpectrum.g()),
+                    Math.max(1.0, b() + rgbSpectrum.b()));
+        }
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
     public double r() {
         return values[0];
     }
