@@ -2,7 +2,6 @@ package ua.leonidius.raytracing.input;
 
 import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
-import ua.leonidius.raytracing.entities.Vector3;
 import ua.leonidius.raytracing.shapes.triangle.Triangle;
 import ua.leonidius.raytracing.shapes.triangle.TriangleMesh;
 
@@ -38,13 +37,11 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
                 switch (firstTwoChars) {
                     case "v " -> {
                         // vertex
-                        var v = parseVectorDeclaration(line);
-                        allVertices.add(new Point(v.x, v.y, v.z)); // TODO refactor and clone points or do a mesh
+                        allVertices.add(parseVertexDeclaration(line));
                     }
-
                     case "vn" ->
                             // normals
-                            allNormals.add(parseVectorDeclaration(line).normalize().toNormal()); // TODO refactor
+                            allNormals.add(parseNormalDeclaration(line));
                     case "f " -> {
                         // face (triangle or polygon)
                         var record = parsePolygonDeclaration(line);
@@ -70,12 +67,11 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
         return new TriangleMesh(allVertices, allNormals, triangles);
     }
 
-    // just test the end function?
-    /* private */ Vector3 parseVectorDeclaration(String line) throws ParsingException {
+    private Point parseVertexDeclaration(String line) throws ParsingException {
         var parts = line.split(" ");
 
-        if (parts.length < 4) {
-            throw new ParsingException("Error parsing vector declaration: less than 3 coordinates");
+        if (parts.length != 4) {
+            throw new ParsingException("Error parsing vertex declaration: less than or more than 3 coordinates");
         }
 
         try {
@@ -83,23 +79,40 @@ public class ParsedWavefrontFile implements ParsedGeometryFile {
             double y = Double.parseDouble(parts[2]);
             double z = Double.parseDouble(parts[3]);
 
-            return new Vector3(x, y, z);
+            return new Point(x, y, z);
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Error parsing vector declaration: invalid number format");
+            throw new ParsingException("Error parsing vertex declaration: invalid number format");
         }
-
     }
 
-    /* private */ record PolygonRecord(
+    private Normal parseNormalDeclaration(String line) throws ParsingException {
+        var parts = line.split(" ");
+
+        if (parts.length != 4) {
+            throw new ParsingException("Error parsing normal declaration: less than 3 coordinates");
+        }
+
+        try {
+            double x = Double.parseDouble(parts[1]);
+            double y = Double.parseDouble(parts[2]);
+            double z = Double.parseDouble(parts[3]);
+
+            return new Normal(x, y, z).normalize(); // we don't trust the file to have normalized normals
+        } catch (NumberFormatException e) {
+            throw new ParsingException("Error parsing normal declaration: invalid number format");
+        }
+    }
+
+    private record PolygonRecord(
             int[] vertexIndices,
             int[] normalIndices
     ) { }
 
-    /* private */ PolygonRecord parsePolygonDeclaration(String line) throws ParsingException {
+    private PolygonRecord parsePolygonDeclaration(String line) throws ParsingException {
         var parts = line.split(" ");
 
         if (parts.length < 4) {
-            throw new RuntimeException("Error parsing polygon declaration: less than 3 vertices");
+            throw new RuntimeException("Error parsing polygon declaration: less than or more than 3 vertices");
         }
 
         int[] vertexIndices = new int[parts.length - 1];

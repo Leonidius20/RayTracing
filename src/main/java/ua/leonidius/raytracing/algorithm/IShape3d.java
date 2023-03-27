@@ -17,7 +17,4 @@ public interface IShape3d {
 
     BoundingBox computeBoundingBox();
 
-    // TODO: watch lecture about transformations once more
-    // and find out what should be transformed and how
-
 }

@@ -15,7 +15,6 @@ public abstract class Aggregate implements IPrimitive {
         this.primitives = primitives;
     }
 
-    // todo: test
     protected BoundingBox calcBoundingBox() {
         if (primitives.size() == 0)
             return new BoundingBox(new Point(0, 0, 0), new Point(0, 0, 0));

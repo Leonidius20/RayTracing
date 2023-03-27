@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class ParsedWavefrontFileTest {
 
@@ -55,56 +56,41 @@ class ParsedWavefrontFileTest {
     }
 
     @Test
-    void parseVectorDeclaration() throws ParsingException {
-        var reader = new ParsedWavefrontFile(null);
-
-        // "v" vertex or "vn" normal
+    void parseBadVertexDeclaration() {
         String badLine = "v 5.76 7.67";
+        var reader1 = new ParsedWavefrontFile(new BufferedReader(new StringReader(badLine)));
+
         assertThrows(ParsingException.class, () -> {
-            reader.parseVectorDeclaration(badLine);
+            reader1.shapes(mock(ITriangleFactory.class));
         });
 
-        String line = "v 5.76 7.67 -6.66";
-        var expected = new Vector3(5.76, 7.67, -6.66);
-        assertEquals(expected, reader.parseVectorDeclaration(line));
-    }
+        badLine = "v 5.76 7.67 8.9 9.0";
+        var reader2 = new ParsedWavefrontFile(new BufferedReader(new StringReader(badLine)));
 
-    @Test
-    void parsePolygonDeclaration() throws ParsingException {
-        var reader = new ParsedWavefrontFile(null);
-        // options:
-        /*
-                f 1 2 3      (only vertices)
-                f 3/1 4/2 5/3 (vetrex + texture)
-                f 6/4/1 3/5/3 7/6/5 (vetrex + texture + normal)
-                f 7//1 8//2 9//3 (vertex + normal)
-         */
+        assertThrows(ParsingException.class, () -> {
+            reader2.shapes(mock(ITriangleFactory.class));
+        });
 
-        String line = "f 1 2 3";
+        badLine = "v 5.76 7.67 5text";
+        var reader3 = new ParsedWavefrontFile(new BufferedReader(new StringReader(badLine)));
 
-        var expected = new ParsedWavefrontFile.PolygonRecord(new int[] {1, 2, 3}, new int[] {-1,-1,-1});
+        assertThrows(ParsingException.class, () -> {
+            reader3.shapes(mock(ITriangleFactory.class));
+        });
 
-        assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
+        badLine = "vn 5.76 7.67 4text";
+        var reader4 = new ParsedWavefrontFile(new BufferedReader(new StringReader(badLine)));
 
+        assertThrows(ParsingException.class, () -> {
+            reader4.shapes(mock(ITriangleFactory.class));
+        });
 
-        line = "f 3/1 4/2 5/3";
-        expected = new ParsedWavefrontFile.PolygonRecord(new int[] {3, 4, 5}, new int[] {-1,-1,-1});
-        assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
+        badLine = "vn 5.76 7.67";
+        var reader5 = new ParsedWavefrontFile(new BufferedReader(new StringReader(badLine)));
 
-        line = "f 6/4/1 3/5/3 7/6/5";
-        expected = new ParsedWavefrontFile.PolygonRecord(new int[] {6, 3, 7}, new int[] {1,3,5});
-        assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
-
-        line = "f 7//1 8//2 9//3";
-        expected = new ParsedWavefrontFile.PolygonRecord(new int[] {7, 8, 9}, new int[] {1,2,3});
-        assertTrue(polygonRecordsAreEqual(expected, reader.parsePolygonDeclaration(line)));
-    }
-
-    boolean polygonRecordsAreEqual(ParsedWavefrontFile.PolygonRecord r1,
-                                   ParsedWavefrontFile.PolygonRecord r2) {
-        if (r1 == r2) return true;
-        if (r1 == null || r2 == null) return false;
-        return Arrays.equals(r1.vertexIndices(), r2.vertexIndices()) && Arrays.equals(r2.normalIndices(), r1.normalIndices());
+        assertThrows(ParsingException.class, () -> {
+            reader5.shapes(mock(ITriangleFactory.class));
+        });
     }
 
     @Test
