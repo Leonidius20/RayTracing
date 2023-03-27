@@ -43,9 +43,9 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
 
         var secondaryRayDirection = instance.material().getSecondaryRayDirection(intersection.ray().getDirection(), normal);
 
-        ISpectrum color;
+        ISpectrum materialColor;
         if (secondaryRayDirection == null) {
-            color = instance.material().brdf(intersection.ray(), intersection, null);
+            materialColor = instance.material().brdf(intersection.ray(), intersection, null);
         } else {
             var secondaryRay = new Ray(point, secondaryRayDirection);
 
@@ -59,38 +59,44 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
                 secondaryRayResult = new RGBSpectrum(0, 0, 0);
             }
 
-            color = instance.material().brdf(intersection.ray(), intersection, secondaryRayResult);
+            materialColor = instance.material().brdf(intersection.ray(), intersection, secondaryRayResult);
 
             // todo remove, it's only a test
             if (instance.material() instanceof MirrorMaterial m) {
-                return color; // no shadows and no cosine
+                return materialColor; // no shadows and no cosine
             }
         }
 
+        ISpectrum result = new RGBSpectrum(0,0,0);
+
         // light source specific calculations
+        for (var lightSource : scene.getLightSources()) {
+            var cosine = normal.dotProduct(lightSource.directionFromPoint(point));
+            cosine = Math.max(0.0, cosine); // todo: replace with abs ?
+            // todo: let the material calculate the cosine??
+            // i don't think mirror material should be affected by cosine
 
-
-        var cosine = normal.dotProduct(scene.getLightSources().get(0).directionFromPoint(point));
-        cosine = Math.max(0.0, cosine); // todo: replace with abs ?
-        // todo: let the material calculate the cosine??
-        // i don't think mirror material should be affected by cosine
-
-
-
-        if (shadowsEnabled) {
-            if (cosine > 1e-7) {
+            boolean isInShadow = false;
+            if (shadowsEnabled && cosine > 1e-7) {
                 // send shadow ray
-                var shadowRay = new Ray(point, scene.getLightSources().get(0).directionFromPoint(point));
+                var shadowRay = new Ray(point, lightSource.directionFromPoint(point));
                 // find any intersection, if found, return 0
 
                 for (var primitive : scene.getObjects()) {
                     var shadowIntersection = primitive.findAnyIntersectionWithRay(shadowRay);
-                    if (shadowIntersection.isPresent()) return new RGBSpectrum(0, 0, 0);
+                    if (shadowIntersection.isPresent()) {
+                        isInShadow = true; // we don't count that light source's contribution
+                        break;
+                    }
                 }
+            }
+
+            if (!isInShadow) {
+                result = result.add(materialColor.multiplyBy(lightSource.color()).multiplyBy(cosine));
             }
         }
 
-        return new RGBSpectrum(0,0,0).add(color.multiplyBy(scene.getLightSources().get(0).color()).multiplyBy(cosine));
+        return result;
     }
 
     /**

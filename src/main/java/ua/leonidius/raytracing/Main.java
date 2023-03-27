@@ -216,11 +216,14 @@ public class Main implements IMonitoringCallback {
         var camera = new PerspectiveCamera(new Point(0.3, -3.4, 0.5), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
         // var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize(), new RGBSpectrum(0.5, 0.5, 0.5));
         var lightSource = new PointLight(new Point(3, -3, 3), new RGBSpectrum(1, 0.75, 0.8));
+        var lightSource2 = new PointLight(new Point(-3, -3, 3), new RGBSpectrum(0.8, 0.75, 1));
         var flatShading = new FlatShadingModel();
         var lambertMaterial = new MatteMaterial(new RGBSpectrum(1, 0.75, 0));
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading, lambertMaterial)).collect(Collectors.toCollection(ArrayList::new));
 
-        var scene = new Scene(camera, lightSource);
+        var scene = new Scene(camera);
+        scene.add(lightSource);
+        scene.add(lightSource2);
         if (accelerate) {
             System.out.print("Building kd-tree... ");
             var kdTree = new KdTree(instances, new MiddleSplitChooser(), new RecursiveClosestIntersectionFinder());
@@ -230,8 +233,9 @@ public class Main implements IMonitoringCallback {
         } else {
             instances.forEach(scene::add);
         }
-        scene.add(new Instance(new Sphere(new Point(1, 2, 0.25), 0.25), flatShading, new MatteMaterial(new RGBSpectrum(1, 0, 0))));
-        scene.add(new Instance(new Sphere(new Point(1, 2, 0.75), 0.25), flatShading, new MirrorMaterial(new RGBSpectrum(1, 1, 1))));
+        scene.add(new Instance(new Sphere(new Point(1.1, 2, 0.25), 0.25), flatShading, new MatteMaterial(new RGBSpectrum(1, 0, 0))));
+        scene.add(new Instance(new Sphere(new Point(1.1, 2, 0.75), 0.25), flatShading, new MirrorMaterial(new RGBSpectrum(1, 1, 1))));
+        scene.add(new Instance(new Sphere(new Point(-0.25, 1.3, 0.125), 0.125), flatShading, new MatteMaterial(new RGBSpectrum(1, 1, 1))));
         scene.add(new Instance(new Plane(new Point(0, 0, 0), new Normal(0, 0, 1)), flatShading, new MatteMaterial(new RGBSpectrum(0, 0, 1))));
         return scene;
     }
