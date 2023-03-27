@@ -58,6 +58,7 @@ public class Renderer {
                     var intersectionOptional =
                             findClosestIntersection(ray, scene);
                     if (intersectionOptional.isEmpty()) {
+                        result = result == null ? scene.getBackgroundColor() : result.blendWith(scene.getBackgroundColor());
                         continue;
                     }
                     var intersection = intersectionOptional.get();

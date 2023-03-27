@@ -3,6 +3,7 @@ package ua.leonidius.raytracing.camera;
 import lombok.Getter;
 import ua.leonidius.raytracing.algorithm.ICamera;
 import ua.leonidius.raytracing.camera.samplers.OneSampleSampler;
+import ua.leonidius.raytracing.camera.samplers.StratifiedSampler;
 import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.Point2d;
 import ua.leonidius.raytracing.entities.Ray;
@@ -34,7 +35,7 @@ public class PerspectiveCamera implements ICamera {
 
     private final Point topLeftPixelCenter;
 
-    private final ISampler sampler = new OneSampleSampler(); // TODO: dependency injection
+    private final ISampler sampler = new StratifiedSampler(4); // TODO: dependency injection
 
     public PerspectiveCamera(Point focusPoint, /*Vector3 cameraDirection,*/ double focusDistance, int sensorHeight, int sensorWidth, double pixelHeight, double pixelWidth) {
         this.focusPoint = focusPoint;
