@@ -9,13 +9,13 @@ import java.util.Optional;
 public class RecursiveClosestIntersectionFinder extends IKdTreeVisitor<Optional<Intersection>> {
 
     @Override
-    public Optional<Intersection> visit(KdTree.INode node, Ray ray, RayFragment fragment) {
+    public Optional<Intersection> visit(INode node, Ray ray, RayFragment fragment) {
 
         return super.visit(node, ray, fragment);
     }
 
     @Override
-    protected Optional<Intersection> visit(KdTree.InteriorNode node, Ray ray, RayFragment fragment) {
+    protected Optional<Intersection> visit(InteriorNode node, Ray ray, RayFragment fragment) {
         node.info().traversed = true;
 
         // idk when this happens but who knows maybe it does
@@ -30,8 +30,8 @@ public class RecursiveClosestIntersectionFinder extends IKdTreeVisitor<Optional<
         boolean isLeftChildFirst = ray.getOrigin().getValue(node.splitAxis()) < node.splitCoordinate()
                 || (ray.getOrigin().getValue(node.splitAxis()) == node.splitCoordinate() && ray.getDirection().getValue(node.splitAxis()) <= 0);
 
-        KdTree.INode firstChild = isLeftChildFirst ? node.leftChild() : node.rightChild();
-        KdTree.INode secondChild = isLeftChildFirst ? node.rightChild() : node.leftChild();
+        INode firstChild = isLeftChildFirst ? node.leftChild() : node.rightChild();
+        INode secondChild = isLeftChildFirst ? node.rightChild() : node.leftChild();
 
         // check whether we need to check both children or just one
 
@@ -57,7 +57,7 @@ public class RecursiveClosestIntersectionFinder extends IKdTreeVisitor<Optional<
     }
 
     @Override
-    protected Optional<Intersection> visit(KdTree.LeafNode node, Ray ray, RayFragment fragment) {
+    protected Optional<Intersection> visit(LeafNode node, Ray ray, RayFragment fragment) {
         node.info().traversed = true;
 
         Optional<Intersection> closestIntersection = Optional.empty();

@@ -9,7 +9,7 @@ import java.util.List;
 public class KdTreeValidator extends IKdTreeVisitor<List<IPrimitive>> {
 
     @Override
-    protected List<IPrimitive> visit(KdTree.InteriorNode node, Ray ray, RayFragment fragment) {
+    protected List<IPrimitive> visit(InteriorNode node, Ray ray, RayFragment fragment) {
         var leftPrim = visit(node.leftChild(), ray, fragment);
         var rightPrim = visit(node.rightChild(), ray, fragment);
 
@@ -44,7 +44,7 @@ public class KdTreeValidator extends IKdTreeVisitor<List<IPrimitive>> {
     }
 
     @Override
-    protected List<IPrimitive> visit(KdTree.LeafNode node, Ray ray, RayFragment fragment) {
+    protected List<IPrimitive> visit(LeafNode node, Ray ray, RayFragment fragment) {
         return node.leafPrimitives();
     }
 

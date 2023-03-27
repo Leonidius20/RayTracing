@@ -1,4 +1,7 @@
 package ua.leonidius.raytracing.primitives.kdtree;
 
-public interface IKdTreeNode {
+interface INode {
+
+    NodeDebugInfo debugInfo();
+
 }

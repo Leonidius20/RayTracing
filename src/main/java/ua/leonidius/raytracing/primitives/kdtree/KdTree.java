@@ -2,9 +2,7 @@ package ua.leonidius.raytracing.primitives.kdtree;
 
 import ua.leonidius.raytracing.algorithm.IPrimitive;
 import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.entities.Axis;
 import ua.leonidius.raytracing.entities.BoundingBox;
-import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.primitives.Aggregate;
 
@@ -13,137 +11,9 @@ import java.util.Optional;
 
 public class KdTree extends Aggregate {
 
-    public interface INode {
-        // Optional<Intersection> checkIntersection(Ray ray, RayFragment fragment);
-        NodeDebugInfo debugInfo();
-        //BoundingBox boundingBox();
-    }
-
-    public record InteriorNode(INode leftChild,
-                        INode rightChild,
-                        Axis splitAxis, double splitCoordinate,
-                        //BoundingBox aabb,
-                        NodeDebugInfo info) implements INode {
-
-        /*@Override
-        public Optional<Intersection> checkIntersection(Ray ray, RayFragment fragment) {
-            this.info.traversed = true;
-
-            // idk when this happens but who knows maybe it does
-            if (fragment.tMin() > fragment.tMax()) {
-                return Optional.empty();
-            }
-
-            // compute distance to split plane along ray
-            double tSplit = (splitCoordinate - ray.getOrigin().getValue(splitAxis))
-                    / ray.getDirection().getValue(splitAxis); // todo: can there be a division by zero?
-
-            boolean isLeftChildFirst = ray.getOrigin().getValue(splitAxis) < splitCoordinate
-                    || (ray.getOrigin().getValue(splitAxis) == splitCoordinate && ray.getDirection().getValue(splitAxis) <= 0);
-
-            INode firstChild = isLeftChildFirst ? leftChild : rightChild;
-            INode secondChild = isLeftChildFirst ? rightChild : leftChild;
-
-            // check whether we need to check both children or just one
-
-            // if the ray enters and exits only the left sub-box
-            // or if it goes in inverse direction starting from the split plane
-            if (tSplit > fragment.tMax() || tSplit <= 0) {
-                return firstChild.checkIntersection(ray, fragment);
-            } else if (tSplit < fragment.tMin()) { // if the ray enters and exits only the right sub box
-                return secondChild.checkIntersection(ray, fragment);
-            } else {
-                // if the ray enters both sub-boxes
-                // check the first child
-                var intersection = firstChild.checkIntersection(ray, new RayFragment(fragment.tMin(), tSplit));
-                if (intersection.isPresent()) {
-                    return intersection;
-                }
-
-                // check the second child
-                return secondChild.checkIntersection(ray, new RayFragment(tSplit, fragment.tMax()));
-            }
-        }*/
-
-        @Override
-        public NodeDebugInfo debugInfo() {
-            return info;
-        }
-
-       // @Override
-        //public BoundingBox boundingBox() {
-           // return aabb;
-       // }
-    }
-
-    public record LeafNode(
-            ArrayList<IPrimitive> leafPrimitives,
-            NodeDebugInfo info//,
-            /*BoundingBox aabb*/) implements INode {
-
-        /*@Override
-        public Optional<Intersection> checkIntersection(Ray ray, RayFragment fragment) {
-            this.info.traversed = true;
-
-            Optional<Intersection> closestIntersection = Optional.empty();
-
-            // again idk if this is needed
-            if (fragment.tMin() > fragment.tMax()) {
-                return Optional.empty();
-            }
-
-            for (var object : leafPrimitives) {
-                var intersection = object
-                        .findVisibleIntersectionWithRay(ray);
-                if (intersection.isEmpty()) continue;
-
-                if (closestIntersection.isEmpty()
-                        || intersection.get().tParam() < closestIntersection.get().tParam()) {
-                    closestIntersection = intersection;
-                }
-            }
-
-            return closestIntersection;
-        }*/
-
-        @Override
-        public NodeDebugInfo debugInfo() {
-            return info;
-        }
-
-        /*@Override
-        public BoundingBox boundingBox() {
-            return aabb;
-        }*/
-    }
-
-    public static class NodeDebugInfo {
-        final int depth;
-        final String type;
-        final int primitivesNumber;
-        boolean traversed;
-        public BoundingBox aabb;
-
-        private NodeDebugInfo(int depth, String type, int primitivesNumber, BoundingBox aabb) {
-            this.depth = depth;
-            this.type = type;
-            this.primitivesNumber = primitivesNumber;
-            this.traversed = false;
-            this.aabb = aabb;
-        }
-    }
-
-    /**
-     * An interface for an object that can choose where to split the box
-     * (e.g. in the middle, according to SAH and so on)
-     */
-    interface SplitChooser {
-        double splitCoordinate(BoundingBox box, ArrayList<IPrimitive> primitives, Axis splitAxis);
-    }
-
     public final INode root;
     private final BoundingBox boundingBox;
-    private final SplitChooser splitChooser;
+    private final ISplitChooser splitChooser;
     private final IKdTreeVisitor<Optional<Intersection>> visitor;
     private final IKdTreeVisitor<Optional<Intersection>> anyIntersectionFinder
             = new RecursiveAnyIntersectionFinder(); // todo remove dependency
@@ -151,14 +21,11 @@ public class KdTree extends Aggregate {
     int maxDepth;
     int minPrimitivesNumberInLeaf;
 
-    // private KdTree() {}
-
-    public KdTree(ArrayList<IPrimitive> primitives, SplitChooser splitChooser, IKdTreeVisitor<Optional<Intersection>> visitor) {
+    public KdTree(ArrayList<IPrimitive> primitives, ISplitChooser splitChooser, IKdTreeVisitor<Optional<Intersection>> visitor) {
         super(primitives);
         this.splitChooser = splitChooser;
         this.visitor = visitor;
         boundingBox = calcBoundingBox();
-
 
         maxDepth = (int) (8 + 1.3 * Math.log(primitives.size())) / 2;
         // i've added /2
@@ -166,14 +33,10 @@ public class KdTree extends Aggregate {
         minPrimitivesNumberInLeaf = 50; //  todo choose
 
         root = buildTree(primitives, 0, boundingBox);
-
-
     }
 
     INode buildTree(ArrayList<IPrimitive> themPrimitives, int currentDepth,
                     BoundingBox currentAABB) {
-        // return new LeafNode(primitives);
-
         if (themPrimitives.size() < minPrimitivesNumberInLeaf
                 || currentDepth == maxDepth) { // todo: maybe add a minimum box size for splitting?
             // create a leaf node
@@ -191,18 +54,10 @@ public class KdTree extends Aggregate {
             }
 
             var leftAABB = new BoundingBox(currentAABB.getMinPoint(),
-                    replaceValueInPoint(currentAABB.getMaxPoint(), splitAxis, splitCoordinate));
-            /*for (var axis : Axis.values()) {
-                replaceValueInPoint(leftAABB.getMinPoint(), axis, leftAABB.getMinPoint().getValue(axis) - 0.0001);
-                replaceValueInPoint(leftAABB.getMaxPoint(), axis, leftAABB.getMaxPoint().getValue(axis) + 0.0001);
-            }*/
+                    currentAABB.getMaxPoint().replaceValue(splitAxis, splitCoordinate));
 
-           var rightAABB = new BoundingBox(replaceValueInPoint(currentAABB.getMinPoint(), splitAxis, splitCoordinate),
+            var rightAABB = new BoundingBox(currentAABB.getMinPoint().replaceValue(splitAxis, splitCoordinate),
                     currentAABB.getMaxPoint());
-            /*for (var axis : Axis.values()) {
-                replaceValueInPoint(rightAABB.getMinPoint(), axis, rightAABB.getMinPoint().getValue(axis) - 0.0001);
-                replaceValueInPoint(rightAABB.getMaxPoint(), axis, rightAABB.getMaxPoint().getValue(axis) + 0.0001);
-            }*/
 
             // create children
             // check who is on the left and who is on the right
@@ -220,12 +75,12 @@ public class KdTree extends Aggregate {
                if (primitive.computeBoundingBox().getMaxPoint().getValue(splitAxis) >= splitCoordinate - 0.0001) {
                     primitivesOnTheRight.add(primitive);
                     added = true;
-                }
-                if (!added) {
-                    System.out.println("ERROR: primitive not added to any child");
-                    primitivesOnTheLeft.add(primitive);
-                    primitivesOnTheRight.add(primitive);
-                }
+               }
+               if (!added) {
+                   System.out.println("ERROR: primitive not added to any child");
+                   primitivesOnTheLeft.add(primitive);
+                   primitivesOnTheRight.add(primitive);
+               }
 
             }
 
@@ -237,34 +92,8 @@ public class KdTree extends Aggregate {
         }
     }
 
-    /* private */ static BoundingBox createLeftSubBox(BoundingBox box, Axis splitAxis, double splitCoordinate) {
-        return new BoundingBox(box.getMinPoint(),
-                replaceValueInPoint(box.getMaxPoint(), splitAxis, splitCoordinate));
-    }
-
-    /* private */ static BoundingBox createRightSubBox(BoundingBox box, Axis splitAxis, double splitCoordinate) {
-        return new BoundingBox(replaceValueInPoint(box.getMinPoint(), splitAxis, splitCoordinate),
-                box.getMaxPoint());
-    }
-
     private static LeafNode createLeaf(ArrayList<IPrimitive> themPrimitives, int currentDepth, BoundingBox box) {
         return new LeafNode(themPrimitives, new NodeDebugInfo(currentDepth, "leaf", themPrimitives.size(), box));
-    }
-
-    // todo move to Point class
-    private static Point replaceValueInPoint(Point point, Axis axis, double newValue) {
-        switch (axis) {
-            case X -> {
-                return new Point(newValue, point.y, point.z);
-            }
-            case Y -> {
-                return new Point(point.x, newValue, point.z);
-            }
-            case Z -> {
-                return new Point(point.x, point.y, newValue);
-            }
-        }
-        throw new RuntimeException(); // unreachable
     }
 
     @Override
@@ -273,7 +102,7 @@ public class KdTree extends Aggregate {
                 = boundingBox.findVisibleIntersectionWithRay(ray);
         if (intersectionWithAABB.isEmpty()) return Optional.empty();
         var fragment = intersectionWithAABB.get();
-        
+
         return visitor.visit(root, ray, fragment);
     }
 
@@ -291,6 +120,5 @@ public class KdTree extends Aggregate {
     public BoundingBox computeBoundingBox() {
         return boundingBox;
     }
-
 
 }

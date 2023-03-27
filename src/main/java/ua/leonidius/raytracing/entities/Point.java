@@ -20,34 +20,25 @@ public class Point extends OrderedXyzTriple {
     }
 
     /**
-     * Add specified values to the coordinates of this point and return a new one with
-     * these new values
-     *
-     * @return
+     * Returns a new point with the same coordinates as this point,
+     * but with the value of the specified axis replaced
+     * @param axis axis on which to replace the value
+     * @param newValue new value for the axis
+     * @return new point
      */
-    /*public Point add(double deltaX, double deltaY, double deltaZ) {
-        return new Point(x + deltaX, y + deltaY, z + deltaZ);
-    }*/
-
-    /*@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Point point = (Point) o;
-        return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0 && Double.compare(point.z, z) == 0;
-    }*/
-
-    /*public Vector3 toVector() {
-        return new Vector3(x, y, z);
-    }*/
-
-    /*
-    OPERATIONS:
-    - convert to location vector
-    - add or subtract vector to/from point (move point by vector)
-    - subtract point from point (get vector between them)
-    - distance between 2 points
-    - multiply by a scalar
-     */
+    public Point replaceValue(Axis axis, double newValue) {
+        switch (axis) {
+            case X -> {
+                return new Point(newValue, y, z);
+            }
+            case Y -> {
+                return new Point(x, newValue, z);
+            }
+            case Z -> {
+                return new Point(x, y, newValue);
+            }
+        }
+        throw new RuntimeException(); // unreachable
+    }
 
 }

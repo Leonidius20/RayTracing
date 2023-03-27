@@ -63,4 +63,5 @@ public abstract class OrderedXyzTriple {
         }
         throw new RuntimeException("unknown axis");
     }
+
 }

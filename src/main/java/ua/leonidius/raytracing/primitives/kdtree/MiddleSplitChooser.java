@@ -6,7 +6,7 @@ import ua.leonidius.raytracing.entities.BoundingBox;
 
 import java.util.ArrayList;
 
-public class MiddleSplitChooser implements KdTree.SplitChooser {
+public class MiddleSplitChooser implements ISplitChooser {
 
     @Override
     public double splitCoordinate(BoundingBox box, ArrayList<IPrimitive> primitives, Axis splitAxis) {

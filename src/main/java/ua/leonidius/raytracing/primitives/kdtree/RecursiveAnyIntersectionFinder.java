@@ -9,7 +9,7 @@ import java.util.Optional;
 public class RecursiveAnyIntersectionFinder extends RecursiveClosestIntersectionFinder {
 
     @Override
-    protected Optional<Intersection> visit(KdTree.LeafNode node, Ray ray, RayFragment fragment) {
+    protected Optional<Intersection> visit(LeafNode node, Ray ray, RayFragment fragment) {
         node.info().traversed = true;
 
         // again idk if this is needed
