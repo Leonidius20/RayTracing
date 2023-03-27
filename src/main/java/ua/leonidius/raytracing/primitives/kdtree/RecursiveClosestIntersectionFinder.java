@@ -6,7 +6,7 @@ import ua.leonidius.raytracing.entities.RayFragment;
 
 import java.util.Optional;
 
-public class KdTreeRecursiveIntersectionFinder extends IKdTreeVisitor<Optional<Intersection>> {
+public class RecursiveClosestIntersectionFinder extends IKdTreeVisitor<Optional<Intersection>> {
 
     @Override
     public Optional<Intersection> visit(KdTree.INode node, Ray ray, RayFragment fragment) {

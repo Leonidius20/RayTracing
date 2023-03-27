@@ -145,6 +145,8 @@ public class KdTree extends Aggregate {
     private final BoundingBox boundingBox;
     private final SplitChooser splitChooser;
     private final IKdTreeVisitor<Optional<Intersection>> visitor;
+    private final IKdTreeVisitor<Optional<Intersection>> anyIntersectionFinder
+            = new RecursiveAnyIntersectionFinder(); // todo remove dependency
 
     int maxDepth;
     int minPrimitivesNumberInLeaf;
@@ -249,6 +251,7 @@ public class KdTree extends Aggregate {
         return new LeafNode(themPrimitives, new NodeDebugInfo(currentDepth, "leaf", themPrimitives.size(), box));
     }
 
+    // todo move to Point class
     private static Point replaceValueInPoint(Point point, Axis axis, double newValue) {
         switch (axis) {
             case X -> {
@@ -270,9 +273,18 @@ public class KdTree extends Aggregate {
                 = boundingBox.findVisibleIntersectionWithRay(ray);
         if (intersectionWithAABB.isEmpty()) return Optional.empty();
         var fragment = intersectionWithAABB.get();
-
-        // return root.checkIntersection(ray, fragment);
+        
         return visitor.visit(root, ray, fragment);
+    }
+
+    @Override
+    public Optional<Intersection> findAnyIntersectionWithRay(Ray ray) {
+        var intersectionWithAABB
+                = boundingBox.findVisibleIntersectionWithRay(ray);
+        if (intersectionWithAABB.isEmpty()) return Optional.empty();
+        var fragment = intersectionWithAABB.get();
+
+        return anyIntersectionFinder.visit(root, ray, fragment);
     }
 
     @Override

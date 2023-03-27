@@ -31,6 +31,11 @@ public class AggregateTest {
         }
 
         @Override
+        public Optional<Intersection> findAnyIntersectionWithRay(Ray ray) {
+            return Optional.empty();
+        }
+
+        @Override
         public BoundingBox computeBoundingBox() {
             return calcBoundingBox();
         }
@@ -44,7 +49,7 @@ public class AggregateTest {
         ArrayList<IPrimitive> primitives = new ArrayList<>(2);
         primitives.add(triangle1);
         primitives.add(triangle2);
-        var aggregate = new SomeAggregate(primitives);
+        var aggregate = new SomeAggregate(primitives); // todo replace with mock?
 
         var expected = new BoundingBox(new Point(0, 0, 0), new Point(5, 4, 4));
 

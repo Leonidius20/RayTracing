@@ -85,9 +85,8 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
                 var shadowRay = new Ray(point, scene.getLightSources().get(0).directionFromPoint(point));
                 // find any intersection, if found, return 0
 
-                for (var shape : scene.getObjects()) {
-                    var shadowIntersection = shape.findVisibleIntersectionWithRay(shadowRay);
-                    // todo: replace with 'find any intersection' instead of finding the closest one
+                for (var primitive : scene.getObjects()) {
+                    var shadowIntersection = primitive.findAnyIntersectionWithRay(shadowRay);
                     if (shadowIntersection.isPresent()) return new RGBSpectrum(0, 0, 0);
                 }
             }

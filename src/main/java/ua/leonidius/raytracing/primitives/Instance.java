@@ -44,6 +44,11 @@ public class Instance implements IInstance {
     }
 
     @Override
+    public Optional<Intersection> findAnyIntersectionWithRay(Ray ray) {
+        return findVisibleIntersectionWithRay(ray);
+    }
+
+    @Override
     public BoundingBox computeBoundingBox() {
         return geometry.computeBoundingBox();
     }

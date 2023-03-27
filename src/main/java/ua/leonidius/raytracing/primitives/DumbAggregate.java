@@ -38,6 +38,23 @@ public class DumbAggregate extends Aggregate {
     }
 
     @Override
+    public Optional<Intersection> findAnyIntersectionWithRay(Ray ray) {
+        if (boundingBox.findVisibleIntersectionWithRay(ray).isEmpty()) {
+            return Optional.empty();
+        }
+
+        for (var object : allPrimitives()) {
+            var intersection = object
+                    .findAnyIntersectionWithRay(ray);
+            if (intersection.isPresent()) {
+                return intersection;
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
     public BoundingBox computeBoundingBox() {
         return null;
     }

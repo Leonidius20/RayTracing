@@ -17,7 +17,7 @@ import ua.leonidius.raytracing.material.MirrorMaterial;
 import ua.leonidius.raytracing.output.PngImageWriter;
 import ua.leonidius.raytracing.primitives.Instance;
 import ua.leonidius.raytracing.primitives.kdtree.KdTree;
-import ua.leonidius.raytracing.primitives.kdtree.KdTreeRecursiveIntersectionFinder;
+import ua.leonidius.raytracing.primitives.kdtree.RecursiveClosestIntersectionFinder;
 import ua.leonidius.raytracing.primitives.kdtree.MiddleSplitChooser;
 import ua.leonidius.raytracing.shading.FlatShadingModel;
 import ua.leonidius.raytracing.shapes.Plane;
@@ -224,7 +224,7 @@ public class Main implements IMonitoringCallback {
 
         var scene = new Scene(camera, lightSource);
         if (accelerate) {
-            var kdTree = new KdTree(instances, new MiddleSplitChooser(), new KdTreeRecursiveIntersectionFinder());
+            var kdTree = new KdTree(instances, new MiddleSplitChooser(), new RecursiveClosestIntersectionFinder());
        
             scene.add(kdTree);
         } else {
