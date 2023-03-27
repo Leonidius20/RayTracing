@@ -2,9 +2,13 @@ package ua.leonidius.raytracing.camera;
 
 import lombok.Getter;
 import ua.leonidius.raytracing.algorithm.ICamera;
+import ua.leonidius.raytracing.camera.samplers.OneSampleSampler;
 import ua.leonidius.raytracing.entities.Point;
+import ua.leonidius.raytracing.entities.Point2d;
 import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.entities.Vector3;
+
+import java.util.Arrays;
 
 public class PerspectiveCamera implements ICamera {
 
@@ -29,6 +33,8 @@ public class PerspectiveCamera implements ICamera {
     final double pixelWidth;
 
     private final Point topLeftPixelCenter;
+
+    private final ISampler sampler = new OneSampleSampler(); // TODO: dependency injection
 
     public PerspectiveCamera(Point focusPoint, /*Vector3 cameraDirection,*/ double focusDistance, int sensorHeight, int sensorWidth, double pixelHeight, double pixelWidth) {
         this.focusPoint = focusPoint;
@@ -82,6 +88,25 @@ public class PerspectiveCamera implements ICamera {
                 .normalize();
 
         return new Ray(focusPoint, rayDirection);
+    }
+
+    public Ray getRayForPixel(Point2d pixel) {
+        Vector3 offset = new Vector3(pixel.x() * pixelWidth, 0, -pixel.y() * pixelHeight);
+        // todo: offset is also dependent on rotation of camera.
+        var pixelCenter = topLeftPixelCenter.add(offset);
+
+        // vector from focus point to pixel center
+        Vector3 rayDirection = pixelCenter.subtract(focusPoint)
+                .normalize();
+
+        return new Ray(focusPoint, rayDirection);
+    }
+
+    @Override
+    public Ray[] getRaysForPixel(Point2d pixelCoordinates) {
+        return Arrays.stream(sampler.samplePointsForPixel(pixelCoordinates))
+                .map(this::getRayForPixel)
+                .toArray(Ray[]::new);
     }
 
 }

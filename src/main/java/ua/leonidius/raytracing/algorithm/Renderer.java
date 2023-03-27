@@ -2,6 +2,7 @@ package ua.leonidius.raytracing.algorithm;
 
 import ua.leonidius.raytracing.Scene;
 import ua.leonidius.raytracing.entities.Color;
+import ua.leonidius.raytracing.entities.Point2d;
 import ua.leonidius.raytracing.entities.Ray;
 
 import java.util.Arrays;
@@ -49,18 +50,28 @@ public class Renderer {
                     startY = pixelY;
                 }
 
-               var ray = camera.getRayForPixel(pixelX, pixelY);
+                var rays = camera.getRaysForPixel(new Point2d(pixelX, pixelY));
 
-                var intersectionOptional =
-                        findClosestIntersection(ray, scene);
-                if (intersectionOptional.isEmpty()) {
+                Color result = null;
+
+                for (var ray : rays) {
+                    var intersectionOptional =
+                            findClosestIntersection(ray, scene);
+                    if (intersectionOptional.isEmpty()) {
+                        continue;
+                    }
+                    var intersection = intersectionOptional.get();
+
+                    // outer array contains rows (Y value), inner array contains cells from left to right (X value)
+                    var color = pixelRenderer.renderIntersection(scene, intersection);
+                    result = result == null ? color : result.blendWith(color);
+                }
+
+                if (result == null) {
                     pixels[pixelY][pixelX] = scene.getBackgroundColor();
-                    continue;
-                };
-                var intersection = intersectionOptional.get();
-
-                // outer array contains rows (Y value), inner array contains cells from left to right (X value)
-                pixels[pixelY][pixelX] = pixelRenderer.renderIntersection(scene, intersection);
+                } else {
+                    pixels[pixelY][pixelX] = result;
+                }
             }
         }
 

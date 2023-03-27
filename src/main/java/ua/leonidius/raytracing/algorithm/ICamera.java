@@ -1,5 +1,6 @@
 package ua.leonidius.raytracing.algorithm;
 
+import ua.leonidius.raytracing.entities.Point2d;
 import ua.leonidius.raytracing.entities.Ray;
 
 /**
@@ -13,5 +14,7 @@ public interface ICamera {
     int sensorHeight();
 
     Ray getRayForPixel(int pixelX, int pixelY);
+
+    Ray[] getRaysForPixel(Point2d pixelCoordinates);
 
 }

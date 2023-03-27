@@ -38,4 +38,8 @@ public record Color(int r, int g, int b) {
         return new Color((int) (255 * r), (int) (255 * g), (int) (255 * b));
     }
 
+    public Color blendWith(Color other) {
+        return new Color((r + other.r) / 2, (g + other.g) / 2, (b + other.b) / 2);
+    }
+
 }
