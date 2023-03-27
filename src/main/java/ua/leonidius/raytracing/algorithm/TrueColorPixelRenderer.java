@@ -92,7 +92,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
             }
 
             if (!isInShadow) {
-                result = result.add(materialColor.multiplyBy(lightSource.color()).multiplyBy(cosine));
+                result = result.add(materialColor.multiplyBy(lightSource.color()).multiplyBy(lightSource.intensity()).multiplyBy(cosine));
             }
         }
 

@@ -2,31 +2,30 @@ package ua.leonidius.raytracing.light;
 
 import ua.leonidius.raytracing.algorithm.ILightSource;
 import ua.leonidius.raytracing.entities.ISpectrum;
+import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
-import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.entities.Vector3;
 
-public class PointLight implements ILightSource {
+public class AreaLight implements ILightSource {
 
-    private final Point position;
     private final ISpectrum color;
     private final double intensity;
-    // intensity?
 
-    @Deprecated
-    public PointLight(Point position, ISpectrum color) {
-        this(position, color, 1.0);
-    }
+    private static final Normal UP = new Normal(0, 0, 1);
 
-    public PointLight(Point position, ISpectrum color, double intensity) {
-        this.position = position;
+    public AreaLight(ISpectrum color, double intensity) {
         this.color = color;
         this.intensity = intensity;
     }
 
     @Override
     public Vector3 directionFromPoint(Point point) {
-        return position.subtract(point).normalize();
+        // random from upper hemisphere
+        var x = Math.random() * 2 - 1;
+        var y = Math.random() * 2 - 1;
+        var z = Math.random() * 2 - 1;
+
+        return new Vector3(x, y, z).normalize();
     }
 
     @Override
@@ -38,4 +37,5 @@ public class PointLight implements ILightSource {
     public double intensity() {
         return intensity;
     }
+
 }

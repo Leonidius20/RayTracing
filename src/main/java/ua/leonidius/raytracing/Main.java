@@ -6,11 +6,13 @@ import ua.leonidius.raytracing.arguments.CliArgsParseException;
 import ua.leonidius.raytracing.arguments.CliArguments;
 import ua.leonidius.raytracing.arguments.MissingCliParameterException;
 import ua.leonidius.raytracing.camera.PerspectiveCamera;
+import ua.leonidius.raytracing.camera.samplers.StratifiedSampler;
 import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.spectrum.RGBSpectrum;
 import ua.leonidius.raytracing.input.ParsedWavefrontFile;
 import ua.leonidius.raytracing.input.ParsingException;
+import ua.leonidius.raytracing.light.AreaLight;
 import ua.leonidius.raytracing.light.PointLight;
 import ua.leonidius.raytracing.material.MatteMaterial;
 import ua.leonidius.raytracing.material.MirrorMaterial;
@@ -42,6 +44,7 @@ public class Main implements IMonitoringCallback {
 
     private static final boolean ACCELERATE = true;
     private static final boolean SHADOWS_ENABLED = true;
+    private static final int SAMPLES_NUMBER = 16;
 
     private static JLabel jLabel;
     private static BufferedImage img; // for monitoring
@@ -213,10 +216,11 @@ public class Main implements IMonitoringCallback {
 
     private static Scene createScene(ArrayList<IShape3d> shapes, boolean accelerate) {
 
-        var camera = new PerspectiveCamera(new Point(0.3, -3.4, 0.5), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
+        var camera = new PerspectiveCamera(new Point(0.3, -3.4, 0.5), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025, new StratifiedSampler(SAMPLES_NUMBER));
         // var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize(), new RGBSpectrum(0.5, 0.5, 0.5));
-        var lightSource = new PointLight(new Point(3, -3, 3), new RGBSpectrum(1, 0.75, 0.8));
-        var lightSource2 = new PointLight(new Point(-3, -3, 3), new RGBSpectrum(0.8, 0.75, 1));
+        var lightSource = new PointLight(new Point(3, -3, 3), new RGBSpectrum(1, 0.75, 0.8), 0.7);
+        var lightSource2 = new PointLight(new Point(-3, -3, 3), new RGBSpectrum(0.8, 0.75, 1), 0.7);
+        var lightSource3 = new AreaLight(new RGBSpectrum(1, 1, 1), 0.2);
         var flatShading = new FlatShadingModel();
         var lambertMaterial = new MatteMaterial(new RGBSpectrum(1, 0.75, 0));
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading, lambertMaterial)).collect(Collectors.toCollection(ArrayList::new));
@@ -224,6 +228,7 @@ public class Main implements IMonitoringCallback {
         var scene = new Scene(camera);
         scene.add(lightSource);
         scene.add(lightSource2);
+        scene.add(lightSource3);
         if (accelerate) {
             System.out.print("Building kd-tree... ");
             var kdTree = new KdTree(instances, new MiddleSplitChooser(), new RecursiveClosestIntersectionFinder());

@@ -8,7 +8,7 @@ import ua.leonidius.raytracing.entities.Vector3;
 // light source abstraction for Renderer to depend on
 public interface ILightSource {
 
-    Ray buildRayFrom(Point point);
+    // Ray buildRayFrom(Point point);
 
     /**
      * Returns a vector pointing from a given point to the light source
@@ -25,5 +25,11 @@ public interface ILightSource {
     //double getIlluminationAtPoint(Point point); // do we need this?
 
     ISpectrum color();
+
+    /**
+     * Multiplier from 0 (dark) to 1 (maximum brightness)
+     * @return intensity
+     */
+    double intensity();
 
 }
