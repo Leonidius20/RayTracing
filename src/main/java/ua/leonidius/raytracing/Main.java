@@ -215,7 +215,7 @@ public class Main implements IMonitoringCallback {
 
         var camera = new PerspectiveCamera(new Point(0.3, -3.4, 0.5), 0.7, IMAGE_HEIGHT, IMAGE_WIDTH, 0.00025, 0.00025);
         // var lightSource = new DirectionalLightSource(new Vector3(0.5, -1, 1).normalize(), new RGBSpectrum(0.5, 0.5, 0.5));
-        var lightSource = new PointLight(new Point(3, -3, 3), new RGBSpectrum(1, 1, 1));
+        var lightSource = new PointLight(new Point(3, -3, 3), new RGBSpectrum(1, 0.75, 0.8));
         var flatShading = new FlatShadingModel();
         var lambertMaterial = new MatteMaterial(new RGBSpectrum(1, 0.75, 0));
         ArrayList<IPrimitive> instances = shapes.stream().map(shape -> new Instance(shape, flatShading, lambertMaterial)).collect(Collectors.toCollection(ArrayList::new));

@@ -37,21 +37,9 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
         }
 
         intersection = fixFloatingPointImprecision(intersection);
-
-
-
-        // todo multiple light sources
-        // just add light values from all light sources
-        // main loop going through all light sources
-
         var instance = intersection.object();
         var point = intersection.point();
         var normal = instance.getNormal(point);
-
-        var cosine = normal.dotProduct(scene.getLightSources().get(0).directionFromPoint(point));
-        cosine = Math.max(0.0, cosine); // todo: replace with abs ?
-        // todo: let the material calculate the cosine??
-        // i don't think mirror material should be affected by cosine
 
         var secondaryRayDirection = instance.material().getSecondaryRayDirection(intersection.ray().getDirection(), normal);
 
@@ -79,6 +67,16 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
             }
         }
 
+        // light source specific calculations
+
+
+        var cosine = normal.dotProduct(scene.getLightSources().get(0).directionFromPoint(point));
+        cosine = Math.max(0.0, cosine); // todo: replace with abs ?
+        // todo: let the material calculate the cosine??
+        // i don't think mirror material should be affected by cosine
+
+
+
         if (shadowsEnabled) {
             if (cosine > 1e-7) {
                 // send shadow ray
@@ -92,7 +90,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
             }
         }
 
-        return color.multiplyBy(cosine);
+        return new RGBSpectrum(0,0,0).add(color.multiplyBy(scene.getLightSources().get(0).color()).multiplyBy(cosine));
     }
 
     /**

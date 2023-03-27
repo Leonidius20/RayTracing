@@ -29,9 +29,9 @@ public class RGBSpectrum implements ISpectrum {
     public ISpectrum add(ISpectrum spectrum) {
         if (spectrum instanceof RGBSpectrum rgbSpectrum) {
             return new RGBSpectrum(
-                    Math.max(1.0, r() + rgbSpectrum.r()),
-                    Math.max(1.0, g() + rgbSpectrum.g()),
-                    Math.max(1.0, b() + rgbSpectrum.b()));
+                    Math.min(1.0, r() + rgbSpectrum.r()),
+                    Math.min(1.0, g() + rgbSpectrum.g()),
+                    Math.min(1.0, b() + rgbSpectrum.b()));
         }
         throw new UnsupportedOperationException("Not implemented yet");
     }
