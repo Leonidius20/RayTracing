@@ -1,11 +1,10 @@
 package ua.leonidius.raytracing.algorithm;
 
-import ua.leonidius.raytracing.entities.ISpectrum;
-import ua.leonidius.raytracing.entities.Ray;
+import ua.leonidius.raytracing.entities.*;
 
 public interface IMaterial {
 
-    Ray createSecondaryRay(Ray ray, Intersection intersection);
+    Vector3 getSecondaryRayDirection(Vector3 incidentDirection, Normal normal);
 
     // brdf
     ISpectrum brdf(Ray ray, Intersection intersection, ISpectrum secondaryRayResult);

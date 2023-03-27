@@ -2,8 +2,7 @@ package ua.leonidius.raytracing.material;
 
 import ua.leonidius.raytracing.algorithm.IMaterial;
 import ua.leonidius.raytracing.algorithm.Intersection;
-import ua.leonidius.raytracing.entities.ISpectrum;
-import ua.leonidius.raytracing.entities.Ray;
+import ua.leonidius.raytracing.entities.*;
 
 public class MatteMaterial implements IMaterial {
 
@@ -14,8 +13,8 @@ public class MatteMaterial implements IMaterial {
     }
 
     @Override
-    public Ray createSecondaryRay(Ray ray, Intersection intersection) {
-        return null; // todo: random ray
+    public Vector3 getSecondaryRayDirection(Vector3 incidentDirection, Normal normal) {
+        return null;
     }
 
     @Override

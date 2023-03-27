@@ -3,7 +3,9 @@ package ua.leonidius.raytracing.material;
 import ua.leonidius.raytracing.algorithm.IMaterial;
 import ua.leonidius.raytracing.algorithm.Intersection;
 import ua.leonidius.raytracing.entities.ISpectrum;
+import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Ray;
+import ua.leonidius.raytracing.entities.Vector3;
 
 public class LambertMaterial implements IMaterial {
 
@@ -13,9 +15,13 @@ public class LambertMaterial implements IMaterial {
         this.albedo = albedo;
     }
 
-    @Override
     public Ray createSecondaryRay(Ray ray, Intersection intersection) {
         // randomise
+        return null;
+    }
+
+    @Override
+    public Vector3 getSecondaryRayDirection(Vector3 incidentDirection, Normal normal) {
         return null;
     }
 

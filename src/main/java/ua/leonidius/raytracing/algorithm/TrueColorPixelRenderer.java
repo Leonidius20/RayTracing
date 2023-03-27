@@ -38,7 +38,7 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
 
         intersection = fixFloatingPointImprecision(intersection);
 
-        // todo account for recursion depth
+
 
         // todo multiple light sources
         // just add light values from all light sources
@@ -53,12 +53,14 @@ public class TrueColorPixelRenderer implements IPixelRenderer {
         // todo: let the material calculate the cosine??
         // i don't think mirror material should be affected by cosine
 
+        var secondaryRayDirection = instance.material().getSecondaryRayDirection(intersection.ray().getDirection(), normal);
 
-        var secondaryRay = instance.material().createSecondaryRay(intersection.ray(), intersection);
         ISpectrum color;
-        if (secondaryRay == null) {
+        if (secondaryRayDirection == null) {
             color = instance.material().brdf(intersection.ray(), intersection, null);
         } else {
+            var secondaryRay = new Ray(point, secondaryRayDirection);
+
             // trace secondary rays
             ISpectrum secondaryRayResult;
 
