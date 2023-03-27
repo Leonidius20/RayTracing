@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class KdTree extends Aggregate {
 
-    public final INode root;
+    final INode root;
     private final BoundingBox boundingBox;
     private final ISplitChooser splitChooser;
     private final IKdTreeVisitor<Optional<Intersection>> visitor;
@@ -27,10 +27,11 @@ public class KdTree extends Aggregate {
         this.visitor = visitor;
         boundingBox = calcBoundingBox();
 
-        maxDepth = (int) (8 + 1.3 * Math.log(primitives.size())) / 2;
+        maxDepth = (int) (8 + 1.3 * Math.log(primitives.size()));
+        //maxDepth = 5;
         // i've added /2
 
-        minPrimitivesNumberInLeaf = 50; //  todo choose
+        minPrimitivesNumberInLeaf = 40;
 
         root = buildTree(primitives, 0, boundingBox);
     }
@@ -53,11 +54,11 @@ public class KdTree extends Aggregate {
                 return createLeaf(themPrimitives, currentDepth, currentAABB);
             }
 
-            var leftAABB = new BoundingBox(currentAABB.getMinPoint(),
-                    currentAABB.getMaxPoint().replaceValue(splitAxis, splitCoordinate));
+            //var leftAABB = new BoundingBox(currentAABB.getMinPoint(),
+            //        currentAABB.getMaxPoint().replaceValue(splitAxis, splitCoordinate));
 
-            var rightAABB = new BoundingBox(currentAABB.getMinPoint().replaceValue(splitAxis, splitCoordinate),
-                    currentAABB.getMaxPoint());
+            //var rightAABB = new BoundingBox(currentAABB.getMinPoint().replaceValue(splitAxis, splitCoordinate),
+            //        currentAABB.getMaxPoint());
 
             // create children
             // check who is on the left and who is on the right
@@ -83,6 +84,9 @@ public class KdTree extends Aggregate {
                }
 
             }
+
+            var leftAABB = BoundingBox.calculateFor(primitivesOnTheLeft);
+            var rightAABB = BoundingBox.calculateFor(primitivesOnTheRight);
 
             var leftChild = buildTree(primitivesOnTheLeft, currentDepth + 1, leftAABB);
             var rightChild = buildTree(primitivesOnTheRight, currentDepth + 1, rightAABB);

@@ -1,10 +1,9 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.shapes;
 
 import org.junit.jupiter.api.Test;
 import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.entities.Vector3;
-import ua.leonidius.raytracing.shapes.Sphere;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,7 +1,9 @@
 package ua.leonidius.raytracing.entities;
 
 import lombok.Getter;
+import ua.leonidius.raytracing.algorithm.IPrimitive;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -190,6 +192,16 @@ public class BoundingBox {
         return currentMaxExtent;
     }
 
+    public static BoundingBox calculateFor(ArrayList<IPrimitive> primitives) {
+        if (primitives.size() == 0)
+            return new BoundingBox(new Point(0, 0, 0), new Point(0, 0, 0));
 
+        var bounds = primitives.get(0).computeBoundingBox();
 
+        for (int i = 1; i < primitives.size(); i++) {
+            bounds = bounds.combineWith(primitives.get(i).computeBoundingBox());
+        }
+
+        return bounds;
+    }
 }

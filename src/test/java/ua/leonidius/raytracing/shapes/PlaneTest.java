@@ -1,13 +1,11 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.shapes;
 
 import org.junit.jupiter.api.Test;
 import ua.leonidius.raytracing.entities.Normal;
 import ua.leonidius.raytracing.entities.Point;
 import ua.leonidius.raytracing.entities.Ray;
 import ua.leonidius.raytracing.entities.Vector3;
-import ua.leonidius.raytracing.shapes.Plane;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlaneTest {
@@ -29,7 +27,7 @@ class PlaneTest {
 
         var ray = new Ray(new Point(0, -20, 0), new Vector3(0, 1, 0));
 
-        assertNull(plane.findVisibleIntersectionWithRay(ray));
+        assertTrue(plane.findVisibleIntersectionWithRay(ray).isEmpty());
     }
 
     @Test
@@ -38,7 +36,7 @@ class PlaneTest {
 
         var ray = new Ray(new Point(0, -20, 0), new Vector3(0, -1, 0));
 
-        assertNull(plane.findVisibleIntersectionWithRay(ray));
+        assertTrue(plane.findVisibleIntersectionWithRay(ray).isEmpty());
     }
 
 }

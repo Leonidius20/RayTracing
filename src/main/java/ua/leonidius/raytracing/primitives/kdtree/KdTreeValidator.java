@@ -31,6 +31,7 @@ public class KdTreeValidator extends IKdTreeVisitor<List<IPrimitive>> {
         sb.append("dup: ").append(dupNum).append(" ,");
         sb.append("total: ").append(node.info().primitivesNumber).append(" ,");
         sb.append("missing: ").append(node.info().primitivesNumber - leftNum - rightNum + dupNum).append(" ,");
+        sb.append("split: ").append(node.splitAxis()).append(" ,");
 
         System.out.println(sb);
 

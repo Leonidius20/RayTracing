@@ -1,7 +1,6 @@
-package ua.leonidius.raytracing;
+package ua.leonidius.raytracing.entities;
 
 import org.junit.jupiter.api.Test;
-import ua.leonidius.raytracing.entities.Vector3;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
